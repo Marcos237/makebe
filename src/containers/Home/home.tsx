@@ -5,19 +5,14 @@ import Footer from '../../components/footer';
 import { Box, Grid } from '@mui/material';
 import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
 import { VitrineService } from '../../services/Vitrine/vitrineService';
-import { VitrineItem } from '../../Interfaces/Vitrine/vitrineItem';
 import '../../assets/styles/Conteudo/conteudo.css';
 
 const Home: React.FC = () => {
   const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLogadoItens>();
-  const [vitrineData, setVitrineData] = useState<VitrineItem>({
-    descricao: '',
-    usuarioLogadoItem: {} as UsuarioLogadoItens,
-  });
+
 
   const fetchVitrineData = async () => {
       const data = await VitrineService();
-      setVitrineData(data);
       setUsuarioLogado(data.usuarioLogadoItem); 
   };
    useEffect(() => {

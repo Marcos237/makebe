@@ -14,11 +14,12 @@ build:
   stage: build
   image: node:20.9.0
   script:
-    - npm install # Instala as dependências do projeto
-    - npm run build # Constrói o projeto React
+    - npm install
+    - npm run lint -- --max-warnings=0
+    - npm run build 
   artifacts:
     paths:
-      - build/ # Diretório de saída do build do React
+      - build/ 
   tags:
     - docker
 
@@ -28,11 +29,11 @@ deploy:
   script:
     - apt-get update && apt-get install -y rsync
     - docker pull makebe:latest || true
-    - docker build -t makebe:latest . # Construa a imagem Docker para o frontend
-    - docker stop makebe-frontend || true
-    - docker rm makebe-frontend || true
-    - docker run -d --name makebe -p 80:80 makebe:latest # Inicie o container do frontend
-    - docker network connect dockercompose_makebe-rede makebe-frontend
+    - docker build -t makebe:latest . 
+    - docker stop makebe || true
+    - docker rm makebe || true
+    - docker run -d --name makebe -p 80:80 makebe:latest 
+    - docker network connect dockercompose_makebe-rede makebe
   tags:
     - docker
   only:
