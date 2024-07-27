@@ -1,0 +1,38 @@
+variables:
+  CI_SERVER_URL: http://makebe-gitlab
+
+stages:
+  - build
+  - deploy
+
+before_script:
+
+  - apt-get update && apt-get install -y rsync
+
+build:
+  stage: build
+  image: node:20.9.0
+  script:
+    - npm install # Instala as dependências do projeto
+    - npm run build # Constrói o projeto React
+  artifacts:
+    paths:
+      - build/ # Diretório de saída do build do React
+  tags:
+    - docker
+
+deploy:
+  stage: deploy
+  image: docker:stable
+  script:
+    - apt-get update && apt-get install -y rsync
+    - docker pull makebe:latest || true
+    - docker build -t makebe:latest . # Construa a imagem Docker para o frontend
+    - docker stop makebe-frontend || true
+    - docker rm makebe-frontend || true
+    - docker run -d --name makebe -p 80:80 makebe:latest # Inicie o container do frontend
+    - docker network connect dockercompose_makebe-rede makebe-frontend
+  tags:
+    - docker
+  only:
+    - main

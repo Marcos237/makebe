@@ -1,0 +1,11 @@
+.menu {
+  background-image: url('http://portaldes.fiap.com.br/arquivos/banner_2.png') !important;
+  background-size: cover;
+  background-repeat: no-repeat; 
+  }
+  
+  .imagem {
+    height: 60px;
+    position: absolute;
+    margin-bottom: 40px;
+  }

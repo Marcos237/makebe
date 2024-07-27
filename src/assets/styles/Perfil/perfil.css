@@ -1,0 +1,112 @@
+.gridContainerPerfil {
+    margin-top: 4px !important;
+    width: 100%;
+    height: 100% !important;
+    display: flex;
+}
+
+.gridDireitoPerfil,
+.gridEsquerdoPerfil {
+    width: 100%;
+    padding: 4px !important;
+    height: 100%;
+}
+
+.conteudoEsquerdoPerfil {
+    margin-left: 18px !important;
+}
+
+.conteudoEsquerdoPerfil,
+.conteudoDireitoPerfil {
+    background-color: #F7F9F9;
+    height: 92% !important;
+    padding: 30px;
+    border-radius: 20px;
+}
+
+.camposEsquerdo,
+.camposDireito {
+    padding: 80px;
+}
+
+.center {
+    height: 140px;
+}
+
+.stack {
+    justify-content: center !important;
+}
+
+.formItens {
+    padding: 10px;
+    width: 100%;
+}
+
+.botao {
+    margin-top: 10px;
+    text-align: right;
+    display: inline;
+    margin-right: 10px !important;
+    display: flex;
+    justify-content: flex-end;
+}
+.camposInvisiveis {
+    display: none;
+}
+
+.messageText .texto {
+    margin-top: 10px;
+    display: flex !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+@media (max-width: 900px) {
+
+    .gridContainerPerfil {
+        margin-top: 0px !important;
+        width: 100%;
+        height: 100%;
+
+    }
+
+    .gridDireitoPerfil,
+    .gridEsquerdoPerfil {
+        width: 100%;
+        padding: 4px !important;
+        height: 30%;
+    }
+
+    .conteudoEsquerdoPerfil,
+    .conteudoDireitoPerfil {
+        background-color: transparent;
+        height: 80% !important;
+        margin-left: 2px !important;
+
+    }
+
+    .conteudoDireitoPerfil {
+        margin-top: 40px;
+    }
+
+    .camposEsquerdo,
+    .camposDireito {
+        margin-top: 80px;
+        padding: 10px;
+    }
+
+    .camposDireito {
+        margin-top: -20px;
+    }
+
+    .center {
+        height: 0;
+    }
+
+    .gridDireitoPerfil,
+    .gridEsquerdoPerfil {
+        margin-top: 2px !important;
+        padding: 4px !important;
+
+    }
+}

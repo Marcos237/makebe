@@ -1,0 +1,30 @@
+.footer {
+    background-color: #17202A ;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    width: 99%;
+}
+
+
+.footer a {
+    font-size: 14px;
+    color: #fff;
+    margin: 0 10px;
+    text-decoration: none;
+    padding: 10px;
+}
+
+.Footer a:hover {
+    text-decoration: underline;
+}
+
+.direitos {
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    color: #fff;
+    margin: 0 10px;
+    text-decoration: none;
+    padding: 10px;
+}

@@ -1,0 +1,63 @@
+.mensagemRetorno {
+    width: 48%; 
+    max-height: 260px !important;
+    min-height: 40px !important;
+    padding: 2px;
+    border-radius: 10px;
+    margin-right: 16px;
+    opacity: 0;
+    visibility: hidden;
+    margin-top: 40px;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    position: absolute;
+    right: 0; 
+}
+.texto {
+    display: flex;
+    justify-content: start;
+    margin-left: 40px;
+    padding: 2px;
+    color: white;
+}
+.close {
+    position: relative;
+    display: flex;
+    float: right;
+    top: -2;
+    right: 4px;
+    cursor: pointer;
+    font-size: 22px;
+    color: white;
+}
+
+.mensagemRetorno.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+@media (max-width: 900px) {
+
+    .mensagemRetorno {
+        width: 92%;
+        max-height: 260px !important;
+        margin-left: 30px !important;
+        padding: 2px;
+        border-radius: 10px;
+        margin-left: 10px;
+        opacity: 0;
+        visibility: hidden;
+        margin-top: 40px;
+        transition: opacity 0.5s ease, visibility 0.5s ease;
+        position: absolute;
+    }
+    .close {
+        position: relative;
+        display: flex;
+        float: right;
+        top: 1px;
+        right: 6px;
+        cursor: pointer;
+        font-size: 22px;
+    }
+}

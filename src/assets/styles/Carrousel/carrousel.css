@@ -1,0 +1,17 @@
+.sessao {
+  margin: 8px auto 0;
+  width: 80% !important;
+  max-width: 80% !important;
+  display: flex;
+    justify-content: center;
+  }
+
+.imagens {
+  width: 100% !important;
+}
+
+.carrousel-image {
+  width: 100% !important;
+  height: 400px;
+  object-fit: cover;
+}

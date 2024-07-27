@@ -1,0 +1,30 @@
+.conteudoAutenticacao {
+    height: 100%; 
+    width: 100%;
+}
+
+.itemAutenticacao {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    background-color: #F7F9F9;
+    height: 99%;
+    width: 99%;
+    margin-left: 10px;
+    margin-top: 10px;
+
+}
+
+.textoAutenticacao {
+    margin: 10px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.textoAutenticacao p,  .botaoAutenticacao {
+    color: #839192;
+    margin: 0;
+    padding: 30px;
+}
+

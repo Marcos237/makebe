@@ -1,0 +1,30 @@
+.avatar:hover {
+    cursor: pointer;
+}
+
+.avatar {
+    min-width: 8vw;
+    min-height: 12vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 4px solid #979A9A;
+    text-align: center;
+    font-size: 40px;
+}
+
+
+@media (max-width: 900px) {
+
+    .avatar {
+        min-width: 16vw;
+        min-height: 8h;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 4px solid #979A9A;
+        background-color: #F7F9F9;
+        text-align: center;
+        font-size: 40px;
+    }
+}

@@ -1,0 +1,5 @@
+
+  export interface IconeItens {
+    icone: React.ReactElement;
+    dialogo: string;
+}
