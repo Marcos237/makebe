@@ -14,7 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { Link } from 'react-router-dom';
 import { MenuUsuarioItens } from '../Interfaces/Banner/MenuUsuarioItens';
 import { UsuarioLogadoItens } from '../Interfaces/Usuario/UsuarioLogadoItens';
-import { URL_IMAGENS, API_BASE_URL } from '../config/apiConfig';
+
 
 import "../assets/styles/Banner/banner.css";
 

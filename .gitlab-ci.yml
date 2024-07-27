@@ -14,7 +14,8 @@ build:
   stage: build
   image: node:20.9.0
   script:
-    - npm install 
+    - npm install
+    - npm run lint -- --max-warnings=0
     - npm run build 
   artifacts:
     paths:
@@ -29,10 +30,10 @@ deploy:
     - apt-get update && apt-get install -y rsync
     - docker pull makebe:latest || true
     - docker build -t makebe:latest . 
-    - docker stop makebe-frontend || true
-    - docker rm makebe-frontend || true
+    - docker stop makebe || true
+    - docker rm makebe || true
     - docker run -d --name makebe -p 80:80 makebe:latest 
-    - docker network connect dockercompose_makebe-rede makebe-frontend
+    - docker network connect dockercompose_makebe-rede makebe
   tags:
     - docker
   only:
