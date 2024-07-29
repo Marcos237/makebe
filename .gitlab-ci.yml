@@ -19,7 +19,7 @@ build:
 
 deploy:
   stage: deploy
-  image: docker:25.0.2,
+  image: docker:25.0.2
   before_script:
     - apk update && apk add --no-cache rsync
   script:
