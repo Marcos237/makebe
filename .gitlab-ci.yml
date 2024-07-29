@@ -32,7 +32,6 @@ deploy:
     - apt-get update && apt-get install -y rsync docker.io
     - docker --version
   script:
-    - echo "$DOCKER_AUTH_CONFIG" | docker login --username "$DOCKER_USERNAME" --password-stdin
     - docker pull makebe:latest || true
     - docker build -t makebe:latest .
     - docker stop makebe || true
