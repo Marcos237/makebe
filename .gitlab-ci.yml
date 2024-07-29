@@ -19,7 +19,7 @@ build:
 
 deploy:
   stage: deploy
-  image: ubuntu:latest
+  image: docker:stable
 
   script:
     - apt-get update && apt-get install -y rsync 
