@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 import { AutenticacaoService } from "../../services/Perfil/autenticacaoService";
@@ -29,17 +29,15 @@ const Autenticacao: React.FC = () => {
         }
         autenticacaoItens.Id = response?.usuarioId ?? '';
     }
-
-    useEffect(() => {
         fetchAutenticacaoData();
-    }, []);
+
 
     const handleButtonClick = async () => {
         setIsLoading(true);
         setIsDisabled(false);
 
         const retorno = await AtivaPerfilService(autenticacaoItens.Id ?? '');
-        if (!retorno?.notifications || retorno?.notifications?.length == 0) {
+        if (!retorno?.notifications || retorno?.notifications?.length === 0) {
             setIsDisabled(true);
             setIsLoading(true);
         }else{

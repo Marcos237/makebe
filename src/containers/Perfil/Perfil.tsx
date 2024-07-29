@@ -15,7 +15,6 @@ import { PerfilService } from '../../services/Perfil/perfilService';
 import { UpdatePerfilService } from '../../services/Perfil/upDatePerfilService';
 import Mensagem from '../../components/mensagem';
 import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
-import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
 import '../../assets/styles/Perfil/perfil.css';
 import { RetornarMessageService } from '../../services/Perfil/retornarMessageService';
 
@@ -31,7 +30,6 @@ const Perfil: React.FC = () => {
     const [instagran, setInstagran] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [uploadItem, setUploadItem] = useState<UploadItens>({ uploadProps: { nomeImagem: '', urlImagem: '' } });
-    const [usuarioItem, setUsuario] = useState<UsuarioLogadoItens>();
     const [messageItens, setMessageItens] = useState<MensagemItens>();
     const [isLogado, setLogado] = useState<boolean>(false);
     const [isMessage, setMessage] = useState<boolean>(false);
@@ -83,13 +81,11 @@ const Perfil: React.FC = () => {
             const usuarioLogado = await UpdatePerfilService(usuario);
             const messageRetorno = await RetornarMessageService(isLogado, usuarioLogado?.isValid ?? false, usuarioLogado?.notifications ?? [])
             setMessageItens(messageRetorno);
-            setUsuario(usuarioLogado || undefined);
         }
         else {
             const usuarioLogado = await PerfilService(usuario);
             const messageRetorno = await RetornarMessageService(isLogado, usuarioLogado?.isValid ?? false, usuarioLogado?.notifications ?? []) 
             setMessageItens(messageRetorno);
-            setUsuario(usuarioLogado || undefined);
 
             if (!usuarioLogado?.notifications || usuarioLogado.notifications.length === 0) {
                 navigate('/perfilValidar');

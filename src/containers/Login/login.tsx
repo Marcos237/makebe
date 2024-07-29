@@ -14,7 +14,6 @@ import { loginUser } from '../../services/Login/loginService';
 import { MensagemItens } from '../../Interfaces/Mensagens/MensagemItens';
 import Mensagem from '../../components/mensagem';
 import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
-import { getTokenFromLocalStorage } from '../../config/ArmazenaToken'
 import '../../assets/styles/Login/login.css';
 
 
@@ -25,7 +24,6 @@ const Login: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [messageRetorno, setMessageRetorno] = useState<NotificationItens[]>([]);
     const [isMessage, setMessage] = useState<boolean>(false);
-    const [useToken, setToken] = useState<string>('');
 
 
     const handleSubmit = async (event: React.FormEvent) => {
@@ -41,8 +39,6 @@ const Login: React.FC = () => {
         setIsLoading(false);
         setMessageRetorno(usuarioLogado?.notifications ?? []);
         if (usuarioLogado?.isValid) {
-            const token = getTokenFromLocalStorage();
-            setToken(token || '');
             navigate('/', { state: { usuarioLogado } });
         }
         else {
