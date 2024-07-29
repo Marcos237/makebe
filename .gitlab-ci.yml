@@ -27,16 +27,21 @@ build:
 deploy:
   stage: deploy
   image: docker:stable
-
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_DRIVER: overlay2
+  before_script:
+    - apt-get update && apt-get install -y rsync
   script:
-    - apt-get update && apt-get install -y rsync 
-    - docker pull makebe:latest || true  
-    - docker build -t makebe:latest . 
-    - docker stop makebe-front || true  
-    - docker rm makebe-front || true     
-    - docker run -d --name makebe-front -p 80:80 makebe:latest
-    - docker network connect dockercompose_makebe-rede makebe-front 
+    - docker pull makebe:latest || true
+    - docker build -t makebe:latest .
+    - docker stop makebe || true
+    - docker rm makebe || true
+    - docker run -d --name makebe -p 80:80 makebe:latest
+    - docker network connect dockercompose_makebe-rede makebe
   tags:
     - docker
   only:
-    - main  
+    - main
