@@ -26,12 +26,8 @@ build:
 
 deploy:
   stage: deploy
-  image: docker:stable
-  services:
-    - docker:dind
-  variables:
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_DRIVER: overlay2
+  image: docker:25.0.2
+
   before_script:
     - apt-get update && apt-get install -y rsync
   script:
