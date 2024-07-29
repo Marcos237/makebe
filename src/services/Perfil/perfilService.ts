@@ -2,7 +2,6 @@ import axios, { AxiosRequestConfig, AxiosError } from 'axios';
 import { API_BASE_URL } from '../../config/apiConfig';
 import { UsuarioPerilItens } from '../../Interfaces/Usuario/UsuarioPerilItens';
 import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
-import { saveTokenToLocalStorage } from '../../config/ArmazenaToken';
 import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
 
 export const PerfilService = async (usuario: UsuarioPerilItens): Promise<UsuarioLogadoItens | null> => {

@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosError } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { API_BASE_URL } from '../../config/apiConfig';
 import { getTokenFromLocalStorage } from '../../config/ArmazenaToken';
 import { VitrineItem } from '../../Interfaces/Vitrine/vitrineItem';

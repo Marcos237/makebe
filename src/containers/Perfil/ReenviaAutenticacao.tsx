@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import { BotaoItens } from '../../Interfaces/Botao/botao';
 import { ReenviaItens } from '../../Interfaces/Usuario/ReenviaItens';
 import { ReenviatText, SucessText } from '../../constants/Usuario/autenticacaoConstant';
@@ -15,10 +14,8 @@ import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
 
 
 const ReenviaAutenticacao: React.FC = () => {
-    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [email, setEmail] = useState<string>('');
-    const [messageItens, setMessageItens] = useState<MensagemItens>();
     const [messageRetorno, setMessageRetorno] = useState<NotificationItens>();
     const [isMessage, setMessage] = useState<boolean>(false);
 
