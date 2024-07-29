@@ -29,13 +29,14 @@ deploy:
   image: docker:stable
 
   script:
-    - docker pull makebe:latest || true
-    - docker build -t makebe:latest .
-    - docker stop makebe || true
-    - docker rm makebe || true
+    - apt-get update && apt-get install -y rsync 
+    - docker pull makebe-front:latest || true  
+    - docker build -t makebe-front:latest . 
+    - docker stop makebe || true  
+    - docker rm makebe || true     
     - docker run -d --name makebe -p 80:80 makebe:latest
-    - docker network connect dockercompose_makebe-rede makebe
+    - docker network connect dockercompose_makebe-rede makebe 
   tags:
     - docker
   only:
-    - main
+    - main  
