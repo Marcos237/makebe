@@ -5,15 +5,12 @@ stages:
   - build
   - deploy
 
-before_script:
-  - apt-get update && apt-get install -y rsync
-
 build:
   stage: build
   image: node:20.9.0
   script:
-    - npm install --loglevel=error
-    - npm run build --loglevel=error
+    - yarn install
+    - yarn build
   artifacts:
     paths:
       - build/
@@ -22,21 +19,15 @@ build:
 
 deploy:
   stage: deploy
-  image: ubuntu:latest
-  services:
-    - docker:dind
-  variables:
-    DOCKER_DRIVER: overlay2
-    DOCKER_HOST: tcp://docker:2375
+  image: docker:25.0.2
   before_script:
-    - apt-get update && apt-get install -y rsync docker.io
-    - docker --version
+    - apk update && apk add --no-cache rsync
   script:
     - docker pull makebe:latest || true
     - docker build -t makebe:latest .
     - docker stop makebe || true
     - docker rm makebe || true
-    - docker run -d --name makebe -p 80:80 makebe:latest
+    - docker run -d --name makebe -p 8081:80 makebe:latest
     - docker network connect dockercompose_makebe-rede makebe
   tags:
     - docker
