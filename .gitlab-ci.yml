@@ -5,9 +5,7 @@ stages:
   - build
   - deploy
 
-
 before_script:
-
   - apt-get update && apt-get install -y rsync
 
 build:
@@ -18,20 +16,28 @@ build:
     - npm run build --loglevel=error
   artifacts:
     paths:
-      - build/ 
+      - build/
   tags:
     - docker
 
 deploy:
   stage: deploy
-  image: docker:stable
+  image: ubuntu:latest
+  services:
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2375
+  before_script:
+    - apt-get update && apt-get install -y rsync docker.io
+    - docker --version
   script:
-    - apt-get update && apt-get install -y rsync
+    - echo "$DOCKER_AUTH_CONFIG" | docker login --username "$DOCKER_USERNAME" --password-stdin
     - docker pull makebe:latest || true
-    - docker build -t makebe:latest . 
+    - docker build -t makebe:latest .
     - docker stop makebe || true
     - docker rm makebe || true
-    - docker run -d --name makebe -p 80:80 makebe:latest 
+    - docker run -d --name makebe -p 80:80 makebe:latest
     - docker network connect dockercompose_makebe-rede makebe
   tags:
     - docker
