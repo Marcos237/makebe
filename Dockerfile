@@ -1,3 +1,4 @@
+
 FROM node:20.9.0 AS build
 
 WORKDIR /nginx_front-end
@@ -8,12 +9,14 @@ RUN npm install
 
 COPY . .
 
-yarn build
+RUN yarn build
+
 
 FROM nginx:alpine
 
+WORKDIR /usr/share/nginx/html
 
-COPY --from=build-env /nginx_front-end/out .
+COPY --from=build /nginx_front-end/build .
 
 EXPOSE 80
 
