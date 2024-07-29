@@ -1,7 +1,5 @@
 variables:
   CI_SERVER_URL: http://makebe-gitlab
-  DOCKER_DRIVER: overlay2
-  DOCKER_HOST: tcp://docker:2375
 
 stages:
   - build
@@ -13,29 +11,23 @@ build:
   script:
     - yarn install
     - yarn build
-
-  tags:
-    - docker
-
   artifacts:
     paths:
       - build/
-    
-  before_script:
-    - apt-get update && apt-get install -y rsync
+  tags:
+    - docker
 
 deploy:
   stage: deploy
-  image: docker:25.0.2
-
+  image: docker:20.10.17
   before_script:
-    - apt-get update && apt-get install -y rsync
+    - apk update && apk add --no-cache rsync
   script:
     - docker pull makebe:latest || true
     - docker build -t makebe:latest .
     - docker stop makebe || true
     - docker rm makebe || true
-    - docker run -d --name makebe -p 80:80 makebe:latest
+    - docker run -d --name makebe -p 8080:80 makebe:latest
     - docker network connect dockercompose_makebe-rede makebe
   tags:
     - docker
