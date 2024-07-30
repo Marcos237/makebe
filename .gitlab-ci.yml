@@ -24,7 +24,8 @@ deploy:
     - apk update && apk add --no-cache rsync
     - apk add --no-cache sudo 
   script:
-    - sudo rsync -av build/ /mnt/arquivos/makebeserver/dockercompose/nginx_front-end/
+    - mkdir "/mnt/arquivos/makebeserver/dockercompose/nginx_front-end
+    - rsync -av build/ /mnt/arquivos/makebeserver/dockercompose/nginx_front-end/
     - docker pull makebe:latest || true
     - docker build -t makebe:latest .
     - docker stop makebe || true
