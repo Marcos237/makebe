@@ -3,6 +3,7 @@ variables:
 
 stages:
   - build
+  - verify
   - deploy
 
 build:
@@ -16,6 +17,18 @@ build:
       - build/
   tags:
     - docker
+
+verify:
+  stage: verify
+  image: node:20.9.0
+  script:
+    - ls -l build/
+    - cat build/index.html
+  tags:
+    - docker
+  dependencies:
+    - build
+
 
 deploy:
   stage: deploy
