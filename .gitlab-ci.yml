@@ -3,7 +3,6 @@ variables:
 
 stages:
   - build
-  - verify
   - deploy
 
 build:
@@ -15,18 +14,6 @@ build:
   artifacts:
     paths:
       - build/
-    expire_in: 1 hour  # Define a expiração dos artefatos
-  tags:
-    - docker
-
-verify:
-  stage: verify
-  image: node:20.9.0
-  script:
-    - ls -l build/
-    - cat build/index.tsx
-  dependencies:
-    - build
   tags:
     - docker
 
