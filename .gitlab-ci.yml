@@ -15,6 +15,7 @@ build:
   artifacts:
     paths:
       - build/
+    expire_in: 1 hour  # Define a expiração dos artefatos
   tags:
     - docker
 
@@ -24,11 +25,10 @@ verify:
   script:
     - ls -l build/
     - cat build/index.html
-  tags:
-    - docker
   dependencies:
     - build
-
+  tags:
+    - docker
 
 deploy:
   stage: deploy
