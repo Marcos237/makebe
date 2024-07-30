@@ -24,7 +24,7 @@ verify:
   image: node:20.9.0
   script:
     - ls -l build/
-    - cat build/index.html
+    - cat build/index.tsx
   dependencies:
     - build
   tags:
