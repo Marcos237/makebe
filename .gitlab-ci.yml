@@ -34,3 +34,4 @@ deploy:
     - docker
   only:
     - main
+    
