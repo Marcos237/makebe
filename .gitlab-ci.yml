@@ -23,12 +23,12 @@ deploy:
   before_script:
     - apk update && apk add --no-cache rsync
   script:
-    - rsync -av build/ /mnt/arquivos/makebeserver/dockercompose/nginx_front-end/
+    - rsync -av build/ mnt/arquivos/makebeserver/dockercompose/nginx_front-end/
     - docker pull makebe:latest || true
     - docker build -t makebe:latest .
     - docker stop makebe || true
     - docker rm makebe || true
-    - docker run -d --name makebe -p 8081:80 -v /mnt/arquivos/makebeserver/dockercompose/nginx_front-end:/usr/share/nginx/html makebe:latest
+    - docker run -d --name makebe -p 8081:80 -v mnt/arquivos/makebeserver/dockercompose/nginx_front-end:/usr/share/nginx/html makebe:latest
     - docker network connect dockercompose_makebe-rede makebe
   tags:
     - docker
