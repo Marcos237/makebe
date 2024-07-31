@@ -23,8 +23,8 @@ deploy:
   before_script:
     - apk update && apk add --no-cache rsync
   script:
-    - mkdir -p /mnt/arquivos/makebeserver/dockercompose/nginx_front-end
-    - rsync -av build/ /mnt/arquivos/makebeserver/dockercompose/nginx_front-end/
+    - mkdir -p /mnt/arquivos/makebeserver/dockercompose/nginx_front-end/front-end
+    - rsync -av build/ /mnt/arquivos/makebeserver/dockercompose/nginx_front-end/front-end
     - docker exec makebe-nginx nginx -s reload
   tags:
     - docker
