@@ -1,14 +1,9 @@
-
-FROM node:20.9.0 AS build
+FROM node:20.9.0
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN yarn build
-FROM nginx:alpine
-WORKDIR /usr/share/nginx/front-end
-RUN mkdir -p /usr/share/nginx/front-end
-COPY --from=build /app/build .
-
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+RUN npm run build
+RUN npm install -g http-server
+EXPOSE 3000
+CMD ["http-server", "build", "-p", "3000"]
