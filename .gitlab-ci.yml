@@ -27,7 +27,7 @@ deploy:
     - docker build -t makebe:latest .
     - docker stop makebe || true
     - docker rm makebe || true
-    - docker run -d --name makebe -p 8081:3000 -v /mnt/arquivos/makebeserver/dockercompose/nginx_front-end/apiconfig.ts:/app/src/config/apiconfig.ts -v /etc/localtime:/etc/localtime:ro makebe:latest
+    - docker run -d --name makebe -p 8081:3000 -v /mnt/arquivos/makebeserver/dockercompose/nginx_front-end/apiConfig.ts:/app/src/config/apiConfig.ts -v /etc/localtime:/etc/localtime:ro makebe:latest
     - docker network connect dockercompose_makebe-rede makebe || true
   tags:
     - docker
