@@ -95,7 +95,7 @@ const Banner: React.FC<BannerProps> = ({ usuarioLogado }) => {
             textDecoration: 'none',
           }}>
             <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
-              <img src='http://192.168.15.17/imagens/logo_5.png' alt="Logo" className="imagem" />
+              <img src='http://192.168.15.17/images/logo_5.png' alt="Logo" className="imagem" />
             </Box>
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
