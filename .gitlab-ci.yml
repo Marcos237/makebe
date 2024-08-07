@@ -28,7 +28,7 @@ deploy:
     - docker stop makebe || true
     - docker rm makebe || true
       -v /mnt/arquivos/makebeserver/dockercompose/nginx_front-end/build:/usr/share/nginx/html \
-      -v /mnt/arquivos/makebeserver/dockercompose/nginx_front-end/nginx.conf:/etc/nginx/nginx.conf \
+      -v /mnt/arquivos/makebeserver/dockercompose/nginx_front-end/makebe.conf:/etc/nginx/mabeke.conf \
       -v /etc/localtime:/etc/localtime:ro \
       makebe:latest
     - docker network connect dockercompose_makebe-rede makebe || true
