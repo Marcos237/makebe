@@ -46,7 +46,6 @@ const ReenviaAutenticacao: React.FC = () => {
 
     const enviarSatusMessage = () => {
         setMessage(true)
-        console.log(isMessage)
         setTimeout(() => {
             setMessage(false);
         }, 6000);
