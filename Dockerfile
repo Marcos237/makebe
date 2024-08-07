@@ -11,7 +11,7 @@ RUN npm run build
 FROM nginx:latest
 
 COPY --from=build /app/build /usr/share/nginx/html
-COPY src/config/makebe.conf /etc/nginx/makebe.conf
+COPY src/config/makebe.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
 
