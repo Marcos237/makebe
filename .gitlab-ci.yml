@@ -25,12 +25,10 @@ deploy:
   script:
     - docker pull makebe:latest || true
     - docker build -t makebe:latest .
-    - docker run --name makebe_temp makebe:latest
-    - docker cp makebe_temp:/app/build /home/makebe-user/sites/makebe/build
-    - docker rm makebe_temp
     - docker stop makebe || true
     - docker rm makebe || true
     - docker run -d --name makebe -p 8081:80 -v /home/makebe-user/sites/makebe/build:/app/build -v /etc/localtime:/etc/localtime:ro makebe:latest
+    - docker cp makebe:/app/build /home/makebe-user/sites/makebe/build
     - docker network connect dockercompose_makebe-rede makebe || true
   tags:
     - docker
