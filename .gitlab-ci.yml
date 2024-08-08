@@ -27,7 +27,7 @@ deploy:
     - docker build -t makebe:latest .
     - docker stop makebe || true
     - docker rm makebe || true
-    - docker run -d  --name makebe -p 8081:80 -v home/makebe-user/build:/usr/share/nginx/html -v /etc/localtime:/etc/localtime:ro makebe:latest
+    - docker run -d --name makebe -p 8081:80 -v /home/makebe-user/sites/makebe/build:/usr/share/nginx/html -v /etc/localtime:/etc/localtime:ro makebe:latest
     - docker network connect dockercompose_makebe-rede makebe || true
   tags:
     - docker
