@@ -1,19 +1,10 @@
-FROM node:20.9.0 as build
-
+FROM node:20.9.0
 WORKDIR /app
-
 COPY package*.json ./
 RUN npm install
-
 COPY . .
-RUN npm run build
+RUN yarn build
 
-FROM nginx:latest
-
-COPY --from=build /app/build /usr/share/nginx/html
-COPY src/config/makebe.conf /etc/nginx/nginx.conf
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
-
+RUN npm install -g http-server
+EXPOSE 3000
+CMD ["http-server", "build", "-p", "3000"]
