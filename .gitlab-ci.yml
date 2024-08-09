@@ -24,7 +24,7 @@ deploy:
     - apk update && apk add --no-cache rsync
   script:
     - docker pull makebe:latest || true
-    - docker build -t makebe:latest .
+    - docker build -t makebe .
     - docker stop makebe || true
     - docker rm makebe || true
     - docker run -d  --name makebe -p 8081:80 -v /home/makebe-user/sites/makebe/build:/app/build -v /etc/localtime:/etc/localtime:ro makebe:latest
