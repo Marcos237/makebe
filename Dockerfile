@@ -17,4 +17,6 @@ WORKDIR /
 
 RUN rm -rf /temp/react
 
+EXPOSE 3000
+CMD ["build", "-p", "3000"]
 
