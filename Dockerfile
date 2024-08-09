@@ -13,6 +13,8 @@ RUN mkdir -p /var/www/html
 
 RUN mv build/* /var/www/html 
 
+VOLUME /mnt/arquivos/makebeserver/dockercompose/nginx_front-end/sites
+
 WORKDIR /
 
 RUN rm -rf /temp/react
