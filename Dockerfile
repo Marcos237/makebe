@@ -11,12 +11,10 @@ RUN npm run build
 
 RUN mkdir -p /var/www/html
 
-RUN mv dist/* /var/www/html 
+RUN mv build/* /var/www/html 
 
 WORKDIR /
 
 RUN rm -rf /temp/react
 
-RUN npm install -g http-server
-EXPOSE 3000
-CMD ["http-server", "build", "-p", "3000"]
+
