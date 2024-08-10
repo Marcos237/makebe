@@ -1,23 +1,18 @@
-FROM node:latest
 
-WORKDIR /temp/react
-COPY . .
+FROM node:latest as react-build
+
+WORKDIR /app
+
+COPY package*.json ./
 
 RUN rm -rf node_modules
 
 RUN npm install
 
+COPY . .
+
 RUN npm run build
-
-RUN mkdir -p /var/www/html
-
-RUN mv build/* /var/www/html 
 
 VOLUME /mnt/arquivos/makebeserver/dockercompose/nginx_front-end
 
-WORKDIR /
-
-RUN rm -rf /temp/react
-
-EXPOSE 3000
-CMD ["node", "/var/www/html"]
+RUN cp -r /app/build/* /mnt/arquivos/makebeserver/dockercompose/nginx_front-end/
