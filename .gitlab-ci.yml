@@ -29,6 +29,8 @@ deploy:
     - docker rm makebe || true
     - docker run -d  --name makebe -p 8081:80 -v /mnt/arquivos/makebeserver/dockercompose/nginx_front-end/sites/makebe:/app/build -v /etc/localtime:/etc/localtime:ro makebe:latest
     - docker network connect dockercompose_makebe-rede makebe || true
+    - docker cp makebe:/app/build /mnt/arquivos/makebeserver/dockercompose/nginx_front-end/sites/makebe
+    - docker stop makebe
   tags:
     - docker
   only:
