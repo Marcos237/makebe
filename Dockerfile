@@ -1,16 +1,22 @@
-
 FROM node:20.9.0 as build
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY . /app
+
 RUN npm install
 
-COPY . .
 RUN npm run build
 
-COPY --from=build /app/build /usr/share/nginx/html
+FROM node:20.9.0
+
+WORKDIR /app
+
+COPY --from=build /app/build /app/build
 
 RUN npm install -g http-server
+
 EXPOSE 3000
+
 CMD ["http-server", "build", "-p", "3000"]
+
