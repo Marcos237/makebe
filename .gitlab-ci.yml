@@ -31,7 +31,7 @@ deploy:
     - docker network connect dockercompose_makebe-rede makebe || true
     - |
       sshpass -p "$DOCKER_PASSWORD" ssh -o StrictHostKeyChecking=no "$DOCKER_USER@$DOCKER_NETWORK" "
-      docker cp makebe:/app /home/makebe-user/sites/makebe
+      sudo docker cp makebe:/app /home/makebe-user/sites/makebe
       "
   tags:
     - docker
