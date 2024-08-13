@@ -21,22 +21,20 @@ deploy:
   stage: deploy
   image: docker:25.0.2
   before_script:
-    - apk update && apk add --no-cache rsync openssh-client sshpass
-    - mkdir -p ~/.ssh
+    - apk update && apk add --no-cache sshpass
     - ssh-keyscan -H "$DOCKER_NETWORK" >> ~/.ssh/known_hosts
   script:
+    - docker pull makebe:latest || true
+    - docker build -t makebe:latest .
+    - docker stop makebe || true
+    - docker rm makebe || true
+    - docker run -d --name makebe -p 8081:80 -v /etc/localtime:/etc/localtime:ro makebe:latest
+    - docker network connect dockercompose_makebe-rede makebe || true
     - |
       sshpass -p "$DOCKER_PASSWORD" ssh -o StrictHostKeyChecking=no "$DOCKER_USER@$DOCKER_NETWORK" "
-      echo $DOCKER_PASSWORD | sudo -S docker pull makebe:latest || true
-      echo $DOCKER_PASSWORD | sudo -S docker build -t makebe:latest .
-      echo $DOCKER_PASSWORD | sudo -S docker stop makebe || true
-      echo $DOCKER_PASSWORD | sudo -S docker rm makebe || true
-      echo $DOCKER_PASSWORD | sudo -S docker run -d --name makebe -p 8081:80 -v /etc/localtime:/etc/localtime:ro makebe:latest
-      echo $DOCKER_PASSWORD | sudo -S docker network connect dockercompose_makebe-rede makebe || true
-      echo $DOCKER_PASSWORD | sudo -S docker cp makebe:/app /home/makebe-user/sites/makebe
+      docker cp makebe:/app /home/makebe-user/sites/makebe
       "
   tags:
     - docker
   only:
     - main
-
