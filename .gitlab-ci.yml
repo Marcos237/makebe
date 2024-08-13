@@ -29,9 +29,13 @@ deploy:
     - docker rm makebe || true
     - docker run -d --name makebe -p 8081:80 -v /etc/localtime:/etc/localtime:ro makebe:latest
     - docker network connect dockercompose_makebe-rede makebe || true
+
     - |
       sshpass -p "$DOCKER_PASSWORD" ssh -o StrictHostKeyChecking=no "$DOCKER_USER@$DOCKER_NETWORK" "
-      sudo docker cp makebe:/app /home/makebe-user/sites/makebe
+      # Verifica se o docker está rodando como root
+      sudo -S docker cp makebe:/app /home/makebe-user/sites/makebe <<EOF
+      $DOCKER_PASSWORD
+      EOF
       "
   tags:
     - docker
