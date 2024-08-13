@@ -22,7 +22,6 @@ deploy:
   image: docker:25.0.2
   before_script:
     - apk update && apk add --no-cache sshpass
-    - ssh-keyscan -H "$DOCKER_NETWORK" >> ~/.ssh/known_hosts
   script:
     - docker pull makebe:latest || true
     - docker build -t makebe:latest .
