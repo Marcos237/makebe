@@ -27,15 +27,16 @@ deploy:
   script:
     - |
       sshpass -p "$DOCKER_PASSWORD" ssh -o StrictHostKeyChecking=no "$DOCKER_USER@$DOCKER_NETWORK" "
-      sudo docker pull makebe:latest || true
-      sudo docker build -t makebe:latest .
-      sudo docker stop makebe || true
-      sudo docker rm makebe || true
-      sudo docker run -d --name makebe -p 8081:80 -v /etc/localtime:/etc/localtime:ro makebe:latest
-      sudo docker network connect dockercompose_makebe-rede makebe || true
-      sudo docker cp makebe:/app /home/makebe-user/sites/makebe
+      echo $DOCKER_PASSWORD | sudo -S docker pull makebe:latest || true
+      echo $DOCKER_PASSWORD | sudo -S docker build -t makebe:latest .
+      echo $DOCKER_PASSWORD | sudo -S docker stop makebe || true
+      echo $DOCKER_PASSWORD | sudo -S docker rm makebe || true
+      echo $DOCKER_PASSWORD | sudo -S docker run -d --name makebe -p 8081:80 -v /etc/localtime:/etc/localtime:ro makebe:latest
+      echo $DOCKER_PASSWORD | sudo -S docker network connect dockercompose_makebe-rede makebe || true
+      echo $DOCKER_PASSWORD | sudo -S docker cp makebe:/app /home/makebe-user/sites/makebe
       "
   tags:
     - docker
   only:
     - main
+
