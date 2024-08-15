@@ -31,12 +31,9 @@ deploy:
     - docker network connect dockercompose_makebe-rede makebe || true
 
     - |
-      sshpass -p "$DOCKER_PASSWORD" ssh -o StrictHostKeyChecking=no "$DOCKER_USER@$DOCKER_NETWORK" "
-      # Verifica se o docker está rodando como root
-      sudo -S docker cp makebe:/app /home/makebe-user/sites/makebe <<EOF
-      $DOCKER_PASSWORD
-      EOF
-      "
+     sshpass -p "$DOCKER_PASSWORD" ssh -o StrictHostKeyChecking=no "$DOCKER_USER@$DOCKER_NETWORK" "
+     docker cp makebe:/app /home/makebe-user/sites/makebe
+     "
   tags:
     - docker
   only:
