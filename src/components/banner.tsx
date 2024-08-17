@@ -11,6 +11,7 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
+import {URL_IMAGENS} from '../config/apiConfig'
 import { Link } from 'react-router-dom';
 import { MenuUsuarioItens } from '../Interfaces/Banner/MenuUsuarioItens';
 import { UsuarioLogadoItens } from '../Interfaces/Usuario/UsuarioLogadoItens';
@@ -95,7 +96,7 @@ const Banner: React.FC<BannerProps> = ({ usuarioLogado }) => {
             textDecoration: 'none',
           }}>
             <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
-              <img src='http://192.168.15.17/images/logo_5.png' alt="Logo" className="imagem" />
+            <img src={`${URL_IMAGENS}/logo_5.png`} alt="Logo" className="imagem" />
             </Box>
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
