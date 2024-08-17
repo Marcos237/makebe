@@ -21,14 +21,21 @@ deploy:
   stage: deploy
   image: docker:25.0.2
   before_script:
-    - apk update && apk add --no-cache rsync
+    - apk update && apk add --no-cache sshpass
   script:
     - docker pull makebe:latest || true
     - docker build -t makebe:latest .
     - docker stop makebe || true
     - docker rm makebe || true
-    - docker run -d  --name makebe -p 8081:80 -v /mnt/arquivos/makebeserver/dockercompose/nginx_front-end/sites/makebe:/app/build -v /etc/localtime:/etc/localtime:ro makebe:latest
+    - docker run -d --name makebe -p 8081:80 
+      -v /etc/localtime:/etc/localtime:ro makebe:latest
+      -v /mnt/arquivos/makebeserver/dockercompose/sites/config/makebe/appConfig.ts:/app/src/config/appConfig.ts
     - docker network connect dockercompose_makebe-rede makebe || true
+
+    - |
+     sshpass -p "$DOCKER_PASSWORD" ssh -o StrictHostKeyChecking=no "$DOCKER_USER@$DOCKER_NETWORK" "
+     docker cp makebe:/app /home/makebe-user/sites/makebe
+     "
   tags:
     - docker
   only:
