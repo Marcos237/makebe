@@ -29,7 +29,7 @@ deploy:
     - docker rm makebe || true
     - docker run -d --name makebe -p 8081:80 
       -v /etc/localtime:/etc/localtime:ro makebe:latest
-      -v /mnt/arquivos/makebeserver/dockercompose/sites/config/makebe/appConfig.ts:/app/src/config/appConfig.ts
+      -v /mnt/arquivos/makebeserver/dockercompose/sites/config/makebe:/app/src/config/
     - docker network connect dockercompose_makebe-rede makebe || true
 
     - |

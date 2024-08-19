@@ -9,9 +9,8 @@ import CampoTexto from '../../components/textbox';
 import Mensagem from '../../components/mensagem';
 import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
 import { ReenviaEmailService } from '../../services/Perfil/reenviaEmailService'
-import '../../assets/styles/Perfil/reenvia.css'
+import '../../assets/styles/Perfil/reenvia.css';    
 import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
-
 
 const ReenviaAutenticacao: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
