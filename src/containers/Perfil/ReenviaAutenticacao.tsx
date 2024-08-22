@@ -9,35 +9,44 @@ import CampoTexto from '../../components/textbox';
 import Mensagem from '../../components/mensagem';
 import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
 import { ReenviaEmailService } from '../../services/Perfil/reenviaEmailService'
-import '../../assets/styles/Perfil/reenvia.css';    
+import '../../assets/styles/Perfil/reenvia.css';
 import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
+import RecaptchaComponent from '../../components/recaptcha';
+import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig'
 
 const ReenviaAutenticacao: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [email, setEmail] = useState<string>('');
     const [messageRetorno, setMessageRetorno] = useState<NotificationItens>();
     const [isMessage, setMessage] = useState<boolean>(false);
+    const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
+
+
+    const handleRecaptchaChange = (value: string | null) => {
+        setRecaptchaValue(value);
+    };
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         setIsLoading(true);
         const reenviaItens: ReenviaItens = {
             usuarioId: '',
-            email: email
+            email: email,
+            recaptcha: recaptchaValue ?? ''
         };
         const response = await ReenviaEmailService(reenviaItens);
 
         if (response?.notifications) {
 
             const erroEmail = response.notifications[0];
-            setMessageRetorno(erroEmail) 
+            setMessageRetorno(erroEmail)
         }
         else {
             setEmail('');
         }
         setIsLoading(false);
     };
-    
+
     const handleCloseMessage = () => {
         setMessage(false);
     };
@@ -99,7 +108,7 @@ const ReenviaAutenticacao: React.FC = () => {
                 <div className='conteudoReenvia'>
                     <div className="formItens">
                         <div className='messageTextReenvia'>
-                        <Mensagem mensagemProps={messageRetorno?.notificationProps ? messagePropsErro : messageProps} />
+                            <Mensagem mensagemProps={messageRetorno?.notificationProps ? messagePropsErro : messageProps} />
 
                         </div>
                     </div>
@@ -107,6 +116,8 @@ const ReenviaAutenticacao: React.FC = () => {
                         <div className='textoReenvia'>
                             <p>{ReenviatText}</p>
                             <div className="formItens">
+
+
                                 <CampoTexto
                                     textBoxProps={{
                                         name: "Email",
@@ -118,7 +129,9 @@ const ReenviaAutenticacao: React.FC = () => {
                                     }}
                                 />
                             </div>
-
+                            <div className='recaptcha'>
+                            <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange}/>
+                            </div>
 
                             <div className='botaoReenvia'>
                                 <Botao botaoProps={botaoProps}></Botao>

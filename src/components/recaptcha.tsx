@@ -5,6 +5,18 @@ import { RecaptchaItens } from "../Interfaces/shared/RecaptchaItens";
 
 
 const RecaptchaComponent: React.FC<RecaptchaItens> = ({ siteKey, onChange }) => {
+
+  if (window.grecaptcha && window.grecaptcha.enterprise) {
+    window.grecaptcha.enterprise.ready(async () => {
+
+      const token = await window.grecaptcha.enterprise.execute(siteKey, { action: 'submit' });
+      console.log(token);
+      onChange(token);
+
+    });
+  };
+
+
   return (
     <ReCAPTCHA
       sitekey={siteKey}
