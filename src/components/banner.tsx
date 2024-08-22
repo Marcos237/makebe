@@ -29,9 +29,9 @@ const Banner: React.FC<BannerProps> = ({ usuarioLogado }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [anchorElUser, setAnchorElUser] = useState<HTMLElement | null>(null);
 
-
   useEffect(() => {
-    if (usuarioLogado?.isValid) {
+    if (usuarioLogado?.usuarioId) {
+      console.log(usuarioLogado?.usuarioId)
       const items: MenuUsuarioItens[] = [
         { id: 1, descricao: 'Perfil', urlMenu: '/perfil' },
         { id: 2, descricao: 'Sair', urlMenu: '/Deslogar' }
