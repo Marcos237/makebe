@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -11,7 +11,7 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import {URL_IMAGENS} from '../config/apiConfig'
+import { URL_IMAGENS } from '../config/apiConfig'
 import { Link } from 'react-router-dom';
 import { MenuUsuarioItens } from '../Interfaces/Banner/MenuUsuarioItens';
 import { UsuarioLogadoItens } from '../Interfaces/Usuario/UsuarioLogadoItens';
@@ -24,42 +24,32 @@ interface BannerProps {
 }
 
 const Banner: React.FC<BannerProps> = ({ usuarioLogado }) => {
-  const [menuUsuarioItems, setMenuUsuarioItems] = useState<MenuUsuarioItens[]>([]);
-  const [menuUsuarioLogadoItems, setMenuUsuarioLogadoItems] = useState<MenuUsuarioItens[]>([]);
+
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [anchorElUser, setAnchorElUser] = useState<HTMLElement | null>(null);
 
-  useEffect(() => {
-    if (usuarioLogado?.usuarioId) {
-      console.log(usuarioLogado?.usuarioId)
-      const items: MenuUsuarioItens[] = [
+  const menuUsuarioItems: MenuUsuarioItens[] = usuarioLogado?.menus?.length
+    ? [
         { id: 1, descricao: 'Perfil', urlMenu: '/perfil' },
-        { id: 2, descricao: 'Sair', urlMenu: '/Deslogar' }
-      ];
-      setMenuUsuarioItems(items);
-    } else {
-      const defaultItems: MenuUsuarioItens[] = [
+        { id: 2, descricao: 'Sair', urlMenu: '/Deslogar' },
+      ]
+    : [
         { id: 1, descricao: 'Cadastro', urlMenu: '/perfil' },
-        { id: 2, descricao: 'Login', urlMenu: '/login' }
+        { id: 2, descricao: 'Login', urlMenu: '/login' },
       ];
-      setMenuUsuarioItems(defaultItems);
-    }
 
-    if (usuarioLogado?.menus) {
-      const menuItem = usuarioLogado.menus.map(menu => ({
-        id: menu.id,
-        descricao: menu.descricao,
-        urlMenu: menu.urlMenu
-      }));
-      setMenuUsuarioLogadoItems(menuItem);
-    } else {
-      const defaultItems: MenuUsuarioItens[] = [
-        { id: 1, descricao: 'Sobre', urlMenu: '/sobre' },
-        { id: 2, descricao: 'Contato', urlMenu: '/contato' }
-      ];
-      setMenuUsuarioLogadoItems(defaultItems);
-    }
-  }, [usuarioLogado]);
+      const menuUsuarioLogadoItems: MenuUsuarioItens[] = usuarioLogado?.menus?.length
+      ? usuarioLogado.menus.map(menu => ({
+          id: menu.id,
+          descricao: menu.descricao,
+          urlMenu: menu.urlMenu,
+        }))
+      : [
+          { id: 1, descricao: 'Sobre', urlMenu: '/sobre' },
+          { id: 2, descricao: 'Contato', urlMenu: '/contato' },
+        ];
+
+
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -96,7 +86,7 @@ const Banner: React.FC<BannerProps> = ({ usuarioLogado }) => {
             textDecoration: 'none',
           }}>
             <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
-            <img src={`${URL_IMAGENS}/logo_5.png`} alt="Logo" className="imagem" />
+              <img src={`${URL_IMAGENS}/logo_5.png`} alt="Logo" className="imagem" />
             </Box>
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
