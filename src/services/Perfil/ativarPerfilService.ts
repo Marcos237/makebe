@@ -14,7 +14,7 @@ export const AtivaPerfilService = async (id: string): Promise<AutenticacaoItens 
         const usuario: UsuarioPerfilAtivoItens = {
             id: id || '',
         }
-        const response = await axios.put(`${API_BASE_URL}UsuarioPerfil/AtivarUsuario`, usuario, config);
+        const response = await axios.put(`${API_BASE_URL}AutenticacaoDoisFatores`, usuario, config);
         const autenticado: AutenticacaoItens = {
             usuarioId: response.data.data.usuarioId,
             Id: response.data.data.id,

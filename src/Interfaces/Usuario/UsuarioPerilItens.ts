@@ -9,4 +9,5 @@ export interface UsuarioPerilItens  {
     confirmaSenha?: string;
     nomeImagem?: string;
     urlImagem?: string;
+    recaptcha?:string;
 }

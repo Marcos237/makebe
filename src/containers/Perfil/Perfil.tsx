@@ -17,6 +17,8 @@ import Mensagem from '../../components/mensagem';
 import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
 import '../../assets/styles/Perfil/perfil.css';
 import { RetornarMessageService } from '../../services/Perfil/retornarMessageService';
+import RecaptchaComponent from '../../components/recaptcha';
+import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig'
 
 const Perfil: React.FC = () => {
     const navigate = useNavigate();
@@ -33,6 +35,12 @@ const Perfil: React.FC = () => {
     const [messageItens, setMessageItens] = useState<MensagemItens>();
     const [isLogado, setLogado] = useState<boolean>(false);
     const [isMessage, setMessage] = useState<boolean>(false);
+    const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
+
+
+    const handleRecaptchaChange = (value: string | null) => {
+        setRecaptchaValue(value);
+    };
 
 
     const fetchPerfilData = async () => {
@@ -75,7 +83,8 @@ const Perfil: React.FC = () => {
             telefone: telefone,
             senha: senha,
             confirmaSenha: confirmacaoSenha,
-            instagran: instagran
+            instagran: instagran,
+            recaptcha : recaptchaValue ?? ''
         };
         if (isLogado) {
             const usuarioLogado = await UpdatePerfilService(usuario);
@@ -84,7 +93,7 @@ const Perfil: React.FC = () => {
         }
         else {
             const usuarioLogado = await PerfilService(usuario);
-            const messageRetorno = await RetornarMessageService(isLogado, usuarioLogado?.isValid ?? false, usuarioLogado?.notifications ?? []) 
+            const messageRetorno = await RetornarMessageService(isLogado, usuarioLogado?.isValid ?? false, usuarioLogado?.notifications ?? [])
             setMessageItens(messageRetorno);
 
             if (!usuarioLogado?.notifications || usuarioLogado.notifications.length === 0) {
@@ -151,7 +160,7 @@ const Perfil: React.FC = () => {
                 <Banner />
             </div>
             <Box>
-            <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown}>
+                <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown}>
 
                     <Grid container spacing={2} className="gridContainerPerfil">
                         <div className="formItens">
@@ -255,15 +264,19 @@ const Perfil: React.FC = () => {
                                     <div className="formItens">
                                         <CampoTexto
                                             textBoxProps={{
-                                                name: "Instagran",
-                                                tooltip: "digite seu Instagran",
-                                                label: "Instagran",
+                                                name: "Instagram",
+                                                tooltip: "digite seu Instagram",
+                                                label: "Instagram",
                                                 value: instagran,
                                                 type: 'text',
                                                 onChange: (e: React.ChangeEvent<HTMLInputElement>) => setInstagran(e.target.value)
                                             }}
                                         />
                                     </div>
+                                    <div className='recaptcha'>
+                                        <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
+                                    </div>
+
                                     <div className='formItens'>
                                         <div className='botao'>
                                             <Botao botaoProps={botaoProps} />
