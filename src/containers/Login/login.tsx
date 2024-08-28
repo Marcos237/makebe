@@ -39,7 +39,7 @@ const Login: React.FC = () => {
         const usuario: UsuarioLoginItens = {
             usuario: login,
             senha: senha,
-            recatpcha: recaptchaValue ?? ''
+            recaptcha: recaptchaValue ?? ''
         };
 
         const usuarioLogado = await loginUser(usuario);
