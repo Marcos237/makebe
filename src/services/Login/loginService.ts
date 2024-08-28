@@ -30,21 +30,7 @@ export const loginUser = async (usuario: UsuarioLoginItens): Promise<UsuarioLoga
         };
         return usuarioLogado;
     } catch (error) {
-        const axiosError = error as AxiosError;
-        if (!axios.isAxiosError(error)) {
-            return null;
-        }
-        const erroNotifications = JSON.parse(axiosError?.response?.request.response)[0];
-        const notifications : NotificationItens[] = [];
-        if (erroNotifications) {
-            notifications.push({
-                notificationProps : {
-                    Key: erroNotifications.Key,
-                    Message: erroNotifications.Message,
-                    IsValidate: erroNotifications.IsValid
-                }
-            });
-        } 
+        const notifications: NotificationItens[] = [];
         const usuarioLogadoError: UsuarioLogadoItens = {
             usuarioId: '',
             urlImagem: '',
@@ -53,6 +39,23 @@ export const loginUser = async (usuario: UsuarioLoginItens): Promise<UsuarioLoga
             notifications: notifications,
             isValid: false
         };
+        const axiosError = error as AxiosError;
+        if (!axios.isAxiosError(error)) {
+            return usuarioLogadoError;
+        }
+        const erroNotifications = JSON.parse(axiosError?.response?.request.response) as Array<{ Key: string; Message: string; IsValidate: boolean }>;
+        if (Array.isArray(erroNotifications)) {
+            erroNotifications.forEach(erroNotification => {
+                notifications.push({
+                    notificationProps: {
+                        Key: erroNotification?.Key,
+                        Message: erroNotification?.Message,
+                        IsValidate: erroNotification?.IsValidate
+                    }
+                });
+            });
+        }
+
         return usuarioLogadoError;
     }
 };
