@@ -34,7 +34,7 @@ const Autenticacao: React.FC = () => {
         setIsLoading(true);
         setIsDisabled(false);
 
-        const retorno = await AtivaPerfilService(autenticacaoItens.Id ?? '');
+        const retorno = await AtivaPerfilService(autenticacaoItens ?? {});
         if (!retorno?.notifications || retorno?.notifications?.length === 0) {
             setIsDisabled(true);
             setIsLoading(true);
