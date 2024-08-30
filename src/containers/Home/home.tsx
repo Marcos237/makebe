@@ -21,12 +21,11 @@ const Home: React.FC = () => {
       setVitrine(data); 
       const sessao = await UsuarioLogadoService();
       setUsuarioLogado(sessao);
-      console.log(useUsuarioLogado)
   };
    useEffect(() => {
         fetchVitrineData();
     }, []);
-
+console.log(useUsuarioLogado);
 
   return (
     <>
