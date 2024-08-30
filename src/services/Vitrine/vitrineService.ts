@@ -2,7 +2,6 @@ import axios, { AxiosRequestConfig, AxiosError } from 'axios';
 import { API_BASE_URL } from '../../config/apiConfig';
 import { getTokenFromLocalStorage } from '../../config/ArmazenaToken';
 import { VitrineItem } from '../../Interfaces/Vitrine/vitrineItem';
-import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
 import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
 
 export const VitrineService = async (): Promise<VitrineItem> => {
