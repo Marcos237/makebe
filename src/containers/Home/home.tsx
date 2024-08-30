@@ -17,14 +17,17 @@ const Home: React.FC = () => {
 
 
   const fetchVitrineData = async () => {
-      const data = await VitrineService();
-      setVitrine(data); 
-      const sessao = await UsuarioLogadoService();
+      const [data, sessao] = await Promise.all([
+        VitrineService(),
+        UsuarioLogadoService(),
+      ]);
+      setVitrine(data);
       setUsuarioLogado(sessao);
   };
-   useEffect(() => {
-        fetchVitrineData();
-    }, []);
+
+  useEffect(() => {
+    fetchVitrineData();
+  }, []);
 
 
   return (
