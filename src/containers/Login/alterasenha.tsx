@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { BotaoItens } from '../../Interfaces/Botao/botao';
 import { EsqueciSenhaItens } from '../../Interfaces/Usuario/EsqueciSenhaItens';
 import { EsqueciText, SucessText } from '../../constants/Usuario/autenticacaoConstant';
@@ -31,18 +31,18 @@ const AlteraSenha: React.FC = () => {
     const [useIsEnviado, setIsEnviado] = useState<boolean>();
 
 
-    const fetchVitrineData = async () => {
-
+    const fetchData = useCallback(async () => {
         const sessao = await UsuarioLogadoService();
         setUsuarioLogado(sessao);
-        if(useIsEnviado){
+        if (useIsEnviado) {
             setIsLoading(true);
             setIsDiseble(true);
         }
-    };
+    }, [useIsEnviado]);
+    
      useEffect(() => {
-          fetchVitrineData();
-      }, [useIsEnviado]);
+          fetchData();
+      }, [fetchData]);
 
     const handleRecaptchaChange = (value: string | null) => {
         setRecaptchaValue(value);
@@ -144,7 +144,7 @@ const AlteraSenha: React.FC = () => {
                         <div className='textoReenvia'>
 
                             {isVisibleLogin && (
-                                <p>{EnvioItemText} <a href='/login'></a></p>
+                                <p>{EnvioItemText} <a href='/login'>Login</a></p>
                             )}
                             {isEnviaText && (<p>{EsqueciText}</p>)}
 
