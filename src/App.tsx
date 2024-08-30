@@ -7,6 +7,8 @@ import PerfilValidar from './containers/Perfil/PerfiValidar';
 import Deslogar from './containers/Login/deslogar';
 import Autenticacao from './containers/Perfil/Autenticacao'
 import ReenviaAutenticacao from './containers/Perfil/ReenviaAutenticacao';
+import AlteraSenha from './containers/Login/alterasenha'
+import RecuperaSenha from './containers/Perfil/RecuperaSenha';
 
 const App: React.FC = () => {
   return (
@@ -19,6 +21,8 @@ const App: React.FC = () => {
         <Route path="/deslogar" element={<Deslogar />} />
         <Route path="/autenticacao/:chave" element={<Autenticacao />} />
         <Route path="/reenviaAutenticacao" element={<ReenviaAutenticacao />} />
+        <Route path="/alteraSenha" element={<AlteraSenha />} />
+        <Route path="/recuperaSenha/:chave" element={<RecuperaSenha />} />
       </Routes>
     </div>
   );

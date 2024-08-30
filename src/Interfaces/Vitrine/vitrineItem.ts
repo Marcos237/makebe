@@ -1,6 +1,6 @@
-import { UsuarioLogadoItens } from "../Usuario/UsuarioLogadoItens";
+import { NotificationItens } from "../../Interfaces/shared/NotificationItens";
 
 export interface VitrineItem {
-    descricao : string;
-    usuarioLogadoItem : UsuarioLogadoItens;
+    descricao? : string;
+    notifications? : NotificationItens[];
 }
