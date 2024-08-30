@@ -12,16 +12,14 @@ import { VitrineItem } from '../../Interfaces/Vitrine/vitrineItem';
 import '../../assets/styles/Conteudo/conteudo.css';
 
 const Home: React.FC = () => {
-  const [useVritrine, setVitrine] = useState<VitrineItem>();
+  // const [useVritrine, setVitrine] = useState<VitrineItem>();
   const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLogadoItens>();
 
 
   const fetchVitrineData = async () => {
-      const [data, sessao] = await Promise.all([
-        VitrineService(),
+      const [sessao] = await Promise.all([
         UsuarioLogadoService(),
       ]);
-      setVitrine(data);
       setUsuarioLogado(sessao);
   };
 
