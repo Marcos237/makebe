@@ -5,8 +5,8 @@ import Footer from '../../components/footer';
 import { Box, Grid } from '@mui/material';
 import { UsuarioLogadoService } from '../../services/Perfil/usuarioLogadoService';
 import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
-import { VitrineService } from '../../services/Vitrine/vitrineService';
-import { VitrineItem } from '../../Interfaces/Vitrine/vitrineItem';
+// import { VitrineService } from '../../services/Vitrine/vitrineService';
+// import { VitrineItem } from '../../Interfaces/Vitrine/vitrineItem';
 
 
 import '../../assets/styles/Conteudo/conteudo.css';
@@ -42,7 +42,7 @@ const Home: React.FC = () => {
             <Grid item xs={6} className='lado-direito'>
               <div className='conteudo-direito'>
                 <h2>direito</h2>
-                <p>{useVritrine?.descricao}</p>
+                {/* <p>{useVritrine?.descricao}</p> */}
               </div>
             </Grid>
             <Grid item xs={6} className='lado-esquerdo'>
