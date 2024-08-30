@@ -15,12 +15,14 @@ const Home: React.FC = () => {
   const [useVritrine, setVitrine] = useState<VitrineItem>();
   const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLogadoItens>();
 
+  (async () => {
+      const sessao = await UsuarioLogadoService();
+      setUsuarioLogado(sessao);
+  })();
 
   const fetchVitrineData = async () => {
       const data = await VitrineService();
       setVitrine(data); 
-      const sessao = await UsuarioLogadoService();
-      setUsuarioLogado(sessao);
   };
    useEffect(() => {
         fetchVitrineData();
