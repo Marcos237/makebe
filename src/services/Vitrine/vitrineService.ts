@@ -1,8 +1,9 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig, AxiosError } from 'axios';
 import { API_BASE_URL } from '../../config/apiConfig';
 import { getTokenFromLocalStorage } from '../../config/ArmazenaToken';
 import { VitrineItem } from '../../Interfaces/Vitrine/vitrineItem';
 import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
+import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
 
 export const VitrineService = async (): Promise<VitrineItem> => {
 
@@ -18,25 +19,31 @@ export const VitrineService = async (): Promise<VitrineItem> => {
         const response = await axios.get(`${API_BASE_URL}vitrine`, config);
         const vitrineItem: VitrineItem = {
             descricao: response.data.descricao ?? '', 
-            usuarioLogadoItem: {
-                usuarioId: response.data.sessao?.usuarioId ?? '',
-                urlImagem: response.data.sessao?.urlImagem ?? '',
-                nome: response.data.sessao?.nome ?? '',
-                menus: response.data.sessao?.menus?.map((item: any) => ({
-                    id: item.id,
-                    descricao: item.menuDescricao,
-                    urlMenu: item.menuUrl,
-                })) ?? [],
-                notifications: response.data.notifications ?? [],
-                isValid: true 
-            }
         };
         return vitrineItem;
-    } catch  {
-        const vitrineItemErro: VitrineItem = {
+    } catch (error) {
+        const notifications: NotificationItens[] = [];
+        const vitrineError: VitrineItem = {
             descricao: '',
-            usuarioLogadoItem: {} as UsuarioLogadoItens 
+            notifications: notifications,
         };
-        return vitrineItemErro;
+        const axiosError = error as AxiosError;
+        if (!axios.isAxiosError(error)) {
+            return vitrineError;
+        }
+        const erroNotifications = JSON.parse(axiosError?.response?.request.response) as Array<{ Key: string; Message: string; IsValidate: boolean }>;
+        if (Array.isArray(erroNotifications)) {
+            erroNotifications.forEach(erroNotification => {
+                notifications.push({
+                    notificationProps: {
+                        Key: erroNotification?.Key,
+                        Message: erroNotification?.Message,
+                        IsValidate: erroNotification?.IsValidate
+                    }
+                });
+            });
+        }
+
+        return vitrineError;
     }
 }

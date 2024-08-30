@@ -31,11 +31,13 @@ const Banner: React.FC<BannerProps> = ({ usuarioLogado }) => {
   const menuUsuarioItems: MenuUsuarioItens[] = usuarioLogado?.menus?.length
     ? [
         { id: 1, descricao: 'Perfil', urlMenu: '/perfil' },
-        { id: 2, descricao: 'Sair', urlMenu: '/Deslogar' },
+        { id: 2, descricao: 'Alterar Senha', urlMenu: '/alteraSenha' },
+        { id: 3, descricao: 'Sair', urlMenu: '/Deslogar' },
       ]
     : [
-        { id: 1, descricao: 'Cadastro', urlMenu: '/perfil' },
-        { id: 2, descricao: 'Login', urlMenu: '/login' },
+        { id: 1, descricao: 'Login', urlMenu: '/login' },
+        { id: 2, descricao: 'Cadastro', urlMenu: '/perfil' },
+        { id: 3, descricao: 'Recuperar Senha', urlMenu: '/alteraSenha' },
       ];
 
       const menuUsuarioLogadoItems: MenuUsuarioItens[] = usuarioLogado?.menus?.length
