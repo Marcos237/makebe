@@ -14,8 +14,7 @@ export const loginUser = async (usuario: UsuarioLoginItens): Promise<UsuarioPeri
         };
 
         const response = await axios.post(`${API_BASE_URL}usuario/login`, usuario, config);
-        const token = response.data.sessao.chave;
-        console.log(token)
+        const token = response.data.data.chave;
         saveTokenToLocalStorage(token);
         const usuarioLogado: UsuarioPerilItens = {
             id: response.data.sessao.usuarioId,
