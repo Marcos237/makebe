@@ -7,7 +7,6 @@ export const UsuarioLogadoService = async (): Promise<UsuarioLogadoItens> => {
 
     try {
         const token = getTokenFromLocalStorage();
-        console.log(token)
         const config: AxiosRequestConfig = {
             headers: {
                 'Content-Type': 'application/json',
