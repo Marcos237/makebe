@@ -31,18 +31,22 @@ export const RecuperaSenhaService = async (reenvia: RecuperaSenhaItens): Promise
         if (!axios.isAxiosError(error)) {
             return reenviaError;
         }
-        const erroNotifications = JSON.parse(axiosError?.response?.request.response) as Array<{ Key: string; Message: string; IsValidate: boolean }>;
-        if (Array.isArray(erroNotifications)) {
-            erroNotifications.forEach(erroNotification => {
-                notifications.push({
-                    notificationProps: {
-                        Key: erroNotification?.Key,
-                        Message: erroNotification?.Message,
-                        IsValidate: erroNotification?.IsValidate
-                    }
-                });
-            });
-        }
+        const response = axiosError?.response?.request?.response;
+        if (response) {
+                const erroNotifications = JSON.parse(response) as Array<{ Key: string; Message: string; IsValidate: boolean }>;
+                
+                if (Array.isArray(erroNotifications)) {
+                    erroNotifications.forEach(erroNotification => {
+                        notifications.push({
+                            notificationProps: {
+                                Key: erroNotification?.Key,
+                                Message: erroNotification?.Message,
+                                IsValidate: erroNotification?.IsValidate
+                            }
+                        });
+                    });
+                }
+            }
 
         return reenviaError;
     }

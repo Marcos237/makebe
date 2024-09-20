@@ -34,6 +34,7 @@ const AlteraSenha: React.FC = () => {
     const fetchData = useCallback(async () => {
         const sessao = await UsuarioLogadoService();
         setUsuarioLogado(sessao);
+
         if (useIsEnviado) {
             setIsLoading(true);
             setIsDiseble(true);
