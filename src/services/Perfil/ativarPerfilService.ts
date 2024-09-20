@@ -4,7 +4,7 @@ import { NotificationItens } from "../../Interfaces/shared/NotificationItens";
 import { AutenticacaoItens } from "../../Interfaces/Usuario/AutenticacaoItens";
 import { UsuarioPerfilAtivoItens } from '../../Interfaces/Usuario/UsuarioPerfilAtivoItens';
 
-export const AtivaPerfilService = async (id: string): Promise<AutenticacaoItens | null> => {
+export const AtivaPerfilService = async (autenticacao: AutenticacaoItens): Promise<AutenticacaoItens | null> => {
     try {
         const config: AxiosRequestConfig = {
             headers: {
@@ -12,9 +12,10 @@ export const AtivaPerfilService = async (id: string): Promise<AutenticacaoItens 
             }
         };
         const usuario: UsuarioPerfilAtivoItens = {
-            id: id || '',
+            id: autenticacao.Id || '',
+            recaptcha : autenticacao.recaptcha ?? ''
         }
-        const response = await axios.put(`${API_BASE_URL}UsuarioPerfil/AtivarUsuario`, usuario, config);
+        const response = await axios.put(`${API_BASE_URL}AutenticacaoDoisFatores`, usuario, config);
         const autenticado: AutenticacaoItens = {
             usuarioId: response.data.data.usuarioId,
             Id: response.data.data.id,

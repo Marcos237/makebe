@@ -19,12 +19,18 @@
 .textoAutenticacao {
     margin: 10px;
     box-sizing: border-box;
-    text-align: center;
+    text-align: start;
 }
 
-.textoAutenticacao p,  .botaoAutenticacao {
+.textoAutenticacao p {
     color: #839192;
     margin: 0;
-    padding: 30px;
+    padding: 4px;
+
 }
 
+.botaoAutenticacao, .recaptcha {
+        display: flex;
+        justify-content: center;
+        padding: 24px;
+}

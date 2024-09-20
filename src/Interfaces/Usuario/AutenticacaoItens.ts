@@ -4,4 +4,5 @@ export interface AutenticacaoItens {
     usuarioId?: string;
     Id?: string;
     notifications? : NotificationItens[];
+    recaptcha?: string;
 }

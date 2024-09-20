@@ -1,39 +1,35 @@
 import axios, { AxiosRequestConfig, AxiosError } from 'axios';
 import { API_BASE_URL } from '../../config/apiConfig';
-import { UsuarioPerilItens } from '../../Interfaces/Usuario/UsuarioPerilItens';
 import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
-import { getTokenFromLocalStorage } from '../../config/ArmazenaToken';
+import { RecuperaSenhaItens } from '../../Interfaces/Usuario/RecuperaSenhaItens';
 
-export const UpdatePerfilService = async (usuario: UsuarioPerilItens): Promise<UsuarioPerilItens | null> => {
+export const RecuperaSenhaService = async (reenvia: RecuperaSenhaItens): Promise<RecuperaSenhaItens | null> => {
     try {
-        const token = getTokenFromLocalStorage();
         const config: AxiosRequestConfig = {
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+                'Content-Type': 'application/json'
             }
         };
 
-        const response = await axios.put(`${API_BASE_URL}UsuarioPerfil/`, usuario, config);
-        const UsuarioPerfil: UsuarioPerilItens = {
-            id: response.data.sessao.usuarioId,
-            urlImagem: response.data.sessao.urlImagem,
-            nome: response.data.sessao.nome,
+        const response = await axios.put(`${API_BASE_URL}EsqueciSenha`, reenvia, config);
+        const reenviaItens: RecuperaSenhaItens = {
+            id: '',
+            senha: '',
+            confirmaSenha : '',
             notifications: response.data.notifications,
         };
-        return UsuarioPerfil;
+        return reenviaItens;
     } catch (error) {
         const notifications: NotificationItens[] = [];
-        const usuarioPerfilError: UsuarioPerilItens = {
+        const reenviaError: RecuperaSenhaItens = {
             id: '',
-            urlImagem: '',
-            nome: '',
-            notifications: notifications ?? [],
-
+            senha: '',
+            confirmaSenha : '',
+            notifications: notifications
         };
         const axiosError = error as AxiosError;
         if (!axios.isAxiosError(error)) {
-            return usuarioPerfilError;
+            return reenviaError;
         }
         const erroNotifications = JSON.parse(axiosError?.response?.request.response) as Array<{ Key: string; Message: string; IsValidate: boolean }>;
         if (Array.isArray(erroNotifications)) {
@@ -47,6 +43,7 @@ export const UpdatePerfilService = async (usuario: UsuarioPerilItens): Promise<U
                 });
             });
         }
-        return usuarioPerfilError;
+
+        return reenviaError;
     }
 };

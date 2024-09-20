@@ -1,8 +1,8 @@
 import { NotificationItens } from "../shared/NotificationItens";
 
-export interface ReenviaItens {
+export interface EsqueciSenhaItens {
     usuarioId?: string;
-    email?: string;
+    value?: string;
     notifications? : NotificationItens[];
     recaptcha?: string;
 }

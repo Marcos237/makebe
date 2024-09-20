@@ -10,6 +10,7 @@ export const ReenviaEmailService = async (reenvia: ReenviaItens): Promise<Reenvi
                 'Content-Type': 'application/json'
             }
         };
+
         const response = await axios.post(`${API_BASE_URL}AutenticacaoDoisFatores/ReenviarEmailAutenticacao`, reenvia, config);
         const reenviaItens: ReenviaItens = {
             usuarioId: response.data.sessao.usuarioId,

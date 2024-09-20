@@ -13,11 +13,15 @@ import { UploadItens } from '../../Interfaces/TextBox/UploadItens';
 import { GerPerfilService } from '../../services/Perfil/getPerfilService';
 import { PerfilService } from '../../services/Perfil/perfilService';
 import { UpdatePerfilService } from '../../services/Perfil/upDatePerfilService';
+import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
 import Mensagem from '../../components/mensagem';
 import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
-import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
-import '../../assets/styles/Perfil/perfil.css';
 import { RetornarMessageService } from '../../services/Perfil/retornarMessageService';
+import RecaptchaComponent from '../../components/recaptcha';
+import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig'
+import {UsuarioLogadoService} from '../../services/Perfil/usuarioLogadoService'
+
+import '../../assets/styles/Perfil/perfil.css';
 
 const Perfil: React.FC = () => {
     const navigate = useNavigate();
@@ -31,29 +35,36 @@ const Perfil: React.FC = () => {
     const [instagran, setInstagran] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [uploadItem, setUploadItem] = useState<UploadItens>({ uploadProps: { nomeImagem: '', urlImagem: '' } });
-    const [usuarioItem, setUsuario] = useState<UsuarioLogadoItens>();
     const [messageItens, setMessageItens] = useState<MensagemItens>();
     const [isLogado, setLogado] = useState<boolean>(false);
     const [isMessage, setMessage] = useState<boolean>(false);
+    const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
+    const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLogadoItens>();
+
+    const handleRecaptchaChange = (value: string | null) => {
+        setRecaptchaValue(value);
+    };
 
 
     const fetchPerfilData = async () => {
         const response = await GerPerfilService();
-        setId(response?.data?.id ?? '')
-        setNome(response?.data?.nome ?? '');
-        setCpf(response?.data?.cpf ?? '');
-        setEmail(response?.data?.email ?? '')
-        setTelefone(response?.data?.telefone ?? '')
+        setId(response?.id ?? '')
+        setNome(response?.nome ?? '');
+        setCpf(response?.cpf ?? '');
+        setEmail(response?.email ?? '')
+        setTelefone(response?.telefone ?? '')
         setUploadItem({
             uploadProps: {
-                nomeImagem: response.data?.nomeImagem,
-                urlImagem: response.data?.urlImagem,
+                nomeImagem: response?.nomeImagem,
+                urlImagem: response?.urlImagem,
             },
         });
-        setInstagran(response?.data?.instagran ?? '')
+        setInstagran(response?.instagran ?? '')
 
-        if (response.usuarioId !== '') {
+        if (response.id !== '') {
 
+            const sessao = await UsuarioLogadoService();
+            setUsuarioLogado(sessao);
             setLogado(true);
         }
         else {
@@ -77,19 +88,18 @@ const Perfil: React.FC = () => {
             telefone: telefone,
             senha: senha,
             confirmaSenha: confirmacaoSenha,
-            instagran: instagran
+            instagran: instagran,
+            recaptcha : recaptchaValue ?? ''
         };
         if (isLogado) {
             const usuarioLogado = await UpdatePerfilService(usuario);
-            const messageRetorno = await RetornarMessageService(isLogado, usuarioLogado?.isValid ?? false, usuarioLogado?.notifications ?? [])
+            const messageRetorno = await RetornarMessageService(isLogado, useUsuarioLogado?.isValid ?? false, usuarioLogado?.notifications ?? [])
             setMessageItens(messageRetorno);
-            setUsuario(usuarioLogado || undefined);
         }
         else {
             const usuarioLogado = await PerfilService(usuario);
-            const messageRetorno = await RetornarMessageService(isLogado, usuarioLogado?.isValid ?? false, usuarioLogado?.notifications ?? []) 
+            const messageRetorno = await RetornarMessageService(isLogado, useUsuarioLogado?.isValid ?? false, usuarioLogado?.notifications ?? [])
             setMessageItens(messageRetorno);
-            setUsuario(usuarioLogado || undefined);
 
             if (!usuarioLogado?.notifications || usuarioLogado.notifications.length === 0) {
                 navigate('/perfilValidar');
@@ -152,10 +162,10 @@ const Perfil: React.FC = () => {
     return (
         <>
             <div className='banner'>
-                <Banner />
+                <Banner usuarioLogado={useUsuarioLogado}/>
             </div>
             <Box>
-            <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown}>
+                <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown}>
 
                     <Grid container spacing={2} className="gridContainerPerfil">
                         <div className="formItens">
@@ -259,15 +269,19 @@ const Perfil: React.FC = () => {
                                     <div className="formItens">
                                         <CampoTexto
                                             textBoxProps={{
-                                                name: "Instagran",
-                                                tooltip: "digite seu Instagran",
-                                                label: "Instagran",
+                                                name: "Instagram",
+                                                tooltip: "digite seu Instagram",
+                                                label: "Instagram",
                                                 value: instagran,
                                                 type: 'text',
                                                 onChange: (e: React.ChangeEvent<HTMLInputElement>) => setInstagran(e.target.value)
                                             }}
                                         />
                                     </div>
+                                    <div className='recaptcha'>
+                                        <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
+                                    </div>
+
                                     <div className='formItens'>
                                         <div className='botao'>
                                             <Botao botaoProps={botaoProps} />

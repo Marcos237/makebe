@@ -5,33 +5,37 @@ stages:
   - build
   - deploy
 
-before_script:
-
-  - apt-get update && apt-get install -y rsync
-
 build:
   stage: build
   image: node:20.9.0
   script:
-    - npm install # Instala as dependências do projeto
-    - npm run build # Constrói o projeto React
+    - yarn install
+    - yarn build
   artifacts:
     paths:
-      - build/ # Diretório de saída do build do React
+      - build/
   tags:
     - docker
 
 deploy:
   stage: deploy
-  image: docker:stable
+  image: docker:25.0.2
+  before_script:
+    - apk update && apk add --no-cache sshpass
   script:
-    - apt-get update && apt-get install -y rsync
     - docker pull makebe:latest || true
-    - docker build -t makebe:latest . # Construa a imagem Docker para o frontend
-    - docker stop makebe-frontend || true
-    - docker rm makebe-frontend || true
-    - docker run -d --name makebe -p 80:80 makebe:latest # Inicie o container do frontend
-    - docker network connect dockercompose_makebe-rede makebe-frontend
+    - docker build -t makebe:latest .
+    - docker stop makebe || true
+    - docker rm makebe || true
+    - docker run -d --name makebe -p 8081:80 
+      -v /etc/localtime:/etc/localtime:ro makebe:latest
+      -v /mnt/arquivos/makebeserver/dockercompose/sites/config/makebe:/app/src/config/
+    - docker network connect dockercompose_makebe-rede makebe || true
+
+    - |
+     sshpass -p "$DOCKER_PASSWORD" ssh -o StrictHostKeyChecking=no "$DOCKER_USER@$DOCKER_NETWORK" "
+     docker cp makebe:/app /home/makebe-user/sites/makebe
+     "
   tags:
     - docker
   only:

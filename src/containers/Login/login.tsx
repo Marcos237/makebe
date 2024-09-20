@@ -14,7 +14,8 @@ import { loginUser } from '../../services/Login/loginService';
 import { MensagemItens } from '../../Interfaces/Mensagens/MensagemItens';
 import Mensagem from '../../components/mensagem';
 import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
-import { getTokenFromLocalStorage } from '../../config/ArmazenaToken'
+import RecaptchaComponent from '../../components/recaptcha';
+import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig'
 import '../../assets/styles/Login/login.css';
 
 
@@ -24,9 +25,12 @@ const Login: React.FC = () => {
     const [senha, setSenha] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [messageRetorno, setMessageRetorno] = useState<NotificationItens[]>([]);
+    const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
     const [isMessage, setMessage] = useState<boolean>(false);
-    const [useToken, setToken] = useState<string>('');
 
+    const handleRecaptchaChange = (value: string | null) => {
+        setRecaptchaValue(value);
+    };
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -34,15 +38,15 @@ const Login: React.FC = () => {
 
         const usuario: UsuarioLoginItens = {
             usuario: login,
-            senha: senha
+            senha: senha,
+            recaptcha: recaptchaValue ?? ''
         };
 
         const usuarioLogado = await loginUser(usuario);
         setIsLoading(false);
         setMessageRetorno(usuarioLogado?.notifications ?? []);
-        if (usuarioLogado?.isValid) {
-            const token = getTokenFromLocalStorage();
-            setToken(token || '');
+
+        if (!usuarioLogado?.notifications || usuarioLogado?.notifications?.length === 0) {
             navigate('/', { state: { usuarioLogado } });
         }
         else {
@@ -137,12 +141,17 @@ const Login: React.FC = () => {
                                     onChange: (e: React.ChangeEvent<HTMLInputElement>) => setSenha(e.target.value)
                                 }}
                             />
+
+                            <div className='recaptcha'>
+                                <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
+                            </div>
+
                             <div className='botao'>
                                 <Botao botaoProps={botaoProps} />
                             </div>
                         </form>
                         <div className="links-login">
-                            <a href="/EsqueciaSenha" className="esqueci-link">
+                            <a href="/EsqueciSenha" className="esqueci-link">
                                 Esqueci minha senha
                             </a>
                             <a href="/perfil" className="cadastrar-link">

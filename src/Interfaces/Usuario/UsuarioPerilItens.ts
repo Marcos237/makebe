@@ -1,4 +1,6 @@
-export interface UsuarioPerilItens  {
+import { NotificationItens } from "../shared/NotificationItens";
+
+export interface    UsuarioPerilItens  {
     id?: string;
     nome?: string;
     cpf?: string;
@@ -9,4 +11,6 @@ export interface UsuarioPerilItens  {
     confirmaSenha?: string;
     nomeImagem?: string;
     urlImagem?: string;
+    recaptcha?:string;
+    notifications?: NotificationItens[]
 }

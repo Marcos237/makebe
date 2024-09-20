@@ -1,11 +1,11 @@
 import axios, { AxiosRequestConfig, AxiosError } from 'axios';
 import { API_BASE_URL } from '../../config/apiConfig';
 import { UsuarioLoginItens } from '../../Interfaces/Usuario/UsuarioLoginItens';
-import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
 import { saveTokenToLocalStorage } from '../../config/ArmazenaToken';
 import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
+import { UsuarioPerilItens } from '../../Interfaces/Usuario/UsuarioPerilItens';
 
-export const loginUser = async (usuario: UsuarioLoginItens): Promise<UsuarioLogadoItens | null> => {
+export const loginUser = async (usuario: UsuarioLoginItens): Promise<UsuarioPerilItens | null> => {
     try {
         const config: AxiosRequestConfig = {
             headers: {
@@ -14,45 +14,40 @@ export const loginUser = async (usuario: UsuarioLoginItens): Promise<UsuarioLoga
         };
 
         const response = await axios.post(`${API_BASE_URL}usuario/login`, usuario, config);
-        const token = response.data.sessao.chave;
+        const token = response.data.data.chave;
         saveTokenToLocalStorage(token);
-        const usuarioLogado: UsuarioLogadoItens = {
-            usuarioId: response.data.sessao.usuarioId,
+        const usuarioLogado: UsuarioPerilItens = {
+            id: response.data.sessao.usuarioId,
             urlImagem: response.data.sessao.urlImagem,
             nome: response.data.sessao.nome,
-            menus: response.data.sessao.menus.map((item: any) => ({
-                id: item.id,
-                descricao: item.menuDescricao,
-                urlMenu: item.menuUrl,
-            })),
-            notifications: response.data.notifications,
-            isValid: true
+            notifications: response.data.notifications
         };
         return usuarioLogado;
     } catch (error) {
-        const axiosError = error as AxiosError;
-        if (!axios.isAxiosError(error)) {
-            return null;
-        }
-        const erroNotifications = JSON.parse(axiosError?.response?.request.response)[0];
-        const notifications : NotificationItens[] = [];
-        if (erroNotifications) {
-            notifications.push({
-                notificationProps : {
-                    Key: erroNotifications.Key,
-                    Message: erroNotifications.Message,
-                    IsValidate: erroNotifications.IsValid
-                }
-            });
-        } 
-        const usuarioLogadoError: UsuarioLogadoItens = {
-            usuarioId: '',
+        const notifications: NotificationItens[] = [];
+        const usuarioPerfilError: UsuarioPerilItens = {
+            id: '',
             urlImagem: '',
             nome: '',
-            menus: [],
-            notifications: notifications,
-            isValid: false
+            notifications: notifications ?? [],
+
         };
-        return usuarioLogadoError;
+        const axiosError = error as AxiosError;
+        if (!axios.isAxiosError(error)) {
+            return usuarioPerfilError;
+        }
+        const erroNotifications = JSON.parse(axiosError?.response?.request.response) as Array<{ Key: string; Message: string; IsValidate: boolean }>;
+        if (Array.isArray(erroNotifications)) {
+            erroNotifications.forEach(erroNotification => {
+                notifications.push({
+                    notificationProps: {
+                        Key: erroNotification?.Key,
+                        Message: erroNotification?.Message,
+                        IsValidate: erroNotification?.IsValidate
+                    }
+                });
+            });
+        }
+        return usuarioPerfilError;
     }
 };

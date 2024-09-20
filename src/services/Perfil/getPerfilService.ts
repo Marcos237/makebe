@@ -1,11 +1,11 @@
 import axios, { AxiosRequestConfig, AxiosError } from 'axios';
 import { API_BASE_URL } from '../../config/apiConfig';
 import { getTokenFromLocalStorage } from '../../config/ArmazenaToken';
-import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
 import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
+import { UsuarioPerilItens } from '../../Interfaces/Usuario/UsuarioPerilItens';
 
 
-export const GerPerfilService = async (): Promise<UsuarioLogadoItens> => {
+export const GerPerfilService = async (): Promise<UsuarioPerilItens> => {
 
     try {
         const token = getTokenFromLocalStorage();
@@ -17,40 +17,47 @@ export const GerPerfilService = async (): Promise<UsuarioLogadoItens> => {
         };
 
         const response = await axios.get(`${API_BASE_URL}UsuarioPerfil/`, config);
-        const usuarioLogado: UsuarioLogadoItens = {
-            usuarioId: response.data.sessao.usuarioId,
-            urlImagem: response.data.sessao.urlImagem,
-            nome: response.data.sessao.nome,
-            menus: response.data.sessao.menus.map((item: any) => ({
-                id: item.id,
-                descricao: item.menuDescricao,
-                urlMenu: item.menuUrl,
-            })),
-            data: response.data.data,
+        const usuarioPerfil: UsuarioPerilItens = {
+            id: response.data.data.id,
+            nome: response.data.data.nome,
+            cpf: response.data.data.cpf,
+            email: response.data.data.email,
+            telefone: response.data.data.telefone,
+            instagran: response.data.instagran,
+            senha: response.data.data.senha,
+            confirmaSenha:response.data.data.confirmaSenha,
+            nomeImagem:response.data.data.nomeImagem,
+            urlImagem:response.data.data.urlImagem,
+            recaptcha:response.data.data.recaptcha,
             notifications: response.data.notifications,
-            isValid: true
+
         };
-        
-        return usuarioLogado;
+
+        return usuarioPerfil;
     } catch (error) {
-        const usuarioLogadoError: UsuarioLogadoItens = {
-            usuarioId: '',
+        const notifications: NotificationItens[] = [];
+        const usuarioPerfilError: UsuarioPerilItens = {
+            id: '',
             urlImagem: '',
             nome: '',
-            menus: [],
-            notifications: [],
-            isValid: false
+            notifications: notifications ?? [],
+
         };
         const axiosError = error as AxiosError;
-        if (!axiosError?.response?.request.response) {
-            return usuarioLogadoError;
+        if (!axios.isAxiosError(error)) {
+            return usuarioPerfilError;
         }
-        const erroNotification = JSON.parse(axiosError?.response?.request.response) as NotificationItens[];
-        if (erroNotification) {
-            usuarioLogadoError.notifications = erroNotification;
-            return usuarioLogadoError;
+        const erroNotifications = JSON.parse(axiosError?.response?.request.response) as Array<{ Key: string; Message: string; IsValidate: boolean }>;
+        if (Array.isArray(erroNotifications)) {
+            erroNotifications.forEach(erroNotification => {
+                notifications.push({
+                    notificationProps: {
+                        Key: erroNotification?.Key,
+                        Message: erroNotification?.Message,
+                        IsValidate: erroNotification?.IsValidate
+                    }
+                });
+            });
         }
-
-        return usuarioLogadoError;
-    }
-};
+        return usuarioPerfilError;
+    }};
