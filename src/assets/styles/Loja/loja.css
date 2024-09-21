@@ -1,0 +1,24 @@
+.gridContainerLoja {
+    height: 100%;
+    width: 100%;
+    display: flex;
+}
+
+.gridDireitoLoja,
+.gridEsquerdoLoja {
+    width: 100%;
+    height: 100%!important;
+}
+
+.conteudoEsquerdoLoja,
+.conteudoDireitoLoja {
+    background-color: #F7F9F9;
+    height: 40% !important;
+    padding: 10px;
+    border-radius: 20px;
+    margin-top: -28px;
+}
+.camposEsquerdoLoja,
+.camposDireitoLoja {
+    padding: 60px;
+}
