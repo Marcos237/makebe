@@ -14,7 +14,6 @@ const Mensagem: React.FC<{ mensagemProps: MensagemItens }> = ({ mensagemProps })
         }
     }, [isVisible]);
 
-
     return (
         <>
             {texto && (

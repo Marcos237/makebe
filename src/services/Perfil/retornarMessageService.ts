@@ -7,6 +7,7 @@ export const RetornarMessageService = async (isLogado: boolean, isValid: boolean
     let cor = '';
 
 
+
     if (!isValid) {
         let erros = '';
         notifications.forEach((item: any) => {
@@ -15,10 +16,10 @@ export const RetornarMessageService = async (isLogado: boolean, isValid: boolean
         erros = erros.trim() ?? '';
         message = erros;
         cor = "#F6DDCC";
-
     }
     else {
         if (isLogado) {
+
             message = MensagemUpDate;
             cor = "#A3E4D7";
         }
@@ -35,7 +36,6 @@ export const RetornarMessageService = async (isLogado: boolean, isValid: boolean
         isVisible: true,
         onClick: () => { }
     }
-
     return messageRetorno;
 }
 

@@ -1,0 +1,118 @@
+.lista-container {
+    display: flex;
+    flex-wrap: wrap;
+    min-height: 60vh;
+    max-height: auto;
+    justify-content: center;
+    margin-left: 80px;
+
+}
+
+.grid-container {
+    border: #ecf0f1 1px solid;
+    border-radius: 10px;
+    padding: 30px;
+    margin: 20px;
+}
+
+.grid-header {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    height: 20px;
+    padding: 10px 0; 
+    background-color: #34495e;
+    color: white;
+}
+
+
+.grid-header, .grid-row {
+    display: flex; 
+    border-bottom: 1px solid #ecf0f1; 
+    padding: 10px 0;
+}
+
+.grid-column-header {
+    text-align: start;
+}
+.grid-column-header, .grid-column-item {
+    flex: 1;
+    padding: 5px;
+}
+
+.grid-column-item {
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    text-align: center; 
+    width: 20%;
+    max-width: 100%;
+    word-wrap: break-word; 
+    overflow-wrap: break-word; 
+    white-space: normal; 
+    box-sizing: border-box; 
+    overflow: hidden; 
+}
+
+.grid-text {
+    white-space: normal; 
+    overflow-wrap: break-word; 
+    word-wrap: break-word;
+    max-width: 100%; 
+    box-sizing: border-box; 
+}
+
+
+.grid-row {
+    display: flex;
+    flex-wrap: nowrap; 
+    width: 100%; 
+}
+
+
+.grid-column-item p {
+    margin: 0; 
+    word-break: break-word;
+}
+
+
+
+.grid-column-header {
+    font-weight: bold; 
+}
+
+.grid-row {
+    display: flex; 
+}
+
+.grid-column-item:last-child {
+    border-bottom: none; 
+}
+
+.icons-buttons {
+    display: flex; 
+    justify-content: flex-end; 
+    gap: 5px; 
+    padding: 5px;
+}
+
+.buttons-itens {
+    display: flex; 
+    align-items: center;
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+} 
+
+.texto-vazio {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+}
+
+.paginacaototal {
+ color: #a6acaf;
+}

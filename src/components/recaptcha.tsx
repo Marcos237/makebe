@@ -10,7 +10,6 @@ const RecaptchaComponent: React.FC<RecaptchaItens> = ({ siteKey, onChange }) => 
     window.grecaptcha.enterprise.ready(async () => {
 
       const token = await window.grecaptcha.enterprise.execute(siteKey, { action: 'submit' });
-      console.log(token);
       onChange(token);
 
     });

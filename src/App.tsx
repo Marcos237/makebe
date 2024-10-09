@@ -9,6 +9,7 @@ import Autenticacao from './containers/Perfil/Autenticacao'
 import ReenviaAutenticacao from './containers/Perfil/ReenviaAutenticacao';
 import AlteraSenha from './containers/Login/alterasenha'
 import RecuperaSenha from './containers/Perfil/RecuperaSenha';
+import Salao from './containers/Loja/Salao';
 
 const App: React.FC = () => {
   return (
@@ -23,6 +24,7 @@ const App: React.FC = () => {
         <Route path="/reenviaAutenticacao" element={<ReenviaAutenticacao />} />
         <Route path="/alteraSenha" element={<AlteraSenha />} />
         <Route path="/recuperaSenha/:chave" element={<RecuperaSenha />} />
+        <Route path="/loja" element={<Salao />} />
       </Routes>
     </div>
   );

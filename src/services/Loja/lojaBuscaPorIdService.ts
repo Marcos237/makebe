@@ -1,10 +1,10 @@
 import axios, { AxiosRequestConfig, AxiosError } from 'axios';
-import { API_BASE_URL } from '../../config/apiConfig';
-import { UsuarioPerilItens } from '../../Interfaces/Usuario/UsuarioPerilItens';
-import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
+import { API_BASE_AGENDA_URL } from '../../config/apiConfig';
 import { getTokenFromLocalStorage } from '../../config/ArmazenaToken';
+import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
+import { LojaItens } from '../../Interfaces/Loja/lojaItens';
 
-export const UpdatePerfilService = async (usuario: UsuarioPerilItens): Promise<UsuarioPerilItens | null> => {
+export const LojaBuscaPorIdService = async (id: number): Promise<LojaItens | null> => {
     try {
         const token = getTokenFromLocalStorage();
         const config: AxiosRequestConfig = {
@@ -13,32 +13,16 @@ export const UpdatePerfilService = async (usuario: UsuarioPerilItens): Promise<U
                 'Authorization': `Bearer ${token}`
             }
         };
+        const response = await axios.get(`${API_BASE_AGENDA_URL}Loja/${id}`, config);
 
-        const response = await axios.put(`${API_BASE_URL}UsuarioPerfil/`, usuario, config);
-  
-        const UsuarioPerfil: UsuarioPerilItens = {
-            id: response.data.sessao.usuarioId,
-            urlImagem: response.data.sessao.urlImagem,
-            nome: response.data.sessao.nome,
-            notifications: response.data.notifications,
-        };
-        return UsuarioPerfil;
+        return response.data.data;
     } catch (error) {
-
-        const notifications: NotificationItens[] = [];
-        const usuarioPerfilError: UsuarioPerilItens = {
-            id: '',
-            urlImagem: '',
-            nome: '',
-            notifications: notifications ?? [],
-
-        };
         const axiosError = error as AxiosError;
         if (!axios.isAxiosError(error)) {
-            return usuarioPerfilError;
+            return null;
         }
+        const notifications: NotificationItens[] = [];
         const erroNotifications = JSON.parse(axiosError?.response?.request.response) as Array<{ Key: string; Message: string; IsValidate: boolean }>;
-
         if (Array.isArray(erroNotifications)) {
             erroNotifications.forEach(erroNotification => {
                 notifications.push({
@@ -50,6 +34,6 @@ export const UpdatePerfilService = async (usuario: UsuarioPerilItens): Promise<U
                 });
             });
         }
-        return usuarioPerfilError;
-    }
+    };
+    return {};
 };
