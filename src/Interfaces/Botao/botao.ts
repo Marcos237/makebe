@@ -4,7 +4,7 @@ import { ButtonProps } from '@mui/material/Button';
 export interface BotaoItens {
     name?: string;
     tooltip: string;
-    label: string;
+    label?: string;
     onIconClick: () => void;
     onKeyDown?: () => React.KeyboardEvent<HTMLDivElement>;
     icon?: SvgIconComponent;

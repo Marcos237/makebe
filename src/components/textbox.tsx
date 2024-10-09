@@ -17,7 +17,8 @@ const CampoTexto: React.FC<TextBoxItens> = ({ textBoxProps }) => {
     onIconClick,
     type,
     mask,
-    readonly
+    readonly,
+    maxLength
   } = textBoxProps;
 
   const inputProps = mask && mask.length > 0 ? {
@@ -53,6 +54,7 @@ const CampoTexto: React.FC<TextBoxItens> = ({ textBoxProps }) => {
                   </InputAdornment>
                 ),
               }}
+              inputProps={{ maxLength: maxLength || 100 }}
               sx={{
                 width: '100%',
                 '@media (min-width: 600px)': {

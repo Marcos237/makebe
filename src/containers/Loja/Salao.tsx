@@ -1,162 +1,134 @@
-import React, { useState } from "react";
-import { PaginacaoItens } from '../../Interfaces/shared/PaginacaoItens';
-import CampoTexto from '../../components/textbox';
+import React, { useEffect, useState } from "react";
+import EditRoundedIcon from '@mui/icons-material/EditRounded';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Footer from '../../components/footer';
 import Banner from '../../components/banner';
+import Tabs from '../../components/tabs';
+import SalaoPersistir from '../Loja/SalaoPersitir'
+import GridViewLista from '../../components/gridview'
+import SalaoBusca from "./SalaoBusca";
+import { PaginacaoItens } from '../../Interfaces/shared/PaginacaoItens';
 import { UsuarioLogadoService } from '../../services/Perfil/usuarioLogadoService';
 import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
 import { TabsItens } from "../../Interfaces/Tabs/tabsItem";
-import Tabs from '../../components/tabs'
 import { Grid } from '@mui/material';
-import Mensagem from '../../components/mensagem';
-import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
-import { cnpjMaskConst } from '../../constants/Loja/lojaConstant';
-import Botao from '../../components/button';
-import { BotaoItens } from '../../Interfaces/Botao/botao';
-import { foneMaskConst } from "../../constants/Usuario/usuarioConstant";
-import { ItensSelect } from '../../Interfaces/DropDown/dropdownItens';
-import Dropdown from "../../components/dropdown";
+import { LojaItens } from "../../Interfaces/Loja/lojaItens";
+import { ButtonItens } from "../../Interfaces/shared/buttonsItens";
+import { TipoLojaService } from "../../services/Loja/tipoLojaService";
+import { TipoLojaItens } from "../../Interfaces/Loja/tipoLojaItens";
+import { SelectItens } from '../../Interfaces/shared/selectItens';
+import { LojaService } from "../../services/Loja/lojaService";
+import { LojaBuscaPorIdService } from "../../services/Loja/lojaBuscaPorIdService";
+import { propertyLabels } from '../../constants/Loja/lojaConstant';
+import { GrigViewItens } from "../../Interfaces/shared/gridviewItens";
+import { PersistirItens } from "../../Interfaces/shared/persistirItens";
 
-
-import '../../assets/styles/Loja/loja.css'
-
+import '../../assets/styles/Loja/loja.css';
 
 const Salao: React.FC = () => {
     const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLogadoItens>();
-    const [messageItens, setMessageItens] = useState<MensagemItens>();
-    const [isMessage, setMessage] = useState<boolean>(false);
-    const [razaoSocial, setRazaoSocial] = useState<string>('');
-    const [cnpj, setCnpj] = useState<string>('');
-    const [email, setEmail] = useState<string>('');
-    const [telefone, setTelefone] = useState<string>('');
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [selectedItem, setSelectedItem] = React.useState('');
+    const [persistirItens, setPersistirItems] = useState<PersistirItens<LojaItens>>();
+    const [gridViewItens, setGridView] = useState<GrigViewItens<LojaItens>>();
+    const [lojaItem, setLojaItem] = useState<LojaItens>();
+    const [resultadosBusca, setResultadosBusca] = useState<PaginacaoItens<LojaItens>>();
 
-    const handleCloseMessage = () => {
-        setMessage(false);
-    };
+    const actionButtons: ButtonItens[] = [
+        {
+            id: 1,
+            label: 'Edit',
+            icon: <EditRoundedIcon />,
+            href: '#',
+            onClick: (event, loja) => handleIconClick(event, loja)
+        },
+        {
+            id: 2,
+            label: 'Delete',
+            icon: <DeleteIcon />,
+            href: '/delete'
+        }
+    ];
 
-    const handleButtonClick = () => {
-        const fakeEvent = {
-            preventDefault: () => { }
-        } as React.FormEvent;
-        handleSubmit(fakeEvent);
-    };
-
-    const handleSubmit = async (event: React.FormEvent) => {
+    const handleIconClick = async (event: React.MouseEvent, loja?: any) => {
         event.preventDefault();
-        setIsLoading(false);
-    }
-
-    const messageProps: MensagemItens = {
-        texto: messageItens?.texto,
-        cor: messageItens?.cor,
-        isVisible: isMessage,
-        onClick: handleCloseMessage
-    }
-
-    const botaoProps: BotaoItens = {
-        name: 'Salvar',
-        tooltip: 'Fazer o cadastro',
-        label: 'Salvar',
-        width: '200px',
-        onIconClick: handleButtonClick,
-        color: 'primary',
-        isLoading: isLoading,
+        const lojaId = loja.id ?? 0;
+        const retorno = await LojaBuscaPorIdService(lojaId);
+        setLojaItem(retorno ?? {})
     };
+
+    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+        fetchLojaData(page);
+    };
+
+    const paginacao: PaginacaoItens<LojaItens> = {
+        quantidadePagina: resultadosBusca?.quantidadePagina || 6,
+        paginaAtual: resultadosBusca?.paginaAtual || 1,
+        totalPaginas: resultadosBusca?.totalPaginas || 1,
+        total: resultadosBusca?.total || 0,
+        objetoPesquisa: resultadosBusca?.objetoPesquisa || undefined,
+        objetos: resultadosBusca?.objetos ?? []
+    };
+
+    const fetchLojaData = async (page?: number) => {
+        const paginaAtualizada = page !== undefined ? page : 1;
+        paginacao.paginaAtual = paginaAtualizada;
+        paginacao.objetos = [];
+
+        if (!resultadosBusca || page !== undefined) {
+            const lojaResponse = await LojaService(paginacao);
+            if (lojaResponse) {
+                setResultadosBusca(lojaResponse);
+            }
+        }
+    };
+
+    const fetchTipoLojaData = async () => {
+        const tipoLojaResponse = await TipoLojaService();
+        const itensSelect: SelectItens[] = tipoLojaResponse?.map((tipo: TipoLojaItens) => ({
+            key: tipo.id,
+            value: tipo.descricao
+        })) ?? [];
+
+        const persitirProps: PersistirItens<LojaItens> = {
+            selectItems: itensSelect,
+            onSave: fetchLojaData,
+        };
+
+        setPersistirItems(persitirProps);
+    };
+
+    const usuarioData = async () => {
+        const [sessao] = await Promise.all([UsuarioLogadoService()]);
+        setUsuarioLogado(sessao);
+    };
+
+    const fetchResultadoPesquisa = (resultados: PaginacaoItens<LojaItens>) => {
+        setResultadosBusca(resultados);
+    };
+
+    useEffect(() => {
+        fetchTipoLojaData();
+        usuarioData();
+        fetchLojaData();
+    }, []);
+
+    useEffect(() => {
+        if (resultadosBusca) {
+            const gridview: GrigViewItens<LojaItens> = {
+                paginacao: resultadosBusca,
+                propertyLabels: propertyLabels,
+                actionButtons: actionButtons,
+                onPageChange: handlePageChange
+            };
+            setGridView(gridview);
+        }
+    }, [resultadosBusca]);
+
     const tabsData: TabsItens[] = [
         {
             label: 'Loja',
             content: (
-                <Grid container spacing={2} className="gridContainerLoja">
-                    <div className="formItens">
-                        <div className='messageText'>
-                            <Mensagem mensagemProps={messageProps ?? {}} />
-                        </div>
-                    </div>
-
-                    <Grid item md={6} xs={12} className='gridEsquerdoLoja'>
-                        <div className='conteudoEsquerdoLoja'>
-                            <div className='camposEsquerdoLoja'>
-                                <div className="formItens">
-                                    <CampoTexto
-                                        textBoxProps={{
-                                            name: "Razão Social",
-                                            tooltip: "digite a razão social",
-                                            label: "razão social*",
-                                            value: razaoSocial,
-                                            type: 'text',
-                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setRazaoSocial(e.target.value)
-                                        }}
-                                    />
-                                </div>
-                                <div className="formItens">
-                                    <CampoTexto
-                                        textBoxProps={{
-                                            name: "CNPJ",
-                                            tooltip: "digite seu cnpj",
-                                            label: "cnpj*",
-                                            value: cnpj,
-                                            type: 'text',
-                                            mask: cnpjMaskConst,
-                                            readonly: false,
-                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCnpj(e.target.value)
-
-                                        }}
-                                    />
-                                </div>
-                                <div className="formItens">
-                                    <CampoTexto
-                                        textBoxProps={{
-                                            name: "Telefone",
-                                            tooltip: "digite seu telefone",
-                                            label: "telefone*",
-                                            value: telefone,
-                                            mask: foneMaskConst(telefone),
-                                            type: 'text',
-                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setTelefone(e.target.value)
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </Grid>
-                    <Grid item md={6} xs={12} className='gridDireitoLoja'>
-                        <div className='conteudoDireitoLoja'>
-                            <div className='camposDireitoLoja'>
-                                <div className="formItens">
-                                    <CampoTexto
-                                        textBoxProps={{
-                                            name: "Email",
-                                            tooltip: "digite seu e-mail",
-                                            label: "email*",
-                                            value: email,
-                                            type: 'text',
-                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)
-                                        }}
-                                    />
-                                </div>
-
-                                <div className="formItens">
-                                    <Dropdown
-                                        dropProps={{
-                                            name: "TipoLoja",
-                                            itens: [],
-                                            label: "Tipo de Loja*"
-                                        }}
-                                    />
-                                </div>
-
-                                <div className='formItens'>
-                                    <div className='botao'>
-                                        <Botao botaoProps={botaoProps} />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </Grid>
-                </Grid>),
+                <SalaoPersistir persistirProps={{ ...persistirItens, item: lojaItem }} />
+            ),
         },
         {
             label: 'Endereço',
@@ -164,11 +136,8 @@ const Salao: React.FC = () => {
         }
     ];
 
-    const fetchVitrineData = async () => {
-        const [sessao] = await Promise.all([
-            UsuarioLogadoService(),
-        ]);
-        setUsuarioLogado(sessao);
+    const handleResultadosBusca = (resultados: PaginacaoItens<LojaItens>) => {
+        fetchResultadoPesquisa(resultados);
     };
 
     return (
@@ -176,14 +145,34 @@ const Salao: React.FC = () => {
             <div className='banner'>
                 <Banner usuarioLogado={useUsuarioLogado} />
             </div>
-            <div className="conteudoLoja">
-                <Tabs tabsProps={tabsData}></Tabs>
 
-            </div>
+            <div className="paginaLoja">
+                <Grid container spacing={2} className="gridContainerLoja">
+                    <div className="conteudoLoja">
+                        <Tabs tabsProps={tabsData}></Tabs>
+                    </div>
+
+                    <div className="busca-loja">
+                        <SalaoBusca selectItens={persistirItens?.selectItems ?? []}
+                            onResultadosBusca={handleResultadosBusca} />
+                    </div>
+
+                    <div className="gridListaLoja">
+                        <Grid container spacing={2}>
+                            <div className="lista-loja">
+                                <div className="formItens">
+                                    <GridViewLista gridviewProps={gridViewItens ?? {}} />
+                                </div>
+                            </div>
+                        </Grid>
+                    </div>
+                </Grid>
+            </div >
             <div>
                 <Footer />
-            </div>
+            </div >
         </>
     )
 }
+
 export default Salao;

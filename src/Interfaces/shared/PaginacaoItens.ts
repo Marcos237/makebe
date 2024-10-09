@@ -1,6 +1,12 @@
+
+
 export interface PaginacaoItens<T> {
-    quantidadePagina : number,
-    totalPaginas : number,
-    total : number,
-    objetoPesquisa: T | null;
+
+    quantidadePagina?: number;
+    totalPaginas?: number;
+    paginaAtual?: number;
+    total?: number;
+    objetoPesquisa?: T;
+    objetos?: Array<T>;
+
 }

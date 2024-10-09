@@ -12,5 +12,6 @@ export interface TextBoxItens {
     type?: string;
     mask?: Array<string | RegExp>;
     readonly?: boolean;
+    maxLength?: number;
   };
 }
