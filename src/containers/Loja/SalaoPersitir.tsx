@@ -52,15 +52,17 @@ const SalaoPersistir: React.FC<{ persistirProps: PersistirItens<LojaItens> }> = 
         event.preventDefault();
         setIsLoading(true);
         const loja: LojaItens = {
-            id: id,
-            razaoSocial: razaoSocial,
-            cnpj: cnpj,
-            telefone: telefone,
-            email: email,
-            tipoLojaId: Number(tipoLojaId)
+            id: id || 0,
+            razaoSocial: razaoSocial || '',
+            cnpj: cnpj || '',
+            telefone: telefone || '',
+            email: email || '',
+            tipoLojaId: Number(tipoLojaId) || 0
         }
         const retorno = await LojaPersistirService(loja);
         if (!retorno?.notifications || retorno?.notifications?.length === 0) {
+
+            console.log(retorno);
             const messageRetorno = await RetornarMessageService(true, true, [])
             setMessageItens(messageRetorno)
             persistirProps.onSave?.();
