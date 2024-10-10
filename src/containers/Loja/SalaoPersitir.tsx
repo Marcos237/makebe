@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { cnpjMaskConst } from '../../constants/Loja/lojaConstant';
 import CampoTexto from '../../components/textbox';
 import { Grid } from '@mui/material';
@@ -28,17 +28,18 @@ const SalaoPersistir: React.FC<{ persistirProps: PersistirItens<LojaItens> }> = 
     const [telefone, setTelefone] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const fetchLojaData = async () => {
-        setId(persistirProps.item?.id)
-        setTipoLojaId(persistirProps.item?.tipoLojaId)
-        setRazaoSocial(persistirProps.item?.razaoSocial ?? '')
-        setCnpj(persistirProps.item?.cnpj ?? '')
-        setEmail(persistirProps.item?.email ?? '')
-        setTelefone(persistirProps.item?.telefone ?? '')
-    };
+    const fetchLojaData = useCallback(async () => {
+        setId(persistirProps.item?.id);
+        setTipoLojaId(persistirProps.item?.tipoLojaId);
+        setRazaoSocial(persistirProps.item?.razaoSocial ?? '');
+        setCnpj(persistirProps.item?.cnpj ?? '');
+        setEmail(persistirProps.item?.email ?? '');
+        setTelefone(persistirProps.item?.telefone ?? '');
+    }, [persistirProps]);
+
     useEffect(() => {
         fetchLojaData();
-    }, [persistirProps.item]);
+    }, [fetchLojaData]);
 
     const handleButtonClick = () => {
         const fakeEvent = {

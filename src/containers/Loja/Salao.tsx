@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Footer from '../../components/footer';
 import Banner from '../../components/banner';
 import Tabs from '../../components/tabs';
-import SalaoPersistir from '../Loja/SalaoPersitir'
-import GridViewLista from '../../components/gridview'
+import SalaoPersistir from '../Loja/SalaoPersitir';
+import GridViewLista from '../../components/gridview';
 import SalaoBusca from "./SalaoBusca";
 import { PaginacaoItens } from '../../Interfaces/shared/PaginacaoItens';
 import { UsuarioLogadoService } from '../../services/Perfil/usuarioLogadoService';
@@ -13,7 +13,6 @@ import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens'
 import { TabsItens } from "../../Interfaces/Tabs/tabsItem";
 import { Grid } from '@mui/material';
 import { LojaItens } from "../../Interfaces/Loja/lojaItens";
-import { ButtonItens } from "../../Interfaces/shared/buttonsItens";
 import { TipoLojaService } from "../../services/Loja/tipoLojaService";
 import { TipoLojaItens } from "../../Interfaces/Loja/tipoLojaItens";
 import { SelectItens } from '../../Interfaces/shared/selectItens';
@@ -32,13 +31,20 @@ const Salao: React.FC = () => {
     const [lojaItem, setLojaItem] = useState<LojaItens>();
     const [resultadosBusca, setResultadosBusca] = useState<PaginacaoItens<LojaItens>>();
 
-    const actionButtons: ButtonItens[] = [
+    const handleIconClick = useCallback(async (event: React.MouseEvent, loja?: any) => {
+        event.preventDefault();
+        const lojaId = loja.id ?? 0;
+        const retorno = await LojaBuscaPorIdService(lojaId);
+        setLojaItem(retorno ?? {});
+    }, []);
+
+    const actionButtons = useMemo(() => ([ 
         {
             id: 1,
             label: 'Edit',
             icon: <EditRoundedIcon />,
             href: '#',
-            onClick: (event, loja) => handleIconClick(event, loja)
+            onClick: handleIconClick
         },
         {
             id: 2,
@@ -46,32 +52,18 @@ const Salao: React.FC = () => {
             icon: <DeleteIcon />,
             href: '/delete'
         }
-    ];
+    ]), [handleIconClick]); 
 
-    const handleIconClick = async (event: React.MouseEvent, loja?: any) => {
-        event.preventDefault();
-        const lojaId = loja.id ?? 0;
-        const retorno = await LojaBuscaPorIdService(lojaId);
-        setLojaItem(retorno ?? {})
-    };
 
-    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
-        fetchLojaData(page);
-    };
-
-    const paginacao: PaginacaoItens<LojaItens> = {
-        quantidadePagina: resultadosBusca?.quantidadePagina || 6,
-        paginaAtual: resultadosBusca?.paginaAtual || 1,
-        totalPaginas: resultadosBusca?.totalPaginas || 1,
-        total: resultadosBusca?.total || 0,
-        objetoPesquisa: resultadosBusca?.objetoPesquisa || undefined,
-        objetos: resultadosBusca?.objetos ?? []
-    };
-
-    const fetchLojaData = async (page?: number) => {
-        const paginaAtualizada = page !== undefined ? page : 1;
-        paginacao.paginaAtual = paginaAtualizada;
-        paginacao.objetos = [];
+    const fetchLojaData = useCallback(async (page: number = 1) => {
+        const paginacao: PaginacaoItens<LojaItens> = {
+            quantidadePagina: resultadosBusca?.quantidadePagina || 6,
+            paginaAtual: page,
+            totalPaginas: resultadosBusca?.totalPaginas || 1,
+            total: resultadosBusca?.total || 0,
+            objetoPesquisa: resultadosBusca?.objetoPesquisa || undefined,
+            objetos: resultadosBusca?.objetos ?? []
+        };
 
         if (!resultadosBusca || page !== undefined) {
             const lojaResponse = await LojaService(paginacao);
@@ -79,37 +71,41 @@ const Salao: React.FC = () => {
                 setResultadosBusca(lojaResponse);
             }
         }
-    };
+    }, [resultadosBusca]);
 
-    const fetchTipoLojaData = async () => {
+    const handlePageChange = useCallback((event: React.ChangeEvent<unknown>, page: number) => {
+        fetchLojaData(page);
+    }, [fetchLojaData])
+
+    const fetchTipoLojaData = useCallback(async () => {
         const tipoLojaResponse = await TipoLojaService();
         const itensSelect: SelectItens[] = tipoLojaResponse?.map((tipo: TipoLojaItens) => ({
             key: tipo.id,
             value: tipo.descricao
         })) ?? [];
 
-        const persitirProps: PersistirItens<LojaItens> = {
+        const persistirProps: PersistirItens<LojaItens> = {
             selectItems: itensSelect,
             onSave: fetchLojaData,
         };
 
-        setPersistirItems(persitirProps);
-    };
+        setPersistirItems(persistirProps);
+    }, [fetchLojaData]);
 
-    const usuarioData = async () => {
+    const usuarioData = useCallback(async () => {
         const [sessao] = await Promise.all([UsuarioLogadoService()]);
         setUsuarioLogado(sessao);
-    };
+    }, []);
 
-    const fetchResultadoPesquisa = (resultados: PaginacaoItens<LojaItens>) => {
+    const fetchResultadoPesquisa = useCallback((resultados: PaginacaoItens<LojaItens>) => {
         setResultadosBusca(resultados);
-    };
+    }, []);
 
     useEffect(() => {
         fetchTipoLojaData();
         usuarioData();
         fetchLojaData();
-    }, []);
+    }, [fetchTipoLojaData, usuarioData, fetchLojaData]);
 
     useEffect(() => {
         if (resultadosBusca) {
@@ -121,7 +117,7 @@ const Salao: React.FC = () => {
             };
             setGridView(gridview);
         }
-    }, [resultadosBusca]);
+    }, [resultadosBusca, actionButtons, handlePageChange]);
 
     const tabsData: TabsItens[] = [
         {
