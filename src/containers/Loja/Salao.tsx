@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback, useMemo, useRef  } from "react";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Footer from '../../components/footer';
@@ -66,6 +66,7 @@ const Salao: React.FC = () => {
         };
 
         if (!resultadosBusca || page !== undefined) {
+            paginacao.objetos = []
             const lojaResponse = await LojaService(paginacao);
             if (lojaResponse) {
                 setResultadosBusca(lojaResponse);
@@ -101,10 +102,15 @@ const Salao: React.FC = () => {
         setResultadosBusca(resultados);
     }, []);
 
+    const hasFetchedData = useRef(false);
+
     useEffect(() => {
-        fetchTipoLojaData();
-        usuarioData();
-        fetchLojaData();
+        if (!hasFetchedData.current) {
+            fetchTipoLojaData();
+            usuarioData();
+            fetchLojaData();
+            hasFetchedData.current = true; 
+        }
     }, [fetchTipoLojaData, usuarioData, fetchLojaData]);
 
     useEffect(() => {
