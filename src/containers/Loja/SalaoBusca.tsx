@@ -1,18 +1,20 @@
 import React, { useState } from "react";
 import { cnpjMaskConst } from '../../constants/Loja/lojaConstant';
-import CampoTexto from '../../components/textbox';
-import { Grid } from '@mui/material';
-import Botao from '../../components/button';
-import { BotaoItens } from '../../Interfaces/Botao/botao';
-import Dropdown from "../../components/dropdown";
-import '../../assets/styles/Loja/lojabusca.css';
 import { SelectItens } from '../../Interfaces/shared/selectItens';
 import {LojaItens} from '../../Interfaces/Loja/lojaItens';
 import { PaginacaoItens } from '../../Interfaces/shared/PaginacaoItens';
-import { LojaService } from "../../services/Loja/lojaService";
+import { LojaPaginadoService } from "../../services/Loja/lojaPaginadoService";
 import { SelectChangeEvent } from '@mui/material/Select';
+import { Grid } from '@mui/material';
+import { BotaoItens } from '../../Interfaces/Botao/botao';
+import CampoTexto from '../../components/textbox';
+import Botao from '../../components/button';
+import Dropdown from "../../components/dropdown";
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
+
+import '../../assets/styles/Loja/lojabusca.css';
+
 
 const SalaoBusca: React.FC<{ selectItens: SelectItens[], onResultadosBusca: (resultados: PaginacaoItens<LojaItens>) => void }> = ({ selectItens, onResultadosBusca  }) => {
     const [tipoLojaIdBusca, setTipoLojaBusca] = useState<number>();
@@ -49,17 +51,30 @@ const SalaoBusca: React.FC<{ selectItens: SelectItens[], onResultadosBusca: (res
             objetoPesquisa: loja,
             objetos: []
         };
-        const lojaResponse = await LojaService(paginacao ?? {})
+        const lojaResponse = await LojaPaginadoService(paginacao ?? {})
         onResultadosBusca(lojaResponse ?? {}); 
         setIsLoading(false);
     }
 
-    const handleButtonClickLimpar = () => {
+    const handleButtonClickLimpar = async () => {
         setRazaoSocialBusca('');
         setCnpjBusca('');
         setTelefoneBusca('');
         setEmailBusca('');
         setTipoLojaBusca(0);
+
+        setIsLoading(true);
+        const paginacao: PaginacaoItens<LojaItens> = {
+            quantidadePagina: 6,
+            paginaAtual: 1,
+            totalPaginas: 1,
+            total: 0,
+            objetoPesquisa: {},
+            objetos: []
+        };
+        const enderecoService = await LojaPaginadoService(paginacao ?? {});
+        onResultadosBusca(enderecoService ?? {});
+        setIsLoading(false);
     }
 
     const botaoProps: BotaoItens = {

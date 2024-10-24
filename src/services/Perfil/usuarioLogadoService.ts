@@ -23,6 +23,7 @@ export const UsuarioLogadoService = async (): Promise<UsuarioLogadoItens> => {
                     id: item.id,
                     descricao: item.menuDescricao,
                     urlMenu: item.menuUrl,
+                    subMenus : item.subMenus
                 })) ?? [],
                 notifications: response.data.notifications ?? [],
                 isValid: true 

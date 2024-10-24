@@ -1,21 +1,21 @@
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { cnpjMaskConst } from '../../constants/Loja/lojaConstant';
-import CampoTexto from '../../components/textbox';
 import { Grid } from '@mui/material';
-import Botao from '../../components/button';
-import Dropdown from "../../components/dropdown";
+import { PersistirItens } from "../../Interfaces/shared/persistirItens";
 import { BotaoItens } from '../../Interfaces/Botao/botao';
-import Mensagem from '../../components/mensagem';
 import { foneMaskConst } from "../../constants/Usuario/usuarioConstant";
 import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
 import { LojaItens } from "../../Interfaces/Loja/lojaItens";
 import { LojaPersistirService } from '../../services/Loja/lojaPersistirService';
 import { RetornarMessageService } from '../../services/Perfil/retornarMessageService';
 import { SelectChangeEvent } from '@mui/material/Select';
+import Mensagem from '../../components/mensagem';
+import Botao from '../../components/button';
+import Dropdown from "../../components/dropdown";
+import CampoTexto from '../../components/textbox';
 
 import '../../assets/styles/Loja/lojapersistir.css'
-import { PersistirItens } from "../../Interfaces/shared/persistirItens";
 
 const SalaoPersistir: React.FC<{ persistirProps: PersistirItens<LojaItens> }> = ({ persistirProps }) => {
     const [isMessage, setMessage] = useState<boolean>(false);
@@ -29,17 +29,23 @@ const SalaoPersistir: React.FC<{ persistirProps: PersistirItens<LojaItens> }> = 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const fetchLojaData = useCallback(async () => {
-        setId(persistirProps.item?.id);
-        setTipoLojaId(persistirProps.item?.tipoLojaId);
-        setRazaoSocial(persistirProps.item?.razaoSocial ?? '');
-        setCnpj(persistirProps.item?.cnpj ?? '');
-        setEmail(persistirProps.item?.email ?? '');
-        setTelefone(persistirProps.item?.telefone ?? '');
+        if (!persistirProps.item) return;
+        setId(persistirProps.item.id);
+        setTipoLojaId(persistirProps.item.tipoLojaId);
+        setRazaoSocial(persistirProps.item.razaoSocial ?? '');
+        setCnpj(persistirProps.item.cnpj ?? '');
+        setEmail(persistirProps.item.email ?? '');
+        setTelefone(persistirProps.item.telefone ?? '');
     }, [persistirProps]);
-
+    
+    const prevItemRef = useRef(persistirProps.item);
     useEffect(() => {
-        fetchLojaData();
-    }, [fetchLojaData]);
+        const prevItem = prevItemRef.current;
+        if (persistirProps.item && prevItem !== persistirProps.item) {
+            fetchLojaData();
+        }
+        prevItemRef.current = persistirProps.item;
+    }, [fetchLojaData, persistirProps.item]);
 
     const handleButtonClick = () => {
         const fakeEvent = {
@@ -60,9 +66,8 @@ const SalaoPersistir: React.FC<{ persistirProps: PersistirItens<LojaItens> }> = 
             tipoLojaId: Number(tipoLojaId) || 0
         }
         const retorno = await LojaPersistirService(loja);
-        if (!retorno?.notifications || retorno?.notifications?.length === 0) {
 
-            console.log(retorno);
+        if (!retorno?.data?.notifications || retorno?.data?.notifications?.length === 0) {
             const messageRetorno = await RetornarMessageService(true, true, [])
             setMessageItens(messageRetorno)
             persistirProps.onSave?.();

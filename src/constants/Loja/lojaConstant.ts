@@ -14,3 +14,6 @@ export const propertyLabels: { [key: string]: string } = {
     telefone: "Telefone",
     tipoLojaDescricao : "Tipo de Loja"
 };
+
+export const modalTitulo = "Loja";
+export const modalTexto = "Deseja remover a loja?"
