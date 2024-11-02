@@ -11,7 +11,6 @@ const Dropdown: React.FC<{ dropProps: DropDownItens }> = ({ dropProps }) => {
       dropProps.onChange(event); 
     }
   };
-
   return (
     <FormControl fullWidth>
       <InputLabel>{dropProps.label}</InputLabel>

@@ -4,7 +4,7 @@ import { getTokenFromLocalStorage } from '../../config/ArmazenaToken';
 import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
 import { LojaItens } from '../../Interfaces/Loja/lojaItens';
 
-export const LojaPersistirService = async (lojaitem: LojaItens): Promise<LojaItens | any> => {
+export const LojaBuscarTodosService = async (): Promise<Array<LojaItens> | null> => {
     try {
         const token = getTokenFromLocalStorage();
         const config: AxiosRequestConfig = {
@@ -13,17 +13,14 @@ export const LojaPersistirService = async (lojaitem: LojaItens): Promise<LojaIte
                 'Authorization': `Bearer ${token}`
             }
         };
-        const response = await axios.post(`${API_BASE_AGENDA_URL}Loja/`, lojaitem, config);
-        return response;
+        const response = await axios.get(`${API_BASE_AGENDA_URL}Loja/BuscarTodos`, config);
+        return response.data.datas;
     } catch (error) {
-        const notifications: NotificationItens[] = [];
-        const lojaError: LojaItens = {
-            notifications: notifications ?? []
-        }
         const axiosError = error as AxiosError;
         if (!axios.isAxiosError(error)) {
-            return lojaError;
+            return null;
         }
+        const notifications: NotificationItens[] = [];
         const erroNotifications = JSON.parse(axiosError?.response?.request.response) as Array<{ Key: string; Message: string; IsValidate: boolean }>;
         if (Array.isArray(erroNotifications)) {
             erroNotifications.forEach(erroNotification => {
@@ -36,6 +33,6 @@ export const LojaPersistirService = async (lojaitem: LojaItens): Promise<LojaIte
                 });
             });
         }
-        return lojaError;
     };
+    return [];
 };

@@ -1,0 +1,34 @@
+.enderecoContainer {
+    height: 100%;
+}
+
+.enderecoConteudo {
+    width: 98%;
+    min-height: 40vh;
+    padding: 6px;
+}
+
+.gridEsquerdoEndereco , .gridDireitoEndereco {
+    width: 100%;
+    height: 100% !important;
+}
+.enderecoEsquerdo,
+.enderecoDireito {
+    background-color: #F7F9F9;
+    padding: 10px;
+    border-radius: 20px;
+    padding-top: 140px;
+    min-height: 36vh;
+
+}
+
+.formItens {
+padding: 10px;
+
+}
+
+.formItens-drop{
+    width: 98%;
+    padding: 10px;
+    margin-bottom: 14px;
+}

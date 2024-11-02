@@ -3,9 +3,9 @@ import { API_BASE_AGENDA_URL } from '../../config/apiConfig';
 import { getTokenFromLocalStorage } from '../../config/ArmazenaToken';
 import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
 import { PaginacaoItens } from '../../Interfaces/shared/PaginacaoItens';
-import { LojaItens } from '../../Interfaces/Loja/lojaItens';
+import { EnderecoItens } from '../../Interfaces/Endereco/enderecoItens';
 
-export const LojaService = async (paginacao: PaginacaoItens<LojaItens>): Promise<PaginacaoItens<LojaItens> | null> => {
+export const EnderecoPaginacaoService = async (paginacao: PaginacaoItens<EnderecoItens>): Promise<PaginacaoItens<EnderecoItens> | null> => {
     try {
         const token = getTokenFromLocalStorage();
         const config: AxiosRequestConfig = {
@@ -14,7 +14,7 @@ export const LojaService = async (paginacao: PaginacaoItens<LojaItens>): Promise
                 'Authorization': `Bearer ${token}`
             }
         };
-        const response = await axios.post(`${API_BASE_AGENDA_URL}Loja/BuscarPaginado`, paginacao, config);
+        const response = await axios.post(`${API_BASE_AGENDA_URL}Endereco/BuscarPaginado`, paginacao, config);
 
         return response.data.data;
     } catch (error) {
