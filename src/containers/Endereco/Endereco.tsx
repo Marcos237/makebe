@@ -37,14 +37,33 @@ const Endereco: React.FC = () => {
     const [modalOpen, setModalOpen] = useState<ModalItem>();
     const [persistirItens, setPersistirItems] = useState<PersistirItens<LojaItens>>();
 
-    const handleModalDesativarEndereco = async (id: number) => {
+    const fetchEnderecoData = useCallback(async (page: number = 1) => {
+        const paginacao: PaginacaoItens<EnderecoItens> = {
+            quantidadePagina: resultadosBusca?.quantidadePagina || 6,
+            paginaAtual: page,
+            totalPaginas: resultadosBusca?.totalPaginas || 1,
+            total: resultadosBusca?.total || 0,
+            objetoPesquisa: resultadosBusca?.objetoPesquisa || undefined,
+            objetos: resultadosBusca?.objetos ?? []
+        };
+
+        if (!resultadosBusca || page !== undefined) {
+            paginacao.objetos = []
+            const enderecoResponse = await EnderecoPaginacaoService(paginacao);
+            if (enderecoResponse) {
+                setResultadosBusca(enderecoResponse);
+            }
+        }
+    }, [resultadosBusca]);
+
+    const handleModalDesativarEndereco = useCallback(async (id: number) => {
         const lojaRetorno = await EnderecoExcluirService(id);
         if (lojaRetorno) {
 
             fetchEnderecoData();
             setModalOpen(undefined);
         }
-    }
+    }, [fetchEnderecoData]);
 
     const handleUpdateClick = useCallback(async (event: React.MouseEvent, endereco?: any) => {
         event.preventDefault();
@@ -54,9 +73,9 @@ const Endereco: React.FC = () => {
     }, []);
 
 
-    const handleModalClose = () => {
+    const handleModalClose = useCallback (async () => {
         setModalOpen(undefined);
-    }
+    }, []);
 
     const handleDeleteClick = useCallback(async (event: React.MouseEvent, endereco?: any) => {
         event.preventDefault();
@@ -129,24 +148,7 @@ const Endereco: React.FC = () => {
         }
     ]), [handleUpdateClick, handleDeleteClick]);
 
-    const fetchEnderecoData = useCallback(async (page: number = 1) => {
-        const paginacao: PaginacaoItens<EnderecoItens> = {
-            quantidadePagina: resultadosBusca?.quantidadePagina || 6,
-            paginaAtual: page,
-            totalPaginas: resultadosBusca?.totalPaginas || 1,
-            total: resultadosBusca?.total || 0,
-            objetoPesquisa: resultadosBusca?.objetoPesquisa || undefined,
-            objetos: resultadosBusca?.objetos ?? []
-        };
 
-        if (!resultadosBusca || page !== undefined) {
-            paginacao.objetos = []
-            const enderecoResponse = await EnderecoPaginacaoService(paginacao);
-            if (enderecoResponse) {
-                setResultadosBusca(enderecoResponse);
-            }
-        }
-    }, [resultadosBusca]);
 
     const handleResultadosBusca = (resultados: PaginacaoItens<EnderecoItens>) => {
         fetchResultadoPesquisa(resultados);
@@ -190,7 +192,7 @@ const Endereco: React.FC = () => {
             fetchEnderecoData();
             hasFetchedData.current = true;
         }
-    }, []);
+    });
     const gridViewItensMemo = useMemo(() => {
         if (resultadosBusca) {
             return {

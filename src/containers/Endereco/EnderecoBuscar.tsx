@@ -5,7 +5,7 @@ import Botao from '../../components/button';
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { SelectChangeEvent } from '@mui/material/Select';
-import { Grid, Box } from '@mui/material';
+import { Grid } from '@mui/material';
 import { BotaoItens } from '../../Interfaces/Botao/botao';
 import { SelectItens } from '../../Interfaces/shared/selectItens';
 import { PaginacaoItens } from "../../Interfaces/shared/PaginacaoItens";

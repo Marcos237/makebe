@@ -37,6 +37,25 @@ const Salao: React.FC = () => {
     const [modalOpen, setModalOpen] = useState<ModalItem>();
 
 
+    const fetchLojaData = useCallback(async (page: number = 1) => {
+        const paginacao: PaginacaoItens<LojaItens> = {
+            quantidadePagina: resultadosBusca?.quantidadePagina || 6,
+            paginaAtual: page,
+            totalPaginas: resultadosBusca?.totalPaginas || 1,
+            total: resultadosBusca?.total || 0,
+            objetoPesquisa: resultadosBusca?.objetoPesquisa || undefined,
+            objetos: resultadosBusca?.objetos ?? []
+        };
+
+        if (!resultadosBusca || page !== undefined) {
+            paginacao.objetos = []
+            const lojaResponse = await LojaPaginadoService(paginacao);
+            if (lojaResponse) {
+                setResultadosBusca(lojaResponse);
+            }
+        }
+    }, [resultadosBusca]);
+
     const handleUpdateClick = useCallback(async (event: React.MouseEvent, loja?: any) => {
         event.preventDefault();
         const lojaId = loja.id ?? 0;
@@ -44,18 +63,18 @@ const Salao: React.FC = () => {
         setLojaItem(retorno ?? {});
     }, []);
 
-    const handleModalClose = () => {
+    const handleModalClose = useCallback(() => {
         setModalOpen(undefined);
-    }
+    },[]);
 
-    const handleModalDesativarLoja = async (id: number) => {
+    const handleModalDesativarLoja = useCallback(async (id: number) => {
         const lojaRetorno = await LojaExcluirService(id);
         if (lojaRetorno) {
-            
             fetchLojaData();
             setModalOpen(undefined);
         }
-    }
+    }, [fetchLojaData]); 
+    
     const handleDeleteClick = useCallback(async (event: React.MouseEvent, loja?: any) => {
         event.preventDefault();
 
@@ -128,29 +147,9 @@ const Salao: React.FC = () => {
         }
     ]), [handleUpdateClick, handleDeleteClick]);
 
-
-    const fetchLojaData = useCallback(async (page: number = 1) => {
-        const paginacao: PaginacaoItens<LojaItens> = {
-            quantidadePagina: resultadosBusca?.quantidadePagina || 6,
-            paginaAtual: page,
-            totalPaginas: resultadosBusca?.totalPaginas || 1,
-            total: resultadosBusca?.total || 0,
-            objetoPesquisa: resultadosBusca?.objetoPesquisa || undefined,
-            objetos: resultadosBusca?.objetos ?? []
-        };
-
-        if (!resultadosBusca || page !== undefined) {
-            paginacao.objetos = []
-            const lojaResponse = await LojaPaginadoService(paginacao);
-            if (lojaResponse) {
-                setResultadosBusca(lojaResponse);
-            }
-        }
-    }, [resultadosBusca]);
-
     const handlePageChange = useCallback((event: React.ChangeEvent<unknown>, page: number) => {
         fetchLojaData(page);
-    }, [])
+    }, [fetchLojaData])
 
     const fetchTipoLojaData = useCallback(async () => {
         const tipoLojaResponse = await TipoLojaService();
@@ -165,7 +164,7 @@ const Salao: React.FC = () => {
         };
 
         setPersistirItems(persistirProps);
-    }, []);
+    }, [fetchLojaData]);
 
     const usuarioData = useCallback(async () => {
         const [sessao] = await Promise.all([UsuarioLogadoService()]);
@@ -177,7 +176,6 @@ const Salao: React.FC = () => {
     }, []);
 
     const hasFetchedData = useRef(false);
-
     useEffect(() => {
         if (!hasFetchedData.current) {
             fetchTipoLojaData();
@@ -185,7 +183,8 @@ const Salao: React.FC = () => {
             fetchLojaData();
             hasFetchedData.current = true;
         }
-    }, []);
+    }, [fetchLojaData, fetchTipoLojaData, usuarioData]); 
+    
     const gridViewItensMemo = useMemo(() => {
         if (resultadosBusca) {
             return {

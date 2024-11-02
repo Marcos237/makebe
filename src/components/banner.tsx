@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
-import { Box, Button, Menu, MenuItem, Fade } from '@mui/material';
+import { Box, Button, Menu, MenuItem } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 import { URL_IMAGENS } from '../config/apiConfig';
 import { Link } from 'react-router-dom';

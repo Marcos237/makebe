@@ -111,7 +111,7 @@ const EnderecoPersistir: React.FC<{ persistirProps: PersistirItens<EnderecoItens
             setEstado('');
             setCidade('');
         }
-    }, [BuscarDadosCorreios, setLogradouro, setEstado, setCidade, setCep]);
+    }, [setLogradouro, setEstado, setCidade, setCep]);
 
     const handleFormKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
 
