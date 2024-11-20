@@ -6,6 +6,7 @@ import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
 import { UsuarioPerilItens } from '../../Interfaces/Usuario/UsuarioPerilItens';
 
 export const loginUser = async (usuario: UsuarioLoginItens): Promise<UsuarioPerilItens | null> => {
+    let erroNotifications: Array<{ Key: string; Message: string; IsValidate: boolean }> = [];
     try {
         const config: AxiosRequestConfig = {
             headers: {
@@ -36,7 +37,7 @@ export const loginUser = async (usuario: UsuarioLoginItens): Promise<UsuarioPeri
         if (!axios.isAxiosError(error)) {
             return usuarioPerfilError;
         }
-        const erroNotifications = JSON.parse(axiosError?.response?.request.response) as Array<{ Key: string; Message: string; IsValidate: boolean }>;
+        erroNotifications = JSON.parse(axiosError?.response?.request.response) as Array<{ Key: string; Message: string; IsValidate: boolean }>;
         if (Array.isArray(erroNotifications)) {
             erroNotifications.forEach(erroNotification => {
                 notifications.push({
