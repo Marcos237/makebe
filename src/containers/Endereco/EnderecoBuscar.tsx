@@ -91,9 +91,9 @@ const EnderecoBuscar: React.FC<{ selectItens: SelectItens[], onResultadosBusca: 
                         <h4>Buscar</h4>
                     </div>
 
-                    <Grid container spacing={2}>
-                        <Grid item md={6} xs={12}>
-                            <div className="formItensBusca">
+                    <Grid container spacing={2} className="formItensBusca ">
+                        <Grid item md={6} xs={11}>
+                            <div className="formItens-drop formItemMenor">
                                 <Dropdown
                                     dropProps={{
                                         name: "Loja",
@@ -106,8 +106,8 @@ const EnderecoBuscar: React.FC<{ selectItens: SelectItens[], onResultadosBusca: 
                             </div>
                         </Grid>
 
-                        <Grid item md={6} xs={12} className='gridBuscarDireitoEndereco'>
-                            <div className="formItensBusca">
+                        <Grid item md={6} xs={11} className='gridBuscarDireitoEndereco'>
+                            <div className="formItens formItemMenor">
                                 <CampoTexto
                                     textBoxProps={{
                                         name: "Logradouro",

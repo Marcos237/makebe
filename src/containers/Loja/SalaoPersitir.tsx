@@ -37,7 +37,7 @@ const SalaoPersistir: React.FC<{ persistirProps: PersistirItens<LojaItens> }> = 
         setEmail(persistirProps.item.email ?? '');
         setTelefone(persistirProps.item.telefone ?? '');
     }, [persistirProps]);
-    
+
     const prevItemRef = useRef(persistirProps.item);
     useEffect(() => {
         const prevItem = prevItemRef.current;
@@ -131,103 +131,106 @@ const SalaoPersistir: React.FC<{ persistirProps: PersistirItens<LojaItens> }> = 
         <div className='messageTextLoja'>
             <Mensagem mensagemProps={messageProps ?? {}} />
         </div>
-
-        <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown}>
-            <Grid container spacing={2} className="gridlojaTab">
-                <Grid item md={6} xs={12} className='gridEsquerdoLoja'>
-                    <div className='conteudoEsquerdoLoja'>
-                        <div className='camposEsquerdoLoja'>
-                            <div className="formItens">
-                                <CampoTexto
-                                    textBoxProps={{
-                                        name: "Razão Social",
-                                        tooltip: "digite a razão social",
-                                        label: "razão social*",
-                                        value: razaoSocial,
-                                        type: 'text',
-                                        maxLength : 250,
-                                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setRazaoSocial(e.target.value)
-                                    }}
-                                />
-                            </div>
-                            <div className="formItens">
-                                <CampoTexto
-                                    textBoxProps={{
-                                        name: "CNPJ",
-                                        tooltip: "digite seu cnpj",
-                                        label: "cnpj*",
-                                        value: cnpj,
-                                        type: 'text',
-                                        mask: cnpjMaskConst,
-                                        readonly: false,
-                                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCnpj(e.target.value)
-
-                                    }}
-                                />
-                            </div>
-                            <div className="formItens">
-                                <CampoTexto
-                                    textBoxProps={{
-                                        name: "Telefone",
-                                        tooltip: "digite seu telefone",
-                                        label: "telefone*",
-                                        value: telefone,
-                                        mask: foneMaskConst(telefone),
-                                        type: 'text',
-                                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setTelefone(e.target.value)
-                                    }}
-                                />
-                            </div>
-                        </div>
+        <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} className="conteudo">
+            <Grid item md={6} xs={10} className='gridEsquerdo'>
+                <div className='conteudoEsquerdoLoja conteudoMenorEsquerdo'>
+                    <div className="formItens">
+                        <CampoTexto
+                            textBoxProps={{
+                                name: "Razão Social",
+                                tooltip: "digite a razão social",
+                                label: "razão social*",
+                                value: razaoSocial,
+                                type: 'text',
+                                maxLength: 250,
+                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setRazaoSocial(e.target.value)
+                            }}
+                        />
                     </div>
-                </Grid>
-                <Grid item md={6} xs={12} className='gridDireitoLoja'>
-                    <div className='conteudoDireitoLoja'>
-                        <div className='camposDireitoLoja'>
-                            <div className="formItens">
-                                <CampoTexto
-                                    textBoxProps={{
-                                        name: "Email",
-                                        tooltip: "digite seu e-mail",
-                                        label: "email*",
-                                        value: email,
-                                        type: 'text',
-                                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)
-                                    }}
-                                />
-                            </div>
+                    <div className="formItens">
+                        <CampoTexto
+                            textBoxProps={{
+                                name: "CNPJ",
+                                tooltip: "digite seu cnpj",
+                                label: "cnpj*",
+                                value: cnpj,
+                                type: 'text',
+                                mask: cnpjMaskConst,
+                                readonly: false,
+                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCnpj(e.target.value)
 
-                            <div className="formItens-drop">
-                                <Dropdown
-                                    dropProps={{
-                                        name: "TipoLoja",
-                                        itens: persistirProps.selectItems,
-                                        label: "Tipo de Loja*",
-                                        selectedId: tipoLojaId?.toString() || '',
-                                        onChange: handleDropdownChange,
-                                    }}
-                                />
-                            </div>
-
-                            <div className='formItens'>
-                                <div className='botao'>
-                                    <Botao botaoProps={botaoProps} />
-                                </div>
-                            </div>
-                        </div>
+                            }}
+                        />
                     </div>
-
-                </Grid>
+                    <div className="formItens">
+                        <CampoTexto
+                            textBoxProps={{
+                                name: "Telefone",
+                                tooltip: "digite seu telefone",
+                                label: "telefone*",
+                                value: telefone,
+                                mask: foneMaskConst(telefone),
+                                type: 'text',
+                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setTelefone(e.target.value)
+                            }}
+                        />
+                    </div>
+                </div>
             </Grid>
-            <div className='camposInvisiveis'>
-                <CampoTexto
-                    textBoxProps={{
-                        name: "id",
-                        value: id?.toString(),
-                        type: 'hidden',
-                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setId(Number(e.target.value))
-                    }} />
-            </div>
+            <div className="separador"></div>
+            <Grid item md={6} xs={10} className='gridDireito'>
+
+                <div className='conteudoDireitoLoja conteudoMenorDireito'>
+                    <div className="formItens">
+                        <CampoTexto
+                            textBoxProps={{
+                                name: "Email",
+                                tooltip: "digite seu e-mail",
+                                label: "email*",
+                                value: email,
+                                type: 'text',
+                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)
+                            }}
+                        />
+                    </div>
+
+                    <div className="formItens-drop">
+                        <Dropdown
+                            dropProps={{
+                                name: "TipoLoja",
+                                itens: persistirProps.selectItems,
+                                label: "Tipo de Loja*",
+                                selectedId: tipoLojaId?.toString() || '',
+                                onChange: handleDropdownChange,
+                            }}
+                        />
+                    </div>
+
+                    <div className='formItens'>
+                        <div className='botao'>
+                            <Botao botaoProps={botaoProps} />
+                        </div>
+                    </div>
+                </div>
+                <div className='camposInvisiveis'>
+                    <CampoTexto
+                        textBoxProps={{
+                            name: "id",
+                            value: id?.toString(),
+                            type: 'hidden',
+                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setId(Number(e.target.value))
+                        }} />
+                </div>
+                <div className='camposInvisiveis'>
+                    <CampoTexto
+                        textBoxProps={{
+                            name: "id",
+                            value: id?.toString(),
+                            type: 'hidden',
+                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setId(Number(e.target.value))
+                        }} />
+                </div>
+            </Grid >
         </form>
     </>
 }

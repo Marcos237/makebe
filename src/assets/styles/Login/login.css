@@ -1,48 +1,20 @@
-.gridContainer {
-    margin-top: 10px;
-    width: 100%;
-    height: 100%;
-    display: flex;
-
-}
-
-.gridDireito,
-.gridEsquerdo {
-    width: 100%;
-    padding: 4px;
-}
-
-.conteudoEsquedoLogin {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    height: 100%;
-}
-
-.itensEsquedoLogin {
-    text-align: center;
-    margin-bottom: 300px;
-}
-
-.itensEsquedoLogin h2,
-.itensEsquedoLogin p {
-    margin-top: 0;
-}
-
-
-.conteudoEsquedoLogin,
+.conteudoEsquerdoLogin,
 .conteudoDireitoLogin {
-    background-color: #F7F9F9;
-    height: 95% !important;
-    align-items: center;
-    align-content: center;
-    padding: 18px;
+    height: 100% !important;
+    padding: 100px;
     border-radius: 20px;
 }
 
+
+.itensEsquedoLogin h2,
+.itensEsquedoLogin p {
+    margin-top: 10px;
+    padding-left: 120px;
+}
+
+
 .links {
     margin-top: 10px;
-    display: flex;
     justify-content: space-between;
 }
 
@@ -51,14 +23,14 @@
 .esqueci-link,
 .cadastrar-link {
     text-decoration: none;
-    color: #5DADE2;
+    color: #F0FFFF;
     font-size: 14px;
     padding: 10px;
 }
 
 .esqueci-link:hover,
 .cadastrar-link:hover {
-    color: #34495E
+    color: #F0FFFF;
 }
 
 .botao {
@@ -81,19 +53,8 @@
     margin-top: 40px;
 }
 
-.messageError .texto {
-    margin-top: 10px;
-    display: flex !important;
-    justify-content: center !important;
-    text-align: center !important;
-}
-
 .recaptcha {
-    padding: 10px;
+    padding: 20px;
 }
 
-@media (max-width: 900px) {
-    .gridEsquerdo {
-        display: none;
-    }
-}
+

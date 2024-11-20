@@ -5,11 +5,10 @@ import Footer from '../../components/footer';
 import Banner from '../../components/banner';
 import SalaoPersistir from '../Loja/SalaoPersitir';
 import GridViewLista from '../../components/gridview';
-import ModalCuston from "../../components/modal";
-import Botao from "../../components/button";
 import SalaoBusca from "./SalaoBusca";
+import ModalGeneric from "../../componentsGenerics/modalGeneric";
 import { ModalItem } from "../../Interfaces/shared/modalItem";
-import {  modalTexto } from "../../constants/Loja/lojaConstant";
+import { modalTexto } from "../../constants/Loja/lojaConstant";
 import { PaginacaoItens } from '../../Interfaces/shared/PaginacaoItens';
 import { UsuarioLogadoService } from '../../services/Perfil/usuarioLogadoService';
 import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
@@ -23,7 +22,6 @@ import { LojaBuscaPorIdService } from "../../services/Loja/lojaBuscaPorIdService
 import { propertyLabels } from '../../constants/Loja/lojaConstant';
 import { GrigViewItens } from "../../Interfaces/shared/gridviewItens";
 import { PersistirItens } from "../../Interfaces/shared/persistirItens";
-import { BotaoItens } from "../../Interfaces/Botao/botao";
 import { LojaExcluirService } from '../../services/Loja/lojaExcluirService';
 
 import '../../assets/styles/Loja/loja.css';
@@ -61,11 +59,12 @@ const Salao: React.FC = () => {
         const lojaId = loja.id ?? 0;
         const retorno = await LojaBuscaPorIdService(lojaId);
         setLojaItem(retorno ?? {});
+        handleScrollToTop();
     }, []);
 
-    const handleModalClose = useCallback(() => {
+    useCallback(() => {
         setModalOpen(undefined);
-    },[]);
+    }, []);
 
     const handleModalDesativarLoja = useCallback(async (id: number) => {
         const lojaRetorno = await LojaExcluirService(id);
@@ -73,62 +72,18 @@ const Salao: React.FC = () => {
             fetchLojaData();
             setModalOpen(undefined);
         }
-    }, [fetchLojaData]); 
-    
+    }, [fetchLojaData]);
+
     const handleDeleteClick = useCallback(async (event: React.MouseEvent, loja?: any) => {
         event.preventDefault();
-
-
-        const modalButtonConfirmar: BotaoItens = {
-            name: 'Confirmar',
-            tooltip: 'Confirmar',
-            label: 'Confirmar',
-            width: '140px',
-            color: 'primary',
-            isLoading: false,
-            onIconClick: () => handleModalDesativarLoja(loja.id)
-        }
-
-        const modalButtonCancelar: BotaoItens = {
-            name: 'Cancelar',
-            tooltip: 'Cancelar',
-            label: 'Cancelar',
-            width: '140px',
-            color: 'error',
-            isLoading: false,
-            onIconClick: handleModalClose
-        }
-
-        const modalActions = [
-            <div className='botao'>
-                <Botao botaoProps={modalButtonConfirmar} />
-            </div>,
-            <div className='botao'>
-                <Botao botaoProps={modalButtonCancelar} />
-            </div>,
-        ];
-
         const modalItens: ModalItem = {
             open: true,
             title: loja.razaoSocial,
             texto: modalTexto,
-            style: {
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: 400,
-                bgcolor: 'black',
-                color: "white",
-                boxShadow: 24,
-                pt: 2,
-                px: 4,
-                pb: 3,
-            },
-            actions: modalActions,
+            onClose : () => handleModalDesativarLoja(loja.id)
         }
         setModalOpen(modalItens)
-    }, [handleModalDesativarLoja, handleModalClose]);
+    }, [handleModalDesativarLoja]);
 
     const actionButtons = useMemo(() => ([
         {
@@ -183,8 +138,8 @@ const Salao: React.FC = () => {
             fetchLojaData();
             hasFetchedData.current = true;
         }
-    }, [fetchLojaData, fetchTipoLojaData, usuarioData]); 
-    
+    }, [fetchLojaData, fetchTipoLojaData, usuarioData]);
+
     const gridViewItensMemo = useMemo(() => {
         if (resultadosBusca) {
             return {
@@ -196,7 +151,7 @@ const Salao: React.FC = () => {
         }
         return undefined;
     }, [resultadosBusca, actionButtons, handlePageChange]);
-    
+
     useEffect(() => {
         if (gridViewItensMemo) {
             setGridView(gridViewItensMemo);
@@ -207,36 +162,38 @@ const Salao: React.FC = () => {
         fetchResultadoPesquisa(resultados);
     };
 
-
+    const handleScrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    };
 
     return (
         <>
             <div className='banner'>
                 <Banner usuarioLogado={useUsuarioLogado} />
             </div>
-
-            <SalaoPersistir persistirProps={{ ...persistirItens, item: lojaItem }} />
-            <div className="paginaLoja">
-                <Grid container spacing={2} className="gridContainerLoja">
-
+            <Grid container className="ContainerGrid" direction="column">
+                <div className="conteudo-inLine">
+                    <div className="persistir-loja">
+                        <SalaoPersistir persistirProps={{ ...persistirItens, item: lojaItem }} />
+                    </div>
                     <div className="busca-loja">
-                        <SalaoBusca selectItens={persistirItens?.selectItems ?? []}
-                            onResultadosBusca={handleResultadosBusca} />
+                        <SalaoBusca
+                            selectItens={persistirItens?.selectItems ?? []}
+                            onResultadosBusca={handleResultadosBusca}
+                        />
                     </div>
+                    <div className="lista-loja">
+                        <GridViewLista gridviewProps={gridViewItens ?? {}} />
+                    </div>
+                </div>
 
-                    <div className="gridListaLoja">
-                        <Grid container spacing={2}>
-                            <div className="lista-loja">
-                                <div className="formItens">
-                                    <GridViewLista gridviewProps={gridViewItens ?? {}} />
-                                </div>
-                            </div>
-                        </Grid>
-                    </div>
-                </Grid>
-            </div >
+            </Grid>
+
             <div className="modal">
-                {modalOpen && <ModalCuston modalProps={modalOpen} />}
+                {modalOpen && <ModalGeneric modalProps={modalOpen} />}
             </div>
             <div>
                 <Footer />

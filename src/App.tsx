@@ -11,6 +11,7 @@ import AlteraSenha from './containers/Login/alterasenha'
 import RecuperaSenha from './containers/Perfil/RecuperaSenha';
 import Salao from './containers/Loja/Salao';
 import Endereco from './containers/Endereco/Endereco';
+import LojaPortifolio from './containers/LojaPortifolio/LojaPortifolio';
 
 const App: React.FC = () => {
   return (
@@ -27,6 +28,7 @@ const App: React.FC = () => {
         <Route path="/recuperaSenha/:chave" element={<RecuperaSenha />} />
         <Route path="/loja" element={<Salao />} />
         <Route path="/enderecoloja" element={<Endereco />} />
+        <Route path="/PortifolioLoja" element={<LojaPortifolio />} />
       </Routes>
     </div>
   );

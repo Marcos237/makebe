@@ -8,7 +8,8 @@ import Banner from '../../components/banner';
 import Footer from '../../components/footer';
 import { AtivaPerfilService } from '../../services/Perfil/ativarPerfilService';
 import RecaptchaComponent from '../../components/recaptcha';
-import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig'
+import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig';
+import { Grid } from '@mui/material';
 import '../../assets/styles/Perfil/autenticacao.css'
 
 
@@ -61,26 +62,30 @@ const Autenticacao: React.FC = () => {
             <div className='banner'>
                 <Banner />
             </div>
-            <div className='conteudoAutenticacao'>
-                <div className='itemAutenticacao'>
-                    <div className='textoAutenticacao'>
 
-                        {isVisibleLogin && (
-                            <p>{AtivarUsuario} <a href='/login'>Clique aqui para fazer o login</a></p>
-                        )}
-                        {isVisibleReevia && (
-                            <p>{ReenviatEmail} <a href='/ReenviaAutenticacao'>Clique aqui</a></p>
-                        )}
 
-                        <div className='recaptcha'>
-                            <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
-                        </div>
-                        <div className='botaoAutenticacao'>
-                            <Botao botaoProps={botaoProps}></Botao>
+            <Grid container className="ContainerGrid">
+                <div className='conteudo'>
+                    <div className='itemAutenticacao'>
+                        <div className='textoAutenticacao'>
+
+                            {isVisibleLogin && (
+                                <p>{AtivarUsuario} <a href='/login'>Clique aqui para fazer o login</a></p>
+                            )}
+                            {isVisibleReevia && (
+                                <p>{ReenviatEmail} <a href='/ReenviaAutenticacao'>Clique aqui</a></p>
+                            )}
+
+                            <div className='recaptcha'>
+                                <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
+                            </div>
+                            <div className='botaoAutenticacao'>
+                                <Botao botaoProps={botaoProps}></Botao>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </Grid>
 
             <div>
                 <Footer />

@@ -14,7 +14,7 @@ import Botao from '../../components/button';
 import RecaptchaComponent from '../../components/recaptcha';
 import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig'
 import { RetornarMessageService } from '../../services/Perfil/retornarMessageService';
-import {UsuarioLogadoService} from '../../services/Perfil/usuarioLogadoService'
+import { UsuarioLogadoService } from '../../services/Perfil/usuarioLogadoService'
 import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
 import { RecuperaSenhaItens } from '../../Interfaces/Usuario/RecuperaSenhaItens';
 
@@ -36,9 +36,9 @@ const RecuperaSenha: React.FC = () => {
         const sessao = await UsuarioLogadoService();
         setUsuarioLogado(sessao);
     };
-     useEffect(() => {
+    useEffect(() => {
         fetchData();
-      }, []);
+    }, []);
 
     const { chave } = useParams();
     const handleSubmit = async (event: React.FormEvent) => {
@@ -53,8 +53,8 @@ const RecuperaSenha: React.FC = () => {
         const retorno = await RecuperaSenhaService(recuperaItens);
         if (!retorno?.notifications || retorno?.notifications?.length === 0) {
             navigate('/login', { state: { retorno } });
-        }else{
-            const messageRetorno = await RetornarMessageService(false,  false, retorno?.notifications ?? [])
+        } else {
+            const messageRetorno = await RetornarMessageService(false, false, retorno?.notifications ?? [])
             setMessageItens(messageRetorno);
             enviarSatusMessage();
             setIsLoading(false);
@@ -105,64 +105,66 @@ const RecuperaSenha: React.FC = () => {
 
             <Box>
                 <form>
-                    <Grid container spacing={2} className="gridContainerRecupera">
 
-                        <div className="formItens">
-                            <div className='messageText'>
-                                <Mensagem mensagemProps={messageProps ?? {}} />
+                    <Grid container className="ContainerGrid">
+                        <div className='conteudo'>
+                            <div className='messageError'>
+                                <Mensagem mensagemProps={messageProps}></Mensagem>
                             </div>
-                        </div>
-                        <Grid item md={6} xs={12} className='gridEsquerdoRecupera'>
-                            <div className='conteudoEsquedoRecupera'>
-                                <div className='itensEsquedoRecupera'>
+                            <Grid item md={6} xs={12} className='gridEsquerdo hiddenTelaPequena'>
+                                <div className='conteudoEsquedoRecupera'>
                                     <h2>Por favor!</h2>
                                     <p>{RecuperaText}</p>
+
                                 </div>
-                            </div>
-                        </Grid>
-
-                        <Grid item md={6} xs={12} className='gridDireitoRecupera'>
-                            <div className='conteudoDireitoRecupera'>
-                                <form>
-                                    <div className="formItensRecupera">
-                                        <CampoTexto
-                                            textBoxProps={{
-                                                name: "Senha",
-                                                tooltip: "digite sua senha",
-                                                label: "Senha",
-                                                type: "password",
-                                                value: senha,
-                                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setSenha(e.target.value)
-                                            }}
-                                        />
-                                    </div>
-                                    <div className="formItensRecupera">
-                                        <CampoTexto
-                                            textBoxProps={{
-                                                name: "ConfirmaSenha",
-                                                tooltip: "Confirme sua Senha",
-                                                label: "Confirma Senha*",
-                                                value: confirmacaoSenha,
-                                                type: 'password',
-                                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setConfirmacaoSenha(e.target.value)
-                                            }}
-                                        />
-                                    </div>
-
-                                    <div className='recaptcha'>
-                                        <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
-                                    </div>
-
-                                    <div className='formItens'>
-                                        <div className='botao'>
-                                            <Botao botaoProps={botaoProps} />
+                            </Grid>
+                            <div className="separador"></div>
+                            <Grid item md={6} xs={12} className='gridDireito'>
+                                <div className='conteudoDireitoRecupera'>
+                                    <form>
+                                        <div className="formItensRecupera">
+                                            <CampoTexto
+                                                textBoxProps={{
+                                                    name: "Senha",
+                                                    tooltip: "digite sua senha",
+                                                    label: "Senha",
+                                                    type: "password",
+                                                    value: senha,
+                                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setSenha(e.target.value)
+                                                }}
+                                            />
                                         </div>
-                                    </div>
+                                        <div className="formItensRecupera">
+                                            <CampoTexto
+                                                textBoxProps={{
+                                                    name: "ConfirmaSenha",
+                                                    tooltip: "Confirme sua Senha",
+                                                    label: "Confirma Senha*",
+                                                    value: confirmacaoSenha,
+                                                    type: 'password',
+                                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setConfirmacaoSenha(e.target.value)
+                                                }}
+                                            />
+                                        </div>
 
-                                </form>
-                            </div>
-                        </Grid>
+                                        <div className='recaptcha'>
+                                            <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
+                                        </div>
+
+                                        <div className='formItens'>
+                                            <div className='botao'>
+                                                <Botao botaoProps={botaoProps} />
+                                            </div>
+                                        </div>
+
+                                    </form>
+                                </div>
+                            </Grid>
+                        </div>
                     </Grid>
+
+
+
                 </form>
 
             </Box>

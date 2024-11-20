@@ -2,9 +2,16 @@ import React from 'react';
 import IconButton from '@mui/material/IconButton';
 import { GrigViewItens } from '../Interfaces/shared/gridviewItens';
 import Pagination from '@mui/material/Pagination';
+import { ThemeProvider, createTheme } from '@mui/material/styles'; 
 import '../assets/styles/shared/gridview.css';
 
 const GridViewLista: React.FC<{ gridviewProps: GrigViewItens<any> }> = ({ gridviewProps }) => {
+
+    const darkTheme = createTheme({
+        palette: {
+            mode: 'dark', 
+        },
+    });
 
     if (!Array.isArray(gridviewProps.paginacao?.objetos) || gridviewProps.paginacao?.objetos?.length === 0) {
         return (
@@ -17,7 +24,7 @@ const GridViewLista: React.FC<{ gridviewProps: GrigViewItens<any> }> = ({ gridvi
     }
 
     return (
-        <>
+        <ThemeProvider theme={darkTheme}>
             <div className='grid-container'>
                 <div className="grid-header">
                     {gridviewProps?.paginacao?.objetos?.length ? (
@@ -40,7 +47,7 @@ const GridViewLista: React.FC<{ gridviewProps: GrigViewItens<any> }> = ({ gridvi
                                 style={{ display: gridviewProps?.propertyLabels?.[key] ? 'block' : 'none' }}
                             >
                                 <div className="grid-text">
-                                    {item[key] ? item[key] : 'Não informado'}
+                                    {item[key] ? item[key] : ''}
                                 </div>
                             </div>
                         ))}
@@ -64,7 +71,7 @@ const GridViewLista: React.FC<{ gridviewProps: GrigViewItens<any> }> = ({ gridvi
                         count={gridviewProps.paginacao?.totalPaginas}
                         page={gridviewProps.paginacao?.paginaAtual}
                         onChange={gridviewProps.onPageChange}
-                        color="primary"
+                        color="primary" 
                         showFirstButton
                         showLastButton
                     />
@@ -73,7 +80,7 @@ const GridViewLista: React.FC<{ gridviewProps: GrigViewItens<any> }> = ({ gridvi
                     <h4>total: {gridviewProps?.paginacao?.total}</h4>
                 </div>
             </div>
-        </>
+        </ThemeProvider> 
     );
 };
 

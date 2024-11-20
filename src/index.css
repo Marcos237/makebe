@@ -2,13 +2,140 @@ body {
     margin: 0;
     padding: 0;
     font-family: "Josefin Sans", sans-serif;
-    background-color: #f4f4f4;
+    background: #0B0B0B;
     display: flex;
     flex-direction: column;
     min-height: 100%;
-  }
-  
-  #root {
+    color: #F5F5F5 !important;
+}
+
+#root {
     flex: 1;
-  }
-  
+}
+
+.container {
+    overflow: auto;
+}
+
+.ContainerGrid {
+    height: 100%;
+
+}
+
+.conteudo {
+    width: 100%;
+    min-height: 20vh;
+    margin-top: 10vh;
+    max-width: 99% !important;
+    display: flex;
+    justify-content: start;
+    height: 100% !important;
+}
+
+.conteudo-inLine {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.gridEsquerdo,
+.gridDireito {
+    height: 99% !important;
+    border-radius: 20px;
+    min-height: 36vh;
+    width: 100%;
+    margin-top: 20vh;
+
+}
+
+.separador {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 2px;
+    background-color: #A9A9A9;
+    height: 30vh;
+    align-content: center;
+
+}
+
+.formItensHorizontal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.formItens {
+    padding: 10px;
+
+}
+
+.formItens-drop {
+    width: 98%;
+    padding: 10px;
+    margin-bottom: 14px;
+}
+
+.formItens-imagem {
+    padding: 20px;
+
+}
+
+.formItens-imagem {
+    display: flex;
+    justify-content: center;
+}
+
+.messageError .texto {
+    margin-top: 10px;
+    display: flex !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+.formItemMenor {
+    width: 80%;
+    padding: 2px !important;
+}
+
+@media (max-width: 900px) {
+    .hiddenTelaPequena {
+        display: none;
+    }
+
+    .separador {
+        display: none;
+    }
+
+    .conteudo {
+        display: block;
+        height: auto;
+    }
+
+    .gridEsquerdo,
+    .gridDireito {
+        height: auto !important;
+        margin-top: 0 !important;
+    }
+
+
+    .conteudoMenorDireito,
+    .conteudoMenorEsquerdo {
+        height: auto !important;
+    }
+
+    .conteudoMenorDireito {
+        margin-top: -12vh !important;
+
+    }
+
+    .formItens-drop {
+        width: 96%;
+    }
+
+    .formItemMenor {
+        width: 100%;
+        padding: 2px !important;
+    }
+}

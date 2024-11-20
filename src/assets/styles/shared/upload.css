@@ -13,6 +13,11 @@
     font-size: 40px;
 }
 
+.tituloUpload {
+    padding: 20px;
+    display: flex;
+}
+
 
 @media (max-width: 900px) {
 

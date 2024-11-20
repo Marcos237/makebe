@@ -1,14 +1,9 @@
-.conteudoReenvia {
-    height: 100%; 
-    width: 100%;
-}
 
 .itemReenvia {
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 10px;
-    background-color: #F7F9F9;
     height: 99%;
     width: 99%;
     margin-left: 10px;

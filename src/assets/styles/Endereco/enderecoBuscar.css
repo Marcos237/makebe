@@ -1,20 +1,6 @@
-.enderecoBuscarConteudo{
-    width: 100%;
-    margin-left: 10px;
-}
 .titulobusca {
-margin-left: 20px;
+    margin-left: 20px;
 }
-
-.gridBuscarEndereco {
-    background-color: #F7F9F9;
-    border-radius: 20px;
-    max-width: 98%;
-    min-height: 20vh;
-    border-radius: 20px;
-    margin-top: -18px;
-}
-
 .formItensBusca {
-    padding: 20px;
+    padding: 10px;
 }

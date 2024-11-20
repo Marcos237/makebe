@@ -1,8 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
-import EditRoundedIcon from '@mui/icons-material/EditRounded';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { Grid } from '@mui/material';
-import { BotaoItens } from '../../Interfaces/Botao/botao';
 import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
 import { UsuarioLogadoService } from '../../services/Perfil/usuarioLogadoService';
 import { GrigViewItens } from "../../Interfaces/shared/gridviewItens";
@@ -17,13 +14,15 @@ import { EnderecoExcluirService } from '../../services/Endereco/enderecoExcluirS
 import { LojaBuscarTodosService } from '../../services/Loja/lojaBuscarTodosService';
 import { EnderecoPaginacaoService } from "../../services/Endereco/enderecoPaginacaoService";
 import { EnderecoBuscarPorIdService } from "../../services/Endereco/enderecoBuscarPorIdService";
+import ModalGeneric from "../../componentsGenerics/modalGeneric";
+import EditRoundedIcon from '@mui/icons-material/EditRounded';
+import DeleteIcon from '@mui/icons-material/Delete';
 import EnderecoPersistir from "./EnderecoPersistir";
 import GridViewLista from '../../components/gridview';
-import Botao from '../../components/button';
 import EnderecoBuscar from "./EnderecoBuscar";
 import Banner from "../../components/banner";
 import Footer from "../../components/footer";
-import ModalCuston from "../../components/modal";
+
 
 
 import '../../assets/styles/Endereco/endereco.css'
@@ -70,66 +69,21 @@ const Endereco: React.FC = () => {
         const enderecoId = endereco.id ?? 0;
         const retorno = await EnderecoBuscarPorIdService(enderecoId);
         setEnderecoItem(retorno ?? {});
-    }, []);
-
-
-    const handleModalClose = useCallback (async () => {
-        setModalOpen(undefined);
+        handleScrollToTop();
     }, []);
 
     const handleDeleteClick = useCallback(async (event: React.MouseEvent, endereco?: any) => {
         event.preventDefault();
 
-        const modalButtonConfirmar: BotaoItens = {
-            name: 'Confirmar',
-            tooltip: 'Confirmar',
-            label: 'Confirmar',
-            width: '140px',
-            color: 'primary',
-            isLoading: false,
-            onIconClick: () => handleModalDesativarEndereco(endereco?.id)
-        };
-
-        const modalButtonCancelar: BotaoItens = {
-            name: 'Cancelar',
-            tooltip: 'Cancelar',
-            label: 'Cancelar',
-            width: '140px',
-            color: 'error',
-            isLoading: false,
-            onIconClick: handleModalClose
-        };
-
-        const modalActions = [
-            <div className='botao'>
-                <Botao botaoProps={modalButtonConfirmar} />
-            </div>,
-            <div className='botao'>
-                <Botao botaoProps={modalButtonCancelar} />
-            </div>,
-        ];
-
-        const modalItens: ModalItem = {
-            open: true,
+        const modalprops: ModalItem =    {
+            open: true, 
+            onClose: () => handleModalDesativarEndereco(endereco.id),
             title: `${endereco.logradouro} - ${endereco?.numero}`,
             texto: modalTexto,
-            style: {
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: 400,
-                bgcolor: 'black',
-                color: "white",
-                boxShadow: 24,
-                pt: 2,
-                px: 4,
-                pb: 3,
-            },
-            actions: modalActions,
-        }
-        setModalOpen(modalItens)
-    }, [handleModalDesativarEndereco, handleModalClose]);
+        };   
+        setModalOpen(modalprops)
+
+    }, [handleModalDesativarEndereco]);
 
     const actionButtons = useMemo(() => ([
         {
@@ -143,7 +97,7 @@ const Endereco: React.FC = () => {
             id: 2,
             label: 'Delete',
             icon: <DeleteIcon />,
-            href: '/delete',
+            href: '#',
             onClick: handleDeleteClick
         }
     ]), [handleUpdateClick, handleDeleteClick]);
@@ -204,13 +158,19 @@ const Endereco: React.FC = () => {
         }
         return undefined;
     }, [resultadosBusca, actionButtons, handlePageChange]);
-    
+
     useEffect(() => {
         if (gridViewItensMemo) {
             setGridView(gridViewItensMemo);
         }
     }, [gridViewItensMemo, fetchEnderecoData]);
 
+    const handleScrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    };
 
     return (
         <>
@@ -218,21 +178,23 @@ const Endereco: React.FC = () => {
                 <Banner usuarioLogado={useUsuarioLogado} />
             </div>
 
-            <EnderecoPersistir persistirProps={{ ...persistirItens, item: enderecoItem }} />
-            <EnderecoBuscar selectItens={persistirItens?.selectItems ?? []}
-                onResultadosBusca={handleResultadosBusca} />
-
-            <div className="gridEndereco">
-                <Grid container spacing={2}>
-                    <div className="lista-loja">
-                        <div className="formItens">
-                            <GridViewLista gridviewProps={gridViewItens ?? {}} />
-                        </div>
+            <Grid container className="ContainerGrid" direction="column">
+                <div className="conteudo-inLine">
+                    <div className="persistir-endereco">
+                        <EnderecoPersistir persistirProps={{ ...persistirItens, item: enderecoItem }} />
                     </div>
-                </Grid>
-            </div>
+                    <div className="busca-endereco">
+                        <EnderecoBuscar selectItens={persistirItens?.selectItems ?? []}
+                            onResultadosBusca={handleResultadosBusca} />
+
+                    </div>
+                    <div className="lista-endereco">
+                        <GridViewLista gridviewProps={gridViewItens ?? {}} />
+                    </div>
+                </div>
+            </Grid>
             <div className="modal">
-                {modalOpen && <ModalCuston modalProps={modalOpen} />}
+                {modalOpen && <ModalGeneric modalProps={modalOpen} />}
             </div>
             <div>
                 <Footer />

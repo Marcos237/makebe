@@ -9,12 +9,16 @@ import { FaTrash } from 'react-icons/fa';
 const Upload: React.FC<UploadItens> = ({ uploadProps, onUpload }) => {
     const [nomeImagem, setNomeImagem] = useState<string>('');
     const [urlImagem, setUrlImagem] = useState<string>('');
-
+    const [tituloImagem, setTituloImagem] = useState<string>('');
+    const [id , setId] = useState<string>('');
 
     useEffect(() => {
         if (uploadProps) {
+
             setNomeImagem(uploadProps?.nomeImagem ?? '');
-            setUrlImagem(uploadProps?.urlImagem ?? '')
+            setUrlImagem(uploadProps?.urlImagem ?? '');
+            setTituloImagem(uploadProps.tituloImagem ?? '')
+            setId(uploadProps.id ?? '')
         }
     }, [uploadProps]);
 
@@ -25,7 +29,7 @@ const Upload: React.FC<UploadItens> = ({ uploadProps, onUpload }) => {
             reader.onloadend = () => {
                 const base64String = reader.result as string;
                 if (onUpload) {
-                    onUpload(base64String ?? '', file.name ?? '');
+                    onUpload(base64String ?? '', file.name ?? '', tituloImagem, id ?? '');
                 }
             };
             reader.readAsDataURL(file);
@@ -36,26 +40,27 @@ const Upload: React.FC<UploadItens> = ({ uploadProps, onUpload }) => {
         setNomeImagem('');
         setUrlImagem('');
         if (onUpload) {
-            onUpload('', '');
+            onUpload("", "", tituloImagem, id);
         }
     };
 
     return <>
         <Stack direction="row" spacing={2} className='stack'>
-            <label htmlFor="avatar-upload">
+            <label htmlFor={id}>
                 <Avatar alt={nomeImagem ?? undefined} src={urlImagem ?? undefined} className='avatar' />
             </label>
-           <div className='icone-remove' onClick={handleIconClick}>
-                <Icone iconeProps={{ icone: <FaTrash />, dialogo: "Remover" }}  />
+            <div className='icone-remove' onClick={handleIconClick}>
+                <Icone iconeProps={{ icone: <FaTrash />, dialogo: "Remover" }} />
             </div>
             <input
-                id="avatar-upload"
+                id={id}
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
                 style={{ display: 'none' }}
             />
         </Stack>
+        <span className='tituloUpload'>{tituloImagem}</span>
     </>
 }
 

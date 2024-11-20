@@ -14,6 +14,7 @@ export const LojaBuscarTodosService = async (): Promise<Array<LojaItens> | null>
             }
         };
         const response = await axios.get(`${API_BASE_AGENDA_URL}Loja/BuscarTodos`, config);
+
         return response.data.datas;
     } catch (error) {
         const axiosError = error as AxiosError;
