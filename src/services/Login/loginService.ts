@@ -37,19 +37,18 @@ export const loginUser = async (usuario: UsuarioLoginItens): Promise<UsuarioPeri
         if (!axios.isAxiosError(error)) {
             return usuarioPerfilError;
         }
-        console.log(axiosError?.response?.request.response)
-        // erroNotifications = JSON.parse(axiosError?.response?.request.response) as Array<{ Key: string; Message: string; IsValidate: boolean }>;
-        // if (Array.isArray(erroNotifications)) {
-        //     erroNotifications.forEach(erroNotification => {
-        //         notifications.push({
-        //             notificationProps: {
-        //                 Key: erroNotification?.Key,
-        //                 Message: erroNotification?.Message,
-        //                 IsValidate: erroNotification?.IsValidate
-        //             }
-        //         });
-        //     });
-        // }
+        erroNotifications = JSON.parse(axiosError?.response?.request.response) as Array<{ Key: string; Message: string; IsValidate: boolean }>;
+        if (Array.isArray(erroNotifications)) {
+            erroNotifications.forEach(erroNotification => {
+                notifications.push({
+                    notificationProps: {
+                        Key: erroNotification?.Key,
+                        Message: erroNotification?.Message,
+                        IsValidate: erroNotification?.IsValidate
+                    }
+                });
+            });
+        }
         return usuarioPerfilError;
     }
 };
