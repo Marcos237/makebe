@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Grid } from '@mui/material';
 import { BotaoItens } from '../../Interfaces/Botao/botao';
 import { EsqueciSenhaItens } from '../../Interfaces/Usuario/EsqueciSenhaItens';
 import { EsqueciText, SucessText } from '../../constants/Usuario/autenticacaoConstant';
@@ -14,7 +15,7 @@ import RecaptchaComponent from '../../components/recaptcha';
 import { EnvioItemText } from '../../constants/Usuario/autenticacaoConstant';
 import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig'
 import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
-import {UsuarioLogadoService} from '../../services/Perfil/usuarioLogadoService'
+import { UsuarioLogadoService } from '../../services/Perfil/usuarioLogadoService';
 
 import '../../assets/styles/Login/esqueciSenha.css';
 
@@ -39,10 +40,10 @@ const AlteraSenha: React.FC = () => {
             setIsDiseble(true);
         }
     }, [useIsEnviado]);
-    
-     useEffect(() => {
-          fetchData();
-      }, [fetchData]);
+
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
 
     const handleRecaptchaChange = (value: string | null) => {
         setRecaptchaValue(value);
@@ -69,7 +70,7 @@ const AlteraSenha: React.FC = () => {
             setIsEnviado(true);
             setValue('');
         }
-        
+
         setIsLoading(false);
     };
 
@@ -108,7 +109,7 @@ const AlteraSenha: React.FC = () => {
         onIconClick: handleButtonClick,
         color: 'info',
         isLoading: isLoading,
-        isDisable : useIsDiseble
+        isDisable: useIsDiseble
 
     };
 
@@ -129,48 +130,53 @@ const AlteraSenha: React.FC = () => {
     return (
         <>
             <div className='banner'>
-                <Banner usuarioLogado={useUsuarioLogado}/>
+                <Banner usuarioLogado={useUsuarioLogado} />
             </div>
 
-            <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown}>
-                <div className='conteudoReenvia'>
-                    <div className="formItens">
-                        <div className='messageTextReenvia'>
-                            <Mensagem mensagemProps={messageRetorno?.notificationProps ? messagePropsErro : messageProps} />
-
-                        </div>
+            <Grid container className="ContainerGrid">
+                <div className='conteudo'>
+                    <div className='messageError'>
+                        <Mensagem mensagemProps={messageRetorno?.notificationProps ? messagePropsErro : messageProps} />
                     </div>
-                    <div className='itemReenvia'>
-                        <div className='textoReenvia'>
-
-                            {isVisibleLogin && (
-                                <p>{EnvioItemText} <a href='/login'>Login</a></p>
-                            )}
-                            {isEnviaText && (<p>{EsqueciText}</p>)}
-
-                            <div className="formItens">
-                                <CampoTexto
-                                    textBoxProps={{
-                                        name: "CPF ou Email",
-                                        tooltip: "digite seu CPF ou Email",
-                                        label: "CPF ou Email*",
-                                        value: value,
-                                        type: 'text',
-                                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)
-                                    }}
-                                />
-                            </div>
-                            <div className='recaptcha'>
-                                <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
-                            </div>
-
-                            <div className='botaoReenvia'>
-                                <Botao botaoProps={botaoProps}></Botao>
+                    <Grid item md={6} xs={12} className='gridEsquerdo hiddenTelaPequena'>
+                        <div className='conteudoEsquerdoAlteraSenha'>
+                            <div className='itensEsquedoAlteraSenha'>
+                                {isVisibleLogin && (
+                                    <p>{EnvioItemText} <a href='/login'>Login</a></p>
+                                )}
+                                {isEnviaText && (<p>{EsqueciText}</p>)}
                             </div>
                         </div>
-                    </div>
-                </div >
-            </form>
+                    </Grid>
+                    <div className="separador"></div>
+                    <Grid item md={6} xs={12} className='gridDireito'>
+                        <div className='conteudoDireitoAlteraSenha'>
+
+                            <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown}>
+                                <div className="formItens">
+                                    <CampoTexto
+                                        textBoxProps={{
+                                            name: "CPF ou Email",
+                                            tooltip: "digite seu CPF ou Email",
+                                            label: "CPF ou Email*",
+                                            value: value,
+                                            type: 'text',
+                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)
+                                        }}
+                                    />
+                                </div>
+                                <div className='recaptcha'>
+                                    <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
+                                </div>
+
+                                <div className='botaoReenvia'>
+                                    <Botao botaoProps={botaoProps}></Botao>
+                                </div>
+                            </form>
+                        </div>
+                    </Grid>
+                </div>
+            </Grid>
             <div>
                 <Footer />
             </div>

@@ -3,8 +3,7 @@ import { PaginacaoItens } from './PaginacaoItens';
 
 export interface GrigViewItens<T> {
     propertyLabels?: { [key: string]: string };
-    actionButtons?: ButtonItens[];
+    actionButtons?: Array<ButtonItens>;
     paginacao?: PaginacaoItens<T>;
     onPageChange?: (event: React.ChangeEvent<unknown>, page: number) => void;
-
 }

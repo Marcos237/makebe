@@ -8,7 +8,6 @@
     justify-content: center;
     align-items: center;
     border-radius: 10px;
-    background-color: #F7F9F9;
     height: 99%;
     width: 99%;
     margin-left: 10px;
@@ -23,7 +22,7 @@
 }
 
 .textoAutenticacao p {
-    color: #839192;
+    color: #F5F5F5;
     margin: 0;
     padding: 4px;
 

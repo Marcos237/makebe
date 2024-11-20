@@ -1,19 +1,8 @@
-.conteudoBusca{
+.conteudoBusca {
     width: 100%;
-    margin-left: 10px;
-}
-.titulobusca {
-margin-left: 20px;
+    margin-left: 5vh;
 }
 
-.busca-loja {
-    background-color: #F7F9F9;
-    border-radius: 20px;
-    min-width: 98%;
-    min-height: 20vh;
-    border-radius: 20px;
-    display: flex;
-    align-content: flex-start;
-    padding-left: 40px;
-    margin-top: 10px;
+.titulobusca {
+    margin-left: 20px;
 }

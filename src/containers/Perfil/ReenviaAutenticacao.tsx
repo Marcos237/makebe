@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Grid } from '@mui/material';
 import { BotaoItens } from '../../Interfaces/Botao/botao';
 import { ReenviaItens } from '../../Interfaces/Usuario/ReenviaItens';
 import { ReenviatText, SucessText } from '../../constants/Usuario/autenticacaoConstant';
@@ -103,42 +104,44 @@ const ReenviaAutenticacao: React.FC = () => {
             <div className='banner'>
                 <Banner />
             </div>
-
             <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown}>
-                <div className='conteudoReenvia'>
-                    <div className="formItens">
-                        <div className='messageTextReenvia'>
-                            <Mensagem mensagemProps={messageRetorno?.notificationProps ? messagePropsErro : messageProps} />
+                <Grid container className="ContainerGrid">
+                    <div className='conteudo'>
 
-                        </div>
-                    </div>
-                    <div className='itemReenvia'>
-                        <div className='textoReenvia'>
-                            <p>{ReenviatText}</p>
-                            <div className="formItens">
+                        <div className="formItens">
+                            <div className='messageTextReenvia'>
+                                <Mensagem mensagemProps={messageRetorno?.notificationProps ? messagePropsErro : messageProps} />
 
-
-                                <CampoTexto
-                                    textBoxProps={{
-                                        name: "Email",
-                                        tooltip: "digite seu Email",
-                                        label: "Email*",
-                                        value: email,
-                                        type: 'text',
-                                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)
-                                    }}
-                                />
-                            </div>
-                            <div className='recaptcha'>
-                            <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange}/>
-                            </div>
-
-                            <div className='botaoReenvia'>
-                                <Botao botaoProps={botaoProps}></Botao>
                             </div>
                         </div>
-                    </div>
-                </div >
+                        <div className='itemReenvia'>
+                            <div className='textoReenvia'>
+                                <p>{ReenviatText}</p>
+                                <div className="formItens">
+
+
+                                    <CampoTexto
+                                        textBoxProps={{
+                                            name: "Email",
+                                            tooltip: "digite seu Email",
+                                            label: "Email*",
+                                            value: email,
+                                            type: 'text',
+                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)
+                                        }}
+                                    />
+                                </div>
+                                <div className='recaptcha'>
+                                    <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
+                                </div>
+
+                                <div className='botaoReenvia'>
+                                    <Botao botaoProps={botaoProps}></Botao>
+                                </div>
+                            </div>
+                        </div>
+                    </div >
+                </Grid>
             </form>
             <div>
                 <Footer />

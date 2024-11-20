@@ -1,24 +1,7 @@
 
-.gridDireitoLoja,
-.gridEsquerdoLoja {
-    width: 100%;
-    height: 100% !important;
-}
-
-.conteudoLoja {
-    width: 100%;
-    padding: 6px;
-    margin-top: 20px;
-}
-
 .conteudoEsquerdoLoja,
 .conteudoDireitoLoja {
-    background-color: #F7F9F9;
-    padding: 10px;
-    border-radius: 20px;
-    padding-top: 130px;
-    min-height: 30vh;
-    margin-top: 20px;
+    padding: 60px;
 }
 
 

@@ -1,8 +1,32 @@
 import * as React from 'react';
 import { TextBoxItens } from '../Interfaces/TextBox/TextboxItens';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { TextField, InputAdornment, IconButton } from '@mui/material';
-import CustomMaskedInput from './maskaras';  
+import CustomMaskedInput from './maskaras';
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+  components: {
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiInputBase-input': {
+            color: '#F5F5F5', 
+            caretColor: '#F5F5F5', 
+            fontFamily: '"Josefin Sans", sans-serif', 
+            '&:read-only': {
+              backgroundColor: 'transparent', 
+              cursor: 'not-allowed', 
+            },
+          },
+        },
+      },
+    },
+  },
+});
 
 const CampoTexto: React.FC<TextBoxItens> = ({ textBoxProps }) => {
   const {
@@ -18,16 +42,16 @@ const CampoTexto: React.FC<TextBoxItens> = ({ textBoxProps }) => {
     type,
     mask,
     readonly,
-    maxLength
+    maxLength,
   } = textBoxProps;
 
   const inputProps = mask && mask.length > 0 ? {
     inputComponent: CustomMaskedInput as any,
-    inputProps: { mask }
+    inputProps: { mask },
   } : {};
 
   return (
-    <>
+    <ThemeProvider theme={darkTheme}>
       {textBoxProps && (
         <div className='textBox'>
           <Box component="form" noValidate autoComplete="off">
@@ -39,7 +63,6 @@ const CampoTexto: React.FC<TextBoxItens> = ({ textBoxProps }) => {
               placeholder={tooltip}
               value={value}
               onChange={onChange}
-              disabled={readonly}
               variant="outlined"
               type={type}
               InputProps={{
@@ -53,25 +76,17 @@ const CampoTexto: React.FC<TextBoxItens> = ({ textBoxProps }) => {
                     )}
                   </InputAdornment>
                 ),
+                readOnly: readonly,
               }}
               inputProps={{ maxLength: maxLength || 100 }}
               sx={{
                 width: '100%',
-                '@media (min-width: 600px)': {
-                  width: '100%',
-                },
-                '@media (min-width: 960px)': {
-                  width: '100%',
-                },
-                '@media (min-width: 1280px)': {
-                  width: '98%',
-                },
               }}
             />
           </Box>
         </div>
       )}
-    </>
+    </ThemeProvider>
   );
 };
 

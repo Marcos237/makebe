@@ -1,23 +1,9 @@
-.gridContainerRecupera {
-    margin-top: 10px;
-    width: 100%;
-    height: 100%;
-    display: flex;
 
-}
-
-.gridDireitoRecupera,
-.gridEsquerdoRecupera {
-    width: 100%;
-    padding: 4px;
-}
 
 .conteudoEsquedoRecupera,
 .conteudoDireitoRecupera {
-    background-color: #F7F9F9;
     height: 95% !important;
-    align-content: center;
-    padding: 18px;
+    padding: 80px;
     border-radius: 20px;
 }
 

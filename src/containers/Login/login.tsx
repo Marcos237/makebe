@@ -16,6 +16,8 @@ import Mensagem from '../../components/mensagem';
 import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
 import RecaptchaComponent from '../../components/recaptcha';
 import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig'
+
+
 import '../../assets/styles/Login/login.css';
 
 
@@ -104,67 +106,68 @@ const Login: React.FC = () => {
                 <Banner />
             </div>
 
-            <Grid container className="gridContainer">
+            <Grid container className="ContainerGrid">
+                <div className='conteudo'>
+                    <div className='messageError'>
+                        <Mensagem mensagemProps={errorMensage}></Mensagem>
+                    </div>
+                    <Grid item md={6} xs={12} className='gridEsquerdo hiddenTelaPequena'>
+                        <div className='conteudoEsquerdoLogin'>
+                            <div className='itensEsquedoLogin'>
+                                <h2>Seja bem vindo!</h2>
+                                <p>Por favor, faça o login para acessar sua conta. Caso ainda não tenha uma você pode se cadastrar.</p>
+                            </div>
+                        </div>
+                    </Grid>
+                    <div className="separador"></div>
+                    <Grid item md={6} xs={12} className='gridDireito'>
+                        <div className='conteudoDireitoLogin'>
+                            <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown}>
+                                <CampoTexto
+                                    textBoxProps={{
+                                        name: "Login",
+                                        tooltip: "digite seu login",
+                                        label: "Login",
+                                        value: login,
+                                        type: 'text',
+                                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setLogin(e.target.value)
+                                    }}
+                                />
+                                <CampoTexto
+                                    textBoxProps={{
+                                        name: "Senha",
+                                        tooltip: "digite sua senha",
+                                        label: "Senha",
+                                        type: "password",
+                                        value: senha,
+                                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setSenha(e.target.value)
+                                    }}
+                                />
 
+                                <div className='recaptcha'>
+                                    <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
+                                </div>
 
-                <div className='messageError'>
-                    <Mensagem mensagemProps={errorMensage}></Mensagem>
+                                <div className='botao'>
+                                    <Botao botaoProps={botaoProps} />
+                                </div>
+                            </form>
+                            <div className="links-login">
+                                <a href="/EsqueciSenha" className="esqueci-link">
+                                    Esqueci minha senha
+                                </a>
+                                <a href="/perfil" className="cadastrar-link">
+                                    Cadastrar
+                                </a>
+                            </div>
+                            <div className="social-icons">
+                                <Icone iconeProps={{ icone: <SiInstagram />, dialogo: "Faça o login com Instagram." }} />
+                                <Icone iconeProps={{ icone: <SiFacebook />, dialogo: "Faça o login com Facebook." }} />
+                                <Icone iconeProps={{ icone: <SiGoogle />, dialogo: "Faça o login com Google." }} />
+                            </div>
+                        </div>
+                    </Grid>
                 </div>
-                <Grid item md={6} xs={12} className='gridEsquerdo'>
-                    <div className='conteudoEsquedoLogin'>
-                        <div className='itensEsquedoLogin'>
-                            <h2>Seja bem vindo!</h2>
-                            <p>Por favor, faça o login para acessar sua conta. Caso ainda não tenha uma você pode se cadastrar.</p>
-                        </div>
-                    </div>
-                </Grid>
-                <Grid item md={6} xs={12} className='gridDireito'>
-                    <div className='conteudoDireitoLogin'>
-                        <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown}>
-                            <CampoTexto
-                                textBoxProps={{
-                                    name: "Login",
-                                    tooltip: "digite seu login",
-                                    label: "Login",
-                                    value: login,
-                                    type: 'text',
-                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setLogin(e.target.value)
-                                }}
-                            />
-                            <CampoTexto
-                                textBoxProps={{
-                                    name: "Senha",
-                                    tooltip: "digite sua senha",
-                                    label: "Senha",
-                                    type: "password",
-                                    value: senha,
-                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setSenha(e.target.value)
-                                }}
-                            />
-
-                            <div className='recaptcha'>
-                                <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
-                            </div>
-
-                            <div className='botao'>
-                                <Botao botaoProps={botaoProps} />
-                            </div>
-                        </form>
-                        <div className="links-login">
-                            <a href="/EsqueciSenha" className="esqueci-link">
-                                Esqueci minha senha
-                            </a>
-                            <a href="/perfil" className="cadastrar-link">
-                                Cadastrar
-                            </a>
-                        </div>
-                        <div className="social-icons">
-                            <Icone iconeProps={{ icone: <SiInstagram />, dialogo: "Faça o login com Instagram." }} />
-                            <Icone iconeProps={{ icone: <SiFacebook />, dialogo: "Faça o login com Facebook." }} />
-                            <Icone iconeProps={{ icone: <SiGoogle />, dialogo: "Faça o login com Google." }} />
-                        </div>
-                    </div>
-                </Grid>
             </Grid>
 
             <div>
