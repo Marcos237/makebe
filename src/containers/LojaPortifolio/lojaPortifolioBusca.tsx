@@ -94,7 +94,7 @@ const LojaPortifolioBusca: React.FC<{ selectItens: SelectItens[], onResultadosBu
                     <div className="titulobusca">
                         <h4>Buscar</h4>
                     </div>
-                    <Grid container spacing={2}>
+                    <Grid container spacing={3}>
                         <Grid item xs={11} md={4}>
                             <div className="formItens formItemMenor">
                                 <Dropdown
@@ -124,7 +124,7 @@ const LojaPortifolioBusca: React.FC<{ selectItens: SelectItens[], onResultadosBu
                         </Grid>
 
                         <Grid item xs={11} md={4}>
-                            <div className="formItens formItemMenor">
+                            <div className="formItens formItemMenor subtitulo">
                                 <CampoTexto
                                     textBoxProps={{
                                         name: "subtitulo",
