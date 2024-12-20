@@ -68,7 +68,7 @@ const SalaoPersistir: React.FC<{ persistirProps: PersistirItens<LojaItens> }> = 
         }
         const retorno = await LojaPersistirService(loja);
 
-        if (!retorno?.data?.notifications || retorno?.data?.notifications?.length === 0) {
+         if (!retorno?.notifications || retorno?.notifications?.length === 0) {
             const messageRetorno = await RetornarMessageService(true, true, [])
             setMessageItens(messageRetorno)
             persistirProps.onSave?.();
@@ -226,6 +226,12 @@ const SalaoPersistir: React.FC<{ persistirProps: PersistirItens<LojaItens> }> = 
                                 onChange: handleDropdownChange,
                             }}
                         />
+                    </div>
+
+                    <div className='formItens'>
+                        <div className='botao'>
+                            <Botao botaoProps={botaoProps} />
+                        </div>
                     </div>
                 </div>
                 <div className='camposInvisiveis'>
