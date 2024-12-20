@@ -11,21 +11,17 @@ import Tooltip from '@mui/material/Tooltip';
 import { URL_IMAGENS } from '../config/apiConfig';
 import { Link } from 'react-router-dom';
 import { MenuUsuarioItens } from '../Interfaces/Banner/MenuUsuarioItens';
-import { UsuarioLogadoItens } from '../Interfaces/Usuario/UsuarioLogadoItens';
+import { BannerItens } from '../Interfaces/Banner/bannerItens';
 
 
 import "../assets/styles/Banner/banner.css";
 
-interface BannerProps {
-  usuarioLogado?: UsuarioLogadoItens;
-}
 
-const Banner: React.FC<BannerProps> = ({ usuarioLogado }) => {
+const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
   const [menuElemento, setMenuElemento] = useState<HTMLElement | null>(null);
   const [subMenuElemento, setSubElemento] = useState<HTMLElement | null>(null);
   const [openSubMenu, setOpenSubMenu] = useState<number | null>(null);
   const [anchorElUser, setAnchorElUser] = useState<HTMLElement | null>(null);
-
 
   const menuUsuarioItems: MenuUsuarioItens[] = usuarioLogado?.menus?.length
     ? [
@@ -115,7 +111,7 @@ const Banner: React.FC<BannerProps> = ({ usuarioLogado }) => {
       <AppBar position="static" className="menu" sx={{ backgroundColor: 'black' }}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
-            <Typography variant="h6" noWrap component="a" href="/" sx={{
+            <Typography variant="h6" noWrap component="a" href="/Home" sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
               fontWeight: 700,

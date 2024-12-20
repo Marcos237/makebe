@@ -17,22 +17,22 @@ export const GerPerfilService = async (): Promise<UsuarioPerilItens> => {
         };
 
         const response = await axios.get(`${API_BASE_URL}UsuarioPerfil/`, config);
+        console.log(response)
         const usuarioPerfil: UsuarioPerilItens = {
             id: response.data.data.id,
             nome: response.data.data.nome,
             cpf: response.data.data.cpf,
             email: response.data.data.email,
             telefone: response.data.data.telefone,
-            instagran: response.data.instagran,
+            instagram: response.data.data.instagram,
             senha: response.data.data.senha,
-            confirmaSenha:response.data.data.confirmaSenha,
-            nomeImagem:response.data.data.nomeImagem,
-            urlImagem:response.data.data.urlImagem,
-            recaptcha:response.data.data.recaptcha,
+            confirmaSenha: response.data.data.confirmaSenha,
+            nomeImagem: response.data.data.nomeImagem,
+            urlImagem: response.data.data.urlImagem,
+            recaptcha: response.data.data.recaptcha,
             notifications: response.data.notifications,
 
         };
-
         return usuarioPerfil;
     } catch (error) {
         const notifications: NotificationItens[] = [];
@@ -47,17 +47,22 @@ export const GerPerfilService = async (): Promise<UsuarioPerilItens> => {
         if (!axios.isAxiosError(error)) {
             return usuarioPerfilError;
         }
-        const erroNotifications = JSON.parse(axiosError?.response?.request.response) as Array<{ Key: string; Message: string; IsValidate: boolean }>;
-        if (Array.isArray(erroNotifications)) {
-            erroNotifications.forEach(erroNotification => {
-                notifications.push({
-                    notificationProps: {
-                        Key: erroNotification?.Key,
-                        Message: erroNotification?.Message,
-                        IsValidate: erroNotification?.IsValidate
-                    }
+
+        const responseString = axiosError?.response?.request?.response;
+        if (responseString) {
+            const erroNotifications = JSON.parse(axiosError?.response?.request.response) as Array<{ Key: string; Message: string; IsValidate: boolean }>;
+            if (Array.isArray(erroNotifications)) {
+                erroNotifications.forEach(erroNotification => {
+                    notifications.push({
+                        notificationProps: {
+                            Key: erroNotification?.Key,
+                            Message: erroNotification?.Message,
+                            IsValidate: erroNotification?.IsValidate
+                        }
+                    });
                 });
-            });
+            }
         }
         return usuarioPerfilError;
-    }};
+    }
+};

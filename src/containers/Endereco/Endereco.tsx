@@ -111,7 +111,7 @@ const Endereco: React.FC = () => {
     const fetchLojaData = useCallback(async () => {
         const lojaResponse = await LojaBuscarTodosService();
         const itensSelect: SelectItens[] = lojaResponse?.map((loja: LojaItens) => ({
-            key: loja.id,
+            key: loja.id || '',
             value: loja.razaoSocial
         })) ?? [];
         const enderecoBuscarProps: PersistirItens<LojaItens> = {

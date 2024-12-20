@@ -80,7 +80,7 @@ const Salao: React.FC = () => {
             open: true,
             title: loja.razaoSocial,
             texto: modalTexto,
-            onClose : () => handleModalDesativarLoja(loja.id)
+            onClose: () => handleModalDesativarLoja(loja.id)
         }
         setModalOpen(modalItens)
     }, [handleModalDesativarLoja]);
@@ -109,7 +109,7 @@ const Salao: React.FC = () => {
     const fetchTipoLojaData = useCallback(async () => {
         const tipoLojaResponse = await TipoLojaService();
         const itensSelect: SelectItens[] = tipoLojaResponse?.map((tipo: TipoLojaItens) => ({
-            key: tipo.id,
+            key: tipo.id || '',
             value: tipo.descricao
         })) ?? [];
 

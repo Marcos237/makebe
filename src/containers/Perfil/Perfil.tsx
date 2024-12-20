@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import Banner from '../../components/banner';
 import Footer from '../../components/footer';
 import { useNavigate } from 'react-router-dom';
@@ -30,7 +30,9 @@ const Perfil: React.FC = () => {
     const [cpf, setCpf] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [telefone, setTelefone] = useState<string>('');
-    const [instagran, setInstagran] = useState<string>('');
+    const [instagram, setInstagram] = useState<string>('');
+    const [senha, setSenha] = useState<string>('');
+    const [confirmacaoSenha, setConfirmacaoSenha] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [uploadItem, setUploadItem] = useState<UploadItens>({ uploadProps: { nomeImagem: '', urlImagem: '' } });
     const [messageItens, setMessageItens] = useState<MensagemItens>();
@@ -51,14 +53,14 @@ const Perfil: React.FC = () => {
         setCpf(response?.cpf ?? '');
         setEmail(response?.email ?? '')
         setTelefone(response?.telefone ?? '')
+        setInstagram(response?.instagram ?? '')
         setUploadItem({
             uploadProps: {
                 nomeImagem: response?.nomeImagem,
                 urlImagem: response?.urlImagem,
-                id : "1"
+                id: "1"
             },
         });
-        setInstagran(response?.instagran ?? '')
 
         if (response.id !== '') {
 
@@ -85,8 +87,10 @@ const Perfil: React.FC = () => {
             cpf: cpf,
             email: email,
             telefone: telefone,
-            instagran: instagran,
-            recaptcha: recaptchaValue ?? ''
+            instagram: instagram,
+            recaptcha: recaptchaValue ?? '',
+            senha: senha,
+            confirmaSenha: confirmacaoSenha
         };
         if (isLogado) {
             const usuarioLogado = await UpdatePerfilService(usuario);
@@ -163,7 +167,7 @@ const Perfil: React.FC = () => {
                 <Banner usuarioLogado={useUsuarioLogado} />
             </div>
             <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown}>
-            <Grid container spacing={2} className="ContainerGrid">
+                <Grid container spacing={2} className="ContainerGrid">
                     <div className='conteudo'>
                         <div className='messageError'>
                             <Mensagem mensagemProps={messageProps}></Mensagem>
@@ -237,12 +241,44 @@ const Perfil: React.FC = () => {
                                             name: "Instagram",
                                             tooltip: "digite seu Instagram",
                                             label: "Instagram",
-                                            value: instagran,
+                                            value: instagram,
                                             type: 'text',
-                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setInstagran(e.target.value)
+                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setInstagram(e.target.value)
                                         }}
                                     />
                                 </div>
+
+                                {!isLogado && (
+                                    <>
+                                        <div className="formItens">
+                                            <CampoTexto
+                                                textBoxProps={{
+                                                    name: "Senha",
+                                                    tooltip: "digite sua senha",
+                                                    label: "Senha",
+                                                    value: senha,
+                                                    type: 'password',
+                                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setSenha(e.target.value),
+                                                }}
+                                            />
+                                        </div>
+
+                                        <div className="formItens">
+                                            <CampoTexto
+                                                textBoxProps={{
+                                                    name: "ConfirmacaoSenha",
+                                                    tooltip: "digite sua confirmação de senha",
+                                                    label: "confirmação da senha",
+                                                    value: confirmacaoSenha,
+                                                    type: 'password',
+                                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setConfirmacaoSenha(e.target.value),
+                                                }}
+                                            />
+                                        </div>
+                                    </>
+                                )}
+
+
                                 <div className='recaptcha'>
                                     <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
                                 </div>

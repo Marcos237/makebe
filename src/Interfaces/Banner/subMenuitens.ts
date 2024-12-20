@@ -3,4 +3,5 @@ export interface SubMenusItens {
         menuId?: number;
         subMenuDescricao?:string;
         subMenuUrl?: string;
+        ordem?: number;
 }

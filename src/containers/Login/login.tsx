@@ -49,7 +49,7 @@ const Login: React.FC = () => {
         setMessageRetorno(usuarioLogado?.notifications ?? []);
 
         if (!usuarioLogado?.notifications || usuarioLogado?.notifications?.length === 0) {
-            navigate('/', { state: { usuarioLogado } });
+            navigate(usuarioLogado?.urlInicial ?? '', { state: { usuarioLogado } });
         }
         else {
             setLogin('');
@@ -153,7 +153,7 @@ const Login: React.FC = () => {
                                 </div>
                             </form>
                             <div className="links-login">
-                                <a href="/EsqueciSenha" className="esqueci-link">
+                                <a href="/AlteraSenha" className="esqueci-link">
                                     Esqueci minha senha
                                 </a>
                                 <a href="/perfil" className="cadastrar-link">

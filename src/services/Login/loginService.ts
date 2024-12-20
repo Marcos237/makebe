@@ -18,9 +18,10 @@ export const loginUser = async (usuario: UsuarioLoginItens): Promise<UsuarioPeri
         const token = response.data.data.chave;
         saveTokenToLocalStorage(token);
         const usuarioLogado: UsuarioPerilItens = {
-            id: response.data.sessao.usuarioId,
-            urlImagem: response.data.sessao.urlImagem,
-            nome: response.data.sessao.nome,
+            id: response.data.data.usuarioId,
+            urlImagem: response.data.data.urlImagem,
+            nome: response.data.data.nome,
+            urlInicial : response.data.data.urlInicial,
             notifications: response.data.notifications
         };
         return usuarioLogado;

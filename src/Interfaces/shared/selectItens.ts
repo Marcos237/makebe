@@ -1,4 +1,4 @@
 export interface SelectItens {
-    key?: number,
+    key: string | number;
     value?: string
 }

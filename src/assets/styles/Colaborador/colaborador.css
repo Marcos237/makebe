@@ -1,0 +1,46 @@
+.persistir-colaborador,
+.busca-colaborador,
+.lista-colaborador {
+    position: relative;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.conteudoColaborador {
+
+    padding: 20px;
+    margin-left: 10px;
+}
+
+.conteudoDireitoColaborador {
+    margin-top: 17vh;
+}
+
+.conteudoEsquerdoColaborador,
+.conteudoDireitoColaborador {
+    padding: 40px;
+}
+
+.conteudoBusca {
+    width: 100%;
+    margin-left: 5vh;
+}
+
+.busca-colaborador::after {
+    margin-top: 10px;
+    content: '';
+    position: absolute;
+    left: 25%;
+    width: 50%;
+    border-bottom: 0.2px solid #34495e;
+    bottom: 0;
+}
+.switch-item {
+    margin-top: -20px;
+}
+@media (max-width: 900px) {
+    .conteudoDireitoColaborador {
+        padding: auto;
+        margin-top: -7vh !important;
+    }
+}
