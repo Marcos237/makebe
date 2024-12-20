@@ -11,7 +11,7 @@ const Deslogar: React.FC = () => {
             isCalled.current = true;
             const deslogar = async () => {
                     await DeslogarService();
-                    navigate('/');
+                    navigate('/Home');
             };
             deslogar();
         }

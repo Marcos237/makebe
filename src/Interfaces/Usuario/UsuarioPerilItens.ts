@@ -1,16 +1,19 @@
 import { NotificationItens } from "../shared/NotificationItens";
 
-export interface    UsuarioPerilItens  {
+export interface UsuarioPerilItens {
     id?: string;
     nome?: string;
     cpf?: string;
     email?: string;
     telefone?: string;
-    instagran?: string;
+    instagram?: string;
     senha?: string;
     confirmaSenha?: string;
     nomeImagem?: string;
     urlImagem?: string;
-    recaptcha?:string;
+    recaptcha?: string;
+    permissaoId?: string;
+    servicoId?: number;
+    urlInicial?: string;
     notifications?: NotificationItens[]
 }

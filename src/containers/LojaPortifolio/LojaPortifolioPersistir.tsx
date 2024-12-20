@@ -57,7 +57,6 @@ const LojaPortifolioPersistir: React.FC<{ persistirProps: PersistirItens<LojaPor
         setTexto(texto);
         setImagens(lojaPortifolioImagens);
         setIsOpen(id);
-
         const uploadItemsRetorno: UploadItens[] = [];
         titulos.forEach((titulo, index) => {
             const imagemEncontrada = lojaPortifolioImagens.find((imagem) => imagem.tituloImagem === titulo);
@@ -204,14 +203,17 @@ const LojaPortifolioPersistir: React.FC<{ persistirProps: PersistirItens<LojaPor
             setMessage(false);
         }, 6000);
     }
-
     const prevItemRef = useRef(persistirProps.item);
+
     useEffect(() => {
         const prevItem = prevItemRef.current;
         if (persistirProps.item && prevItem !== persistirProps.item) {
             fetchPortifolioData();
         }
         prevItemRef.current = persistirProps.item;
+        if (!prevItem) {
+            fetchPortifolioData();
+        }
     }, [fetchPortifolioData, persistirProps.item]);
 
     const sessaoItemImagem: SessaoItens = {
