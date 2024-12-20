@@ -120,7 +120,7 @@ const EnderecoBuscar: React.FC<{ selectItens: SelectItens[], onResultadosBusca: 
                                 />
                             </div>
 
-                            <Grid container item xs={12} justifyContent="flex-end" spacing={2}>
+                            <Grid container item xs={11} justifyContent="flex-end" spacing={2}>
                                 <Grid item>
                                     <div className='botaoBuscar'>
                                         <Botao botaoProps={botaoProps} />

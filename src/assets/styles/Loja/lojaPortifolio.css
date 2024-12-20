@@ -46,12 +46,24 @@
     margin-top: -140px;
 }
 
+.botaoItemSalvar {
+    margin-right: 30px;
+}
+.botaoItem {
+    display: flex;
+    justify-content: start;
+    margin-left: 4vh;
+}
+
 @media (max-width: 900px) {
     .conteudoMenorDireitoLojaPortifolio {
         margin-top: -21vh !important;
     }
     .conteudoBusca .subtitulo {
         margin-top: -12px !important;
+    }
+    .botaoItemSalvar {
+        margin-right: 0;
     }
 
 }

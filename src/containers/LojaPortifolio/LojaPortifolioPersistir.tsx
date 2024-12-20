@@ -23,6 +23,7 @@ import EditorTexto from "../../components/ckEditor";
 import Sessao from "../../components/sessao";
 import Dropdown from "../../components/dropdown";
 import Mensagem from '../../components/mensagem';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import "../../assets/styles/Loja/lojaPortifolio.css"
 
 const LojaPortifolioPersistir: React.FC<{ persistirProps: PersistirItens<LojaPortifolioItem> }> = ({ persistirProps }) => {
@@ -46,7 +47,7 @@ const LojaPortifolioPersistir: React.FC<{ persistirProps: PersistirItens<LojaPor
         imagensSessaoVitrinePrimeiro,
         imagensSessaoVitrinesegundo,
     ], []);
-    
+
     const fetchPortifolioData = useCallback(async () => {
         const { id = 0, lojaId = 0, titulo = '', subTitulo = '', texto = '', lojaPortifolioImagens = [] } = persistirProps.item ?? {};
 
@@ -356,7 +357,17 @@ const LojaPortifolioPersistir: React.FC<{ persistirProps: PersistirItens<LojaPor
         isVisible: isMessage,
         onClick: handleCloseMessage
     }
+    const handleButtonClickLimpar = async () => {
+        limparCampos();
+    }
 
+    const botaoLimparProps: BotaoItens = {
+        tooltip: 'limpar',
+        width: '20px',
+        onIconClick: handleButtonClickLimpar,
+        color: 'success',
+        icon: RefreshIcon
+    };
 
     return (
         <>
@@ -366,13 +377,24 @@ const LojaPortifolioPersistir: React.FC<{ persistirProps: PersistirItens<LojaPor
             <div className="sessaoLojaPortifolio">
                 <form>
                     <Sessao sessaoProps={sessoesItens} isOpen={isOpen || 0} ></Sessao>
-                    <Grid item md={12} xs={7}>
-                        <div className='formItens'>
-                            <div className='botao'>
-                                <Botao botaoProps={botaoProps} />
+
+                    <Grid container spacing={2}>
+                        <Grid item md={4} xs={8}>
+                            <div className='formItens botaoItem'>
+                                <div className='botao'>
+                                    <Botao botaoProps={botaoLimparProps} />
+                                </div>
                             </div>
-                        </div>
+                        </Grid>
+                        <Grid item md={8} xs={4}>
+                            <div className='formItens botaoItemSalvar'>
+                                <div className='botao'>
+                                    <Botao botaoProps={botaoProps} />
+                                </div>
+                            </div>
+                        </Grid>
                     </Grid>
+
                 </form>
             </div>
 

@@ -9,6 +9,7 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import { EnderecoPersistirService } from '../../services/Endereco/enderecoPersistirService';
 import { EnderecoItens } from "../../Interfaces/Endereco/enderecoItens";
 import { BuscarDadosCorreios } from '../../services/Endereco/cooreioService'
+import RefreshIcon from '@mui/icons-material/Refresh';
 import Mensagem from '../../components/mensagem';
 import Botao from '../../components/button';
 import Dropdown from "../../components/dropdown";
@@ -81,13 +82,7 @@ const EnderecoPersistir: React.FC<{ persistirProps: PersistirItens<EnderecoItens
             setMessageItens(messageRetorno)
             persistirProps.onSave?.();
             setIsLoading(false);
-            setId(0);
-            setCep('');
-            setLojaId(0);
-            setNumero(0)
-            setLogradouro('')
-            setCidade('')
-            setEstado('');
+            limparItens();
         } else {
 
             const messageRetorno = await RetornarMessageService(false, false, retorno?.notifications ?? [])
@@ -148,6 +143,28 @@ const EnderecoPersistir: React.FC<{ persistirProps: PersistirItens<EnderecoItens
             setMessage(false);
         }, 6000);
     }
+
+    const handleButtonClickLimpar = async () => {
+        limparItens();
+    }
+
+    const limparItens = () => {
+        setId(0);
+        setCep('');
+        setLojaId(0);
+        setNumero(0)
+        setLogradouro('')
+        setCidade('')
+        setEstado('');
+    }
+
+    const botaoLimparProps: BotaoItens = {
+        tooltip: 'limpar',
+        width: '20px',
+        onIconClick: handleButtonClickLimpar,
+        color: 'success',
+        icon: RefreshIcon
+    };
     return <>
 
         <div className='messageTextLoja'>
@@ -209,6 +226,12 @@ const EnderecoPersistir: React.FC<{ persistirProps: PersistirItens<EnderecoItens
                                 onChange: (e: React.ChangeEvent<HTMLInputElement>) => setNumero(Number(e.target.value))
                             }}
                         />
+                    </div>
+
+                    <div className='formItens'>
+                        <div className='botaoLimpar'>
+                            <Botao botaoProps={botaoLimparProps} />
+                        </div>
                     </div>
 
                 </div>

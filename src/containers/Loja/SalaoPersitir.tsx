@@ -10,6 +10,7 @@ import { LojaItens } from "../../Interfaces/Loja/lojaItens";
 import { LojaPersistirService } from '../../services/Loja/lojaPersistirService';
 import { RetornarMessageService } from '../../services/Perfil/retornarMessageService';
 import { SelectChangeEvent } from '@mui/material/Select';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import Mensagem from '../../components/mensagem';
 import Botao from '../../components/button';
 import Dropdown from "../../components/dropdown";
@@ -71,13 +72,7 @@ const SalaoPersistir: React.FC<{ persistirProps: PersistirItens<LojaItens> }> = 
             const messageRetorno = await RetornarMessageService(true, true, [])
             setMessageItens(messageRetorno)
             persistirProps.onSave?.();
-            setIsLoading(false);
-            setId(0);
-            setCnpj('');
-            setRazaoSocial('');
-            setEmail('')
-            setTelefone('')
-            setTipoLojaId(0)
+            limparItens();
 
         } else {
 
@@ -126,6 +121,27 @@ const SalaoPersistir: React.FC<{ persistirProps: PersistirItens<LojaItens> }> = 
         setTipoLojaId(Number(e.target.value));
     };
 
+    const handleButtonClickLimpar = async () => {
+        limparItens();
+    }
+
+    const limparItens = () => {
+        setIsLoading(false);
+        setId(0);
+        setCnpj('');
+        setRazaoSocial('');
+        setEmail('')
+        setTelefone('')
+        setTipoLojaId(0)
+    }
+
+    const botaoLimparProps: BotaoItens = {
+        tooltip: 'limpar',
+        width: '20px',
+        onIconClick: handleButtonClickLimpar,
+        color: 'success',
+        icon: RefreshIcon
+    };
     return <>
 
         <div className='messageTextLoja'>
@@ -175,6 +191,12 @@ const SalaoPersistir: React.FC<{ persistirProps: PersistirItens<LojaItens> }> = 
                             }}
                         />
                     </div>
+
+                    <div className='formItens'>
+                        <div className='botaoLimpar'>
+                            <Botao botaoProps={botaoLimparProps} />
+                        </div>
+                    </div>
                 </div>
             </Grid>
             <div className="separador"></div>
@@ -204,12 +226,6 @@ const SalaoPersistir: React.FC<{ persistirProps: PersistirItens<LojaItens> }> = 
                                 onChange: handleDropdownChange,
                             }}
                         />
-                    </div>
-
-                    <div className='formItens'>
-                        <div className='botao'>
-                            <Botao botaoProps={botaoProps} />
-                        </div>
                     </div>
                 </div>
                 <div className='camposInvisiveis'>
