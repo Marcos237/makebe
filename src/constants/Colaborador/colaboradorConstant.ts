@@ -1,12 +1,15 @@
 
-export const propertyLabels: { [key: string]: string } = {
-    
-    nome: "Nome",
-    cpf: "CPF",
-    email: "Email",
-    descricaoPermissao : "Permissao",
-    descricaoStatus : "Status"
+export const propertyLabels: { [key: string]: { label: string; ordem?: number }; } = {
+
+    nome: { label: "Nome", ordem: 1 },
+    cpf: { label: "CPF", ordem: 2 },
+    email: { label: "Email", ordem: 3 },
+    descricaoPermissao: { label: "Permissao", ordem: 4 },
+    descricaoStatus: { label: "Status", ordem : 5 }
 };
 
 export const modalTitulo = "Colaborador";
 export const modalTexto = "Deseja remover o colaborador?"
+export const UrlColaborador = "Colaborador";
+export const UrlBuscarPaginado = "Colaborador/BuscarPaginado";
+export const UrlBuscarPermissao = "Permissao";

@@ -7,13 +7,16 @@ import { cpfMaskConst } from '../../constants/Usuario/usuarioConstant';
 import { BotaoItens } from '../../Interfaces/Botao/botao';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { SwitchButtonItem } from "../../Interfaces/shared/switchButtonItem";
+import { GetPaginadoService } from "../../services/shared/getPaginadoService";
+import { API_BASE_AGENDA_URL } from "../../config/apiConfig";
+import { UrlBuscarPaginado } from "../../constants/Colaborador/colaboradorConstant";
 import SwitchButton from "../../components/switchButton";
 import Dropdown from "../../components/dropdown";
 import CampoTexto from '../../components/textbox';
 import Botao from '../../components/button';
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { ColaboradorPaginadoService } from "../../services/Colaboradores/colaboradorPaginadoService";
+
 
 const ColaboradorBusca: React.FC<{
     selectItens: SelectItens[], onResultadosBusca: (
@@ -57,7 +60,7 @@ const ColaboradorBusca: React.FC<{
             objetoPesquisa: colaborador,
             objetos: []
         };
-        const colaboradorResponse  = await ColaboradorPaginadoService(paginacao);
+        const colaboradorResponse  = await GetPaginadoService(paginacao, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`);
         onResultadosBusca(colaboradorResponse ?? {});
         setIsLoading(false);
     }

@@ -14,8 +14,13 @@ export const SessaoTexto = "Texto";
 export const ModalTexto = "Deseja remover esse item?";
 
 
-export const propertyLabels: { [key: string]: string } = {
-    titulo : "Titulo",
-    subTitulo : "SubTitulo",
-    razaoSocial: "Razão Social",
+export const propertyLabels: { [key: string]: { label: string; ordem?: number }; } = {
+    titulo: { label: "Titulo", ordem: 1 },
+    subTitulo: { label: "SubTitulo", ordem: 2 },
+    razaoSocial: { label: "Razão Social", ordem: 3 }
+
 };
+
+export const UrlBuscarPaginado = "LojaPortifolio/BuscarPaginado";
+export const UrlPortifolio = "LojaPortifolio";
+

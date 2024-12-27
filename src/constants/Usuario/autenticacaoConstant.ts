@@ -5,3 +5,6 @@ export const SucessText = "Email enviado com sucesso."
 export const EsqueciText = "Digite seu CPF ou E-mail para recuperar a senha."
 export const RecuperaText = "Cadastre uma nova senha para acessar o site."
 export const EnvioItemText = "Um email foi enviado para sua conta, por favor verifique."
+export const UrlEsqueciSenha = "EsqueciSenha";
+export const UrlAutenticacaoDoisFatores = "AutenticacaoDoisFatores";
+export const UrlReenviaEmail = "AutenticacaoDoisFatores/ReenviarEmailAutenticacao";

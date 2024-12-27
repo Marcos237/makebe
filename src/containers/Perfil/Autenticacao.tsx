@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { useParams } from "react-router-dom";
 import { AutenticacaoItens } from "../../Interfaces/Usuario/AutenticacaoItens";
-import { AtivarUsuario, ReenviatEmail } from '../../constants/Usuario/autenticacaoConstant';
+import { AtivarUsuario, ReenviatEmail, UrlAutenticacaoDoisFatores } from '../../constants/Usuario/autenticacaoConstant';
 import { BotaoItens } from '../../Interfaces/Botao/botao';
+import { PutService } from '../../services/shared/putService';
+import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig';
+import { Grid } from '@mui/material';
+import { API_BASE_URL } from '../../config/apiConfig';
+import RecaptchaComponent from '../../components/recaptcha';
 import Botao from '../../components/button';
 import Banner from '../../components/banner';
 import Footer from '../../components/footer';
-import { AtivaPerfilService } from '../../services/Perfil/ativarPerfilService';
-import RecaptchaComponent from '../../components/recaptcha';
-import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig';
-import { Grid } from '@mui/material';
 import '../../assets/styles/Perfil/autenticacao.css'
 
 
@@ -35,7 +36,7 @@ const Autenticacao: React.FC = () => {
         setIsLoading(true);
         setIsDisabled(false);
 
-        const retorno = await AtivaPerfilService(autenticacaoItens ?? {});
+        const retorno = await PutService(autenticacaoItens ?? {}, `${API_BASE_URL}${UrlAutenticacaoDoisFatores}`);
         if (!retorno?.notifications || retorno?.notifications?.length === 0) {
             setIsDisabled(true);
             setIsLoading(true);

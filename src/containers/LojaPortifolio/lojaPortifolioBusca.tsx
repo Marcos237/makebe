@@ -10,7 +10,9 @@ import { Grid } from "@mui/material";
 import { BotaoItens } from '../../Interfaces/Botao/botao';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { SelectItens } from "../../Interfaces/shared/selectItens";
-import { LojaPortifolioPaginadoService } from "../../services/LojaPortifolio/LojaPortifolioPaginadoService";
+import { GetPaginadoService } from "../../services/shared/getPaginadoService";
+import { API_BASE_AGENDA_URL } from "../../config/apiConfig";
+import { UrlBuscarPaginado } from "../../constants/LojaPortifolio/LojaPortifolioConstant";
 
 
 const LojaPortifolioBusca: React.FC<{ selectItens: SelectItens[], onResultadosBusca: (resultado: PaginacaoItens<LojaPortifolioItem>) => void }> =
@@ -44,7 +46,7 @@ const LojaPortifolioBusca: React.FC<{ selectItens: SelectItens[], onResultadosBu
                 objetoPesquisa: lojaPortifolio,
                 objetos: []
             };
-            const lojaResponse = await LojaPortifolioPaginadoService(paginacao ?? {})
+            const lojaResponse = await GetPaginadoService(paginacao ?? {}, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`)
             onResultadosBusca(lojaResponse ?? {});
             setIsLoading(false);
         }
@@ -62,8 +64,8 @@ const LojaPortifolioBusca: React.FC<{ selectItens: SelectItens[], onResultadosBu
                 objetoPesquisa: {},
                 objetos: []
             };
-            const enderecoService = await LojaPortifolioPaginadoService(paginacao ?? {});
-            onResultadosBusca(enderecoService ?? {});
+            const lojaResponse = await GetPaginadoService(paginacao ?? {}, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`)
+            onResultadosBusca(lojaResponse ?? {});
             setIsLoading(false);
         };
 

@@ -6,7 +6,7 @@ export interface DropDownItens {
     placeholder?: string,
     itens?: Array<SelectItens>,
     name?: string,
-    selectedId?: string;
+    selectedId?: string | number;
     onChange?: (event: SelectChangeEvent<string>) => void;
 }
 

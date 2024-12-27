@@ -2,20 +2,23 @@ import { useCallback, useEffect, useState } from 'react';
 import { Grid } from '@mui/material';
 import { BotaoItens } from '../../Interfaces/Botao/botao';
 import { EsqueciSenhaItens } from '../../Interfaces/Usuario/EsqueciSenhaItens';
-import { EsqueciText, SucessText } from '../../constants/Usuario/autenticacaoConstant';
+import { EsqueciText, SucessText, UrlEsqueciSenha } from '../../constants/Usuario/autenticacaoConstant';
+import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
+import { PostService } from '../../services/shared/postService';
+import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
+import { EnvioItemText } from '../../constants/Usuario/autenticacaoConstant';
+import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig'
+import { UsuarioLoginItens } from '../../Interfaces/Usuario/UsuarioLoginItens';
+import { UrlUsuarioLogado } from '../../constants/Usuario/usuarioConstant';
+import { API_BASE_URL } from '../../config/apiConfig';
+import { GetAllService } from '../../services/shared/getAllService';
+import { ResponseItem } from '../../Interfaces/shared/ResponseItem';
+import RecaptchaComponent from '../../components/recaptcha';
 import Botao from '../../components/button';
 import Banner from '../../components/banner';
 import Footer from '../../components/footer';
 import CampoTexto from '../../components/textbox';
 import Mensagem from '../../components/mensagem';
-import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
-import { EsqueciSenhaService } from '../../services/Login/esqueciSenhaService'
-import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
-import RecaptchaComponent from '../../components/recaptcha';
-import { EnvioItemText } from '../../constants/Usuario/autenticacaoConstant';
-import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig'
-import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
-import { UsuarioLogadoService } from '../../services/Perfil/usuarioLogadoService';
 
 import '../../assets/styles/Login/esqueciSenha.css';
 
@@ -27,13 +30,13 @@ const AlteraSenha: React.FC = () => {
     const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
     const [isVisibleLogin, setIsVisibleLogin] = useState(false);
     const [isEnviaText, setIsEnviaText] = useState(true);
-    const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLogadoItens>();
+    const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLoginItens>();
     const [useIsDiseble, setIsDiseble] = useState<boolean>();
     const [useIsEnviado, setIsEnviado] = useState<boolean>();
 
 
     const fetchData = useCallback(async () => {
-        const sessao = await UsuarioLogadoService();
+        const sessao = await GetAllService(`${API_BASE_URL}${UrlUsuarioLogado}`) as ResponseItem<UsuarioLoginItens>
         setUsuarioLogado(sessao);
         if (useIsEnviado) {
             setIsLoading(true);
@@ -57,10 +60,9 @@ const AlteraSenha: React.FC = () => {
             value: value,
             recaptcha: recaptchaValue ?? ''
         };
-        const response = await EsqueciSenhaService(reenviaItens);
+        const response = await PostService(reenviaItens, `${API_BASE_URL}${UrlEsqueciSenha}`);
         setIsVisibleLogin(true)
         setIsEnviaText(false)
-
         if (response?.notifications && response.notifications.length > 0) {
 
             const erroEmail = response.notifications[0];

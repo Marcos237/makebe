@@ -8,5 +8,4 @@ export interface LojaPortifolioItem {
     subTitulo?:string;
     texto?: string;
     lojaPortifolioImagens?: Array<LojaPortifolioImagemItem>;
-    notifications?: Array<NotificationItens>
 }

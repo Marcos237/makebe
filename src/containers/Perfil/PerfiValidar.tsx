@@ -2,8 +2,8 @@ import React from 'react';
 import Banner from '../../components/banner';
 import Footer from '../../components/footer';
 import { MensagemCadastro } from '../../constants/Usuario/usuarioConstant';
-import '../../assets/styles/Perfil/perfilValidar.css'
 import { Grid } from '@mui/material';
+import '../../assets/styles/Perfil/perfilValidar.css'
 
 const PerfilValidar: React.FC = () => {
     return <>

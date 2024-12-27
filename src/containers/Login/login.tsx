@@ -1,22 +1,25 @@
-import * as React from 'react';
 import { Grid } from '@mui/material';
-import Banner from '../../components/banner';
-import Footer from '../../components/footer';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Botao from '../../components/button';
-import CampoTexto from '../../components/textbox';
 import { BotaoItens } from '../../Interfaces/Botao/botao';
 import { UsuarioLoginItens } from '../../Interfaces/Usuario/UsuarioLoginItens';
-import Icone from '../../components/icone';
 import { SiInstagram, SiFacebook, SiGoogle } from 'react-icons/si';
-import { loginUser } from '../../services/Login/loginService';
+import { PostService } from '../../services/shared/postService';
 import { MensagemItens } from '../../Interfaces/Mensagens/MensagemItens';
-import Mensagem from '../../components/mensagem';
 import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
-import RecaptchaComponent from '../../components/recaptcha';
 import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig'
-
+import { API_BASE_URL } from '../../config/apiConfig';
+import { UrlLogin } from '../../constants/login/loginConstant';
+import { saveTokenToLocalStorage } from '../../config/ArmazenaToken';
+import { UsuarioPerilItens } from '../../Interfaces/Usuario/UsuarioPerilItens'
+import Icone from '../../components/icone';
+import Botao from '../../components/button';
+import Mensagem from '../../components/mensagem';
+import RecaptchaComponent from '../../components/recaptcha';
+import CampoTexto from '../../components/textbox';
+import Banner from '../../components/banner';
+import Footer from '../../components/footer';
+import * as React from 'react';
 
 import '../../assets/styles/Login/login.css';
 
@@ -44,12 +47,19 @@ const Login: React.FC = () => {
             recaptcha: recaptchaValue ?? ''
         };
 
-        const usuarioLogado = await loginUser(usuario);
+        const response = (await PostService(usuario, `${API_BASE_URL}${UrlLogin}`));
+        saveTokenToLocalStorage(response?.data?.chave ?? '');
+        const usuarioLogado: UsuarioPerilItens = {
+            id: response?.data?.usuarioId,
+            urlImagem: response?.data?.urlImagem,
+            nome: response?.data?.nome,
+            urlInicial: response?.data?.urlInicial,
+        };
         setIsLoading(false);
-        setMessageRetorno(usuarioLogado?.notifications ?? []);
+        setMessageRetorno(response?.notifications ?? []);
 
-        if (!usuarioLogado?.notifications || usuarioLogado?.notifications?.length === 0) {
-            navigate(usuarioLogado?.urlInicial ?? '', { state: { usuarioLogado } });
+        if (!response?.notifications || response?.notifications?.length === 0) {
+            navigate(response?.data?.urlInicial ?? '', { state: { usuarioLogado } });
         }
         else {
             setLogin('');

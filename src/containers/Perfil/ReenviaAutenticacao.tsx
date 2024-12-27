@@ -2,18 +2,18 @@ import React, { useState } from 'react';
 import { Grid } from '@mui/material';
 import { BotaoItens } from '../../Interfaces/Botao/botao';
 import { ReenviaItens } from '../../Interfaces/Usuario/ReenviaItens';
-import { ReenviatText, SucessText } from '../../constants/Usuario/autenticacaoConstant';
+import { ReenviatText, SucessText, UrlReenviaEmail } from '../../constants/Usuario/autenticacaoConstant';
+import { API_BASE_URL, RECAPTCHA_SITE_KEY } from '../../config/apiConfig'
+import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
+import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
+import { PostService } from '../../services/shared/postService';
+import RecaptchaComponent from '../../components/recaptcha';
 import Botao from '../../components/button';
 import Banner from '../../components/banner';
 import Footer from '../../components/footer';
 import CampoTexto from '../../components/textbox';
 import Mensagem from '../../components/mensagem';
-import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
-import { ReenviaEmailService } from '../../services/Perfil/reenviaEmailService'
 import '../../assets/styles/Perfil/reenvia.css';
-import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
-import RecaptchaComponent from '../../components/recaptcha';
-import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig'
 
 const ReenviaAutenticacao: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -35,7 +35,7 @@ const ReenviaAutenticacao: React.FC = () => {
             email: email,
             recaptcha: recaptchaValue ?? ''
         };
-        const response = await ReenviaEmailService(reenviaItens);
+        const response = await PostService(reenviaItens, `${API_BASE_URL}${UrlReenviaEmail}`);
 
         if (response?.notifications) {
 

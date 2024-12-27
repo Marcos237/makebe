@@ -3,7 +3,7 @@ import { SubMenusItens } from "./subMenuitens";
 
 export interface MenuUsuarioItens {
     id: number;
-    descricao:string;
+    menuDescricao:string;
     urlMenu: string;
     ordem?: number;
     subMenus?: Array<SubMenusItens>

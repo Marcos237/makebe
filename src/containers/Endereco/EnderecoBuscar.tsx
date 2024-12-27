@@ -10,9 +10,12 @@ import { BotaoItens } from '../../Interfaces/Botao/botao';
 import { SelectItens } from '../../Interfaces/shared/selectItens';
 import { PaginacaoItens } from "../../Interfaces/shared/PaginacaoItens";
 import { EnderecoItens } from "../../Interfaces/Endereco/enderecoItens";
-import { EnderecoPaginacaoService } from '../../services/Endereco/enderecoPaginacaoService';
+import { GetPaginadoService } from '../../services/shared/getPaginadoService';
+import { API_BASE_AGENDA_URL } from "../../config/apiConfig";
+import { UrlBuscarPaginado } from "../../constants/Endereco/enderecoConstants";
 
 import '../../assets/styles/Endereco/enderecoBuscar.css';
+
 
 const EnderecoBuscar: React.FC<{ selectItens: SelectItens[], onResultadosBusca: (resultados: PaginacaoItens<EnderecoItens>) => void }> = 
     ({ selectItens, onResultadosBusca }) => {
@@ -41,7 +44,7 @@ const EnderecoBuscar: React.FC<{ selectItens: SelectItens[], onResultadosBusca: 
                 objetoPesquisa: loja,
                 objetos: []
             };
-            const enderecoService = await EnderecoPaginacaoService(paginacao ?? {});
+            const enderecoService = await GetPaginadoService(paginacao ?? {}, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}` );
             onResultadosBusca(enderecoService ?? {});
             setIsLoading(false);
         };
@@ -58,7 +61,7 @@ const EnderecoBuscar: React.FC<{ selectItens: SelectItens[], onResultadosBusca: 
                 objetoPesquisa: {},
                 objetos: []
             };
-            const enderecoService = await EnderecoPaginacaoService(paginacao ?? {});
+            const enderecoService = await GetPaginadoService(paginacao ?? {}, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}` );
             onResultadosBusca(enderecoService ?? {});
             setIsLoading(false);
         };

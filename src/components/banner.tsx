@@ -1,4 +1,9 @@
 import React, { useState } from 'react';
+import { Box, Button, Menu, MenuItem } from '@mui/material';
+import { URL_IMAGENS } from '../config/apiConfig';
+import { Link } from 'react-router-dom';
+import { MenuUsuarioItens } from '../Interfaces/Banner/MenuUsuarioItens';
+import { BannerItens } from '../Interfaces/Banner/bannerItens';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -6,13 +11,7 @@ import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
-import { Box, Button, Menu, MenuItem } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
-import { URL_IMAGENS } from '../config/apiConfig';
-import { Link } from 'react-router-dom';
-import { MenuUsuarioItens } from '../Interfaces/Banner/MenuUsuarioItens';
-import { BannerItens } from '../Interfaces/Banner/bannerItens';
-
 
 import "../assets/styles/Banner/banner.css";
 
@@ -25,28 +24,27 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
 
   const menuUsuarioItems: MenuUsuarioItens[] = usuarioLogado?.menus?.length
     ? [
-      { id: 1, descricao: 'Perfil', urlMenu: '/perfil' },
-      { id: 2, descricao: 'Alterar Senha', urlMenu: '/alteraSenha' },
-      { id: 3, descricao: 'Sair', urlMenu: '/Deslogar' },
+      { id: 1, menuDescricao: 'Perfil', urlMenu: '/perfil' },
+      { id: 2, menuDescricao: 'Alterar Senha', urlMenu: '/alteraSenha' },
+      { id: 3, menuDescricao: 'Sair', urlMenu: '/Deslogar' },
     ]
     : [
-      { id: 1, descricao: 'Login', urlMenu: '/login' },
-      { id: 2, descricao: 'Cadastro', urlMenu: '/perfil' },
-      { id: 3, descricao: 'Recuperar Senha', urlMenu: '/alteraSenha' },
+      { id: 1, menuDescricao: 'Login', urlMenu: '/login' },
+      { id: 2, menuDescricao: 'Cadastro', urlMenu: '/perfil' },
+      { id: 3, menuDescricao: 'Recuperar Senha', urlMenu: '/alteraSenha' },
     ];
 
   const menuUsuarioLogadoItems: MenuUsuarioItens[] = usuarioLogado?.menus?.length
     ? usuarioLogado.menus.map(menu => ({
       id: menu.id,
-      descricao: menu.descricao,
+      menuDescricao: menu.menuDescricao,
       urlMenu: menu.urlMenu,
       subMenus: menu.subMenus
     }))
     : [
-      { id: 1, descricao: 'Sobre', urlMenu: '/sobre' },
-      { id: 2, descricao: 'Contato', urlMenu: '/contato' },
+      { id: 1, menuDescricao: 'Sobre', urlMenu: '/sobre' },
+      { id: 2, menuDescricao: 'Contato', urlMenu: '/contato' },
     ];
-
 
   const handleOpenUser = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -144,7 +142,7 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
                 {menuUsuarioLogadoItems.map((item) => (
                   <Box key={item.id}>
                     <MenuItem onClick={(event) => handleMenuItemClick(event, item)}>
-                      {item.descricao}
+                      {item.menuDescricao}
                     </MenuItem>
                     {item.subMenus && renderSubMenu(item)}
                   </Box>
@@ -164,7 +162,7 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
               {menuUsuarioLogadoItems.map(item => (
                 <Box key={item.id}>
                   <Button component={Link} to={item.urlMenu} onClick={item.subMenus && item.subMenus.length > 0 ? (event) => handleSubMenuToggle(event, item.id) : handleMenuClose} sx={{ my: 2, color: 'white', display: 'block' }}>
-                    {item.descricao}
+                    {item.menuDescricao}
                   </Button>
                   {item.subMenus && renderSubMenu(item)}
                 </Box>
@@ -198,7 +196,7 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
                 {menuUsuarioItems.map((item) => (
                   <MenuItem key={item.id} onClick={handleCloseUser}>
                     <Link to={item.urlMenu} style={{ textDecoration: 'none', color: 'inherit' }}>
-                      <Typography textAlign="center">{item.descricao}</Typography>
+                      <Typography textAlign="center">{item.menuDescricao}</Typography>
                     </Link>
                   </MenuItem>
                 ))}

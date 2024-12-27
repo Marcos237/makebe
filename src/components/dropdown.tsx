@@ -24,7 +24,7 @@ const Dropdown: React.FC<{ dropProps: DropDownItens }> = ({ dropProps }) => {
       <FormControl fullWidth>
         <InputLabel>{dropProps.label}</InputLabel>
         <Select
-          value={dropProps.selectedId || '0'}
+          value={dropProps.selectedId?.toString() ?? '0'}
           onChange={handleChange}
           label={dropProps.label}
         >
