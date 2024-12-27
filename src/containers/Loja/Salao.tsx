@@ -1,4 +1,22 @@
 import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import { ModalItem } from "../../Interfaces/shared/modalItem";
+import { modalTexto, UrlTipoLoja, UrlPaginado, UrlLoja } from "../../constants/Loja/lojaConstant";
+import { PaginacaoItens } from '../../Interfaces/shared/PaginacaoItens';
+import { Grid } from '@mui/material';
+import { LojaItens } from "../../Interfaces/Loja/lojaItens";
+import { TipoLojaItens } from "../../Interfaces/Loja/tipoLojaItens";
+import { SelectItens } from '../../Interfaces/shared/selectItens';
+import { GetPaginadoService } from "../../services/shared/getPaginadoService";
+import { GetByIdService } from "../../services/shared/getByIdService";
+import { propertyLabels } from '../../constants/Loja/lojaConstant';
+import { GrigViewItens } from "../../Interfaces/shared/gridviewItens";
+import { PersistirItens } from "../../Interfaces/shared/persistirItens";
+import { ResponseItem } from "../../Interfaces/shared/ResponseItem";
+import { DeleteService } from '../../services/shared/deleteService';
+import { UrlUsuarioLogado } from "../../constants/Usuario/usuarioConstant";
+import { API_BASE_URL, API_BASE_AGENDA_URL } from '../../config/apiConfig';
+import { UsuarioLoginItens } from '../../Interfaces/Usuario/UsuarioLoginItens';
+import { GetAllService } from "../../services/shared/getAllService";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Footer from '../../components/footer';
@@ -7,27 +25,11 @@ import SalaoPersistir from '../Loja/SalaoPersitir';
 import GridViewLista from '../../components/gridview';
 import SalaoBusca from "./SalaoBusca";
 import ModalGeneric from "../../componentsGenerics/modalGeneric";
-import { ModalItem } from "../../Interfaces/shared/modalItem";
-import { modalTexto } from "../../constants/Loja/lojaConstant";
-import { PaginacaoItens } from '../../Interfaces/shared/PaginacaoItens';
-import { UsuarioLogadoService } from '../../services/Perfil/usuarioLogadoService';
-import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
-import { Grid } from '@mui/material';
-import { LojaItens } from "../../Interfaces/Loja/lojaItens";
-import { TipoLojaService } from "../../services/Loja/tipoLojaService";
-import { TipoLojaItens } from "../../Interfaces/Loja/tipoLojaItens";
-import { SelectItens } from '../../Interfaces/shared/selectItens';
-import { LojaPaginadoService } from "../../services/Loja/lojaPaginadoService";
-import { LojaBuscaPorIdService } from "../../services/Loja/lojaBuscaPorIdService";
-import { propertyLabels } from '../../constants/Loja/lojaConstant';
-import { GrigViewItens } from "../../Interfaces/shared/gridviewItens";
-import { PersistirItens } from "../../Interfaces/shared/persistirItens";
-import { LojaExcluirService } from '../../services/Loja/lojaExcluirService';
 
 import '../../assets/styles/Loja/loja.css';
 
 const Salao: React.FC = () => {
-    const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLogadoItens>();
+    const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLoginItens>();
     const [persistirItens, setPersistirItems] = useState<PersistirItens<LojaItens>>();
     const [gridViewItens, setGridView] = useState<GrigViewItens<LojaItens>>();
     const [lojaItem, setLojaItem] = useState<LojaItens>();
@@ -47,7 +49,7 @@ const Salao: React.FC = () => {
 
         if (!resultadosBusca || page !== undefined) {
             paginacao.objetos = []
-            const lojaResponse = await LojaPaginadoService(paginacao);
+            const lojaResponse = await GetPaginadoService(paginacao, `${API_BASE_AGENDA_URL}${UrlPaginado}`);
             if (lojaResponse) {
                 setResultadosBusca(lojaResponse);
             }
@@ -57,8 +59,8 @@ const Salao: React.FC = () => {
     const handleUpdateClick = useCallback(async (event: React.MouseEvent, loja?: any) => {
         event.preventDefault();
         const lojaId = loja.id ?? 0;
-        const retorno = await LojaBuscaPorIdService(lojaId);
-        setLojaItem(retorno ?? {});
+        const retorno = await GetByIdService(lojaId, `${API_BASE_AGENDA_URL}${UrlLoja}` ) as ResponseItem<LojaItens>;
+        setLojaItem(retorno.data ?? {});
         handleScrollToTop();
     }, []);
 
@@ -67,7 +69,7 @@ const Salao: React.FC = () => {
     }, []);
 
     const handleModalDesativarLoja = useCallback(async (id: number) => {
-        const lojaRetorno = await LojaExcluirService(id);
+        const lojaRetorno = await DeleteService(id, `${API_BASE_AGENDA_URL}${UrlLoja}`);
         if (lojaRetorno) {
             fetchLojaData();
             setModalOpen(undefined);
@@ -107,8 +109,8 @@ const Salao: React.FC = () => {
     }, [fetchLojaData])
 
     const fetchTipoLojaData = useCallback(async () => {
-        const tipoLojaResponse = await TipoLojaService();
-        const itensSelect: SelectItens[] = tipoLojaResponse?.map((tipo: TipoLojaItens) => ({
+        const tipoLojaResponse = await GetAllService(`${API_BASE_AGENDA_URL}${UrlTipoLoja}`) as ResponseItem<TipoLojaItens>;
+        const itensSelect: SelectItens[] = tipoLojaResponse?.datas?.map((tipo: TipoLojaItens) => ({
             key: tipo.id || '',
             value: tipo.descricao
         })) ?? [];
@@ -122,7 +124,9 @@ const Salao: React.FC = () => {
     }, [fetchLojaData]);
 
     const usuarioData = useCallback(async () => {
-        const [sessao] = await Promise.all([UsuarioLogadoService()]);
+        const [sessao] = await Promise.all([
+            GetAllService(`${API_BASE_URL}${UrlUsuarioLogado}`) as ResponseItem<UsuarioLoginItens>
+        ]);
         setUsuarioLogado(sessao);
     }, []);
 

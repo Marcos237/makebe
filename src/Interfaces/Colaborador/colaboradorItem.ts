@@ -14,5 +14,4 @@ export interface ColaboradorItens {
     status: boolean;
     instagram?: string;
     descricaoStatus?: string;
-    notifications?: Array<NotificationItens>
 }

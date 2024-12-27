@@ -3,30 +3,30 @@ import Banner from '../../components/banner';
 import Carroussel from '../../components/slider';
 import Footer from '../../components/footer';
 import { Box, Grid } from '@mui/material';
-import { UsuarioLogadoService } from '../../services/Perfil/usuarioLogadoService';
-import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
-// import { VitrineService } from '../../services/Vitrine/vitrineService';
-// import { VitrineItem } from '../../Interfaces/Vitrine/vitrineItem';
-
+import { GetAllService } from '../../services/shared/getAllService';
+import { API_BASE_URL } from '../../config/apiConfig';
+import { UrlUsuarioLogado } from '../../constants/Usuario/usuarioConstant';
+import { UsuarioLoginItens } from '../../Interfaces/Usuario/UsuarioLoginItens';
+import { ResponseItem } from '../../Interfaces/shared/ResponseItem';
 
 import '../../assets/styles/Conteudo/conteudo.css';
 
 const Home: React.FC = () => {
-  // const [useVritrine, setVitrine] = useState<VitrineItem>();
-  const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLogadoItens>();
+
+  const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLoginItens>();
 
 
   const fetchVitrineData = async () => {
-      const [sessao] = await Promise.all([
-        UsuarioLogadoService(),
-      ]);
-      setUsuarioLogado(sessao);
+    const [sessao] = await Promise.all([
+      GetAllService(`${API_BASE_URL}${UrlUsuarioLogado}`) as ResponseItem<UsuarioLoginItens>
+    ]);
+
+    setUsuarioLogado(sessao);
   };
 
   useEffect(() => {
     fetchVitrineData();
   }, []);
-
 
   return (
     <>

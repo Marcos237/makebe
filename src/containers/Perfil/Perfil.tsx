@@ -1,25 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Grid } from '@mui/material';
+import { BotaoItens } from '../../Interfaces/Botao/botao';
+import { UsuarioPerilItens } from '../../Interfaces/Usuario/UsuarioPerilItens'
+import { cpfMaskConst, foneMaskConst, UrlUsuarioPerfil } from '../../constants/Usuario/usuarioConstant';
+import { UploadItens } from '../../Interfaces/TextBox/UploadItens';
+import { PostService } from '../../services/shared/postService';
+import { PutService } from '../../services/shared/putService';
+import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
+import { RetornarMessageService } from '../../services/shared/retornarMessageService';
+import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig'
+import { UsuarioLoginItens } from '../../Interfaces/Usuario/UsuarioLoginItens';
+import { UrlUsuarioLogado } from '../../constants/Usuario/usuarioConstant';
+import { API_BASE_URL } from '../../config/apiConfig';
+import { GetAllService } from '../../services/shared/getAllService';
+import { ResponseItem } from '../../Interfaces/shared/ResponseItem';
 import Banner from '../../components/banner';
 import Footer from '../../components/footer';
-import { useNavigate } from 'react-router-dom';
+import RecaptchaComponent from '../../components/recaptcha';
 import Upload from '../../components/upload';
 import Botao from '../../components/button';
 import CampoTexto from '../../components/textbox';
-import { BotaoItens } from '../../Interfaces/Botao/botao';
-import { UsuarioPerilItens } from '../../Interfaces/Usuario/UsuarioPerilItens'
-import { cpfMaskConst, foneMaskConst } from '../../constants/Usuario/usuarioConstant';
-import { UploadItens } from '../../Interfaces/TextBox/UploadItens';
-import { GerPerfilService } from '../../services/Perfil/getPerfilService';
-import { PerfilService } from '../../services/Perfil/perfilService';
-import { UpdatePerfilService } from '../../services/Perfil/upDatePerfilService';
-import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
 import Mensagem from '../../components/mensagem';
-import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
-import { RetornarMessageService } from '../../services/Perfil/retornarMessageService';
-import RecaptchaComponent from '../../components/recaptcha';
-import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig'
-import { UsuarioLogadoService } from '../../services/Perfil/usuarioLogadoService'
+import React, { useState, useEffect } from 'react';
+
 
 import '../../assets/styles/Perfil/perfil.css';
 
@@ -39,32 +42,29 @@ const Perfil: React.FC = () => {
     const [isLogado, setLogado] = useState<boolean>(false);
     const [isMessage, setMessage] = useState<boolean>(false);
     const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
-    const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLogadoItens>();
+    const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLoginItens>();
 
     const handleRecaptchaChange = (value: string | null) => {
         setRecaptchaValue(value);
     };
 
-
     const fetchPerfilData = async () => {
-        const response = await GerPerfilService();
-        setId(response?.id ?? '')
-        setNome(response?.nome ?? '');
-        setCpf(response?.cpf ?? '');
-        setEmail(response?.email ?? '')
-        setTelefone(response?.telefone ?? '')
-        setInstagram(response?.instagram ?? '')
+        const response = await GetAllService(`${API_BASE_URL}${UrlUsuarioPerfil}`) as ResponseItem<UsuarioPerilItens>;
+        setId(response?.data?.id ?? '')
+        setNome(response?.data?.nome ?? '');
+        setCpf(response?.data?.cpf ?? '');
+        setEmail(response?.data?.email ?? '')
+        setTelefone(response?.data?.telefone ?? '')
+        setInstagram(response?.data?.instagram ?? '')
         setUploadItem({
             uploadProps: {
-                nomeImagem: response?.nomeImagem,
-                urlImagem: response?.urlImagem,
+                nomeImagem: response?.data?.nomeImagem,
+                urlImagem: response?.data?.urlImagem,
                 id: "1"
             },
         });
-
-        if (response.id !== '') {
-
-            const sessao = await UsuarioLogadoService();
+        if (response.data?.id !== undefined && response.data?.id !== '') {
+            const sessao = await GetAllService(`${API_BASE_URL}${UrlUsuarioLogado}`) as ResponseItem<UsuarioLoginItens>
             setUsuarioLogado(sessao);
             setLogado(true);
         }
@@ -93,13 +93,16 @@ const Perfil: React.FC = () => {
             confirmaSenha: confirmacaoSenha
         };
         if (isLogado) {
-            const usuarioLogado = await UpdatePerfilService(usuario);
-            const messageRetorno = await RetornarMessageService(isLogado, useUsuarioLogado?.isValid ?? false, usuarioLogado?.notifications ?? [])
+            const usuarioLogado = await PutService(usuario, `${API_BASE_URL}${UrlUsuarioPerfil}`) as ResponseItem<UsuarioPerilItens>;
+            const isValid = !(Array.isArray(usuarioLogado?.notifications) && usuarioLogado?.notifications.length > 0);
+
+            const messageRetorno = await RetornarMessageService(isLogado, isValid , usuarioLogado?.notifications ?? [])
             setMessageItens(messageRetorno);
         }
         else {
-            const usuarioLogado = await PerfilService(usuario);
-            const messageRetorno = await RetornarMessageService(isLogado, useUsuarioLogado?.isValid ?? false, usuarioLogado?.notifications ?? [])
+            const usuarioLogado = await PostService(usuario, `${API_BASE_URL}${UrlUsuarioPerfil}`) as ResponseItem<UsuarioPerilItens>;
+            const isValid = !(Array.isArray(usuarioLogado?.notifications) && usuarioLogado?.notifications.length > 0);
+            const messageRetorno = await RetornarMessageService(isLogado, isValid, usuarioLogado?.notifications ?? [])
             setMessageItens(messageRetorno);
 
             if (!usuarioLogado?.notifications || usuarioLogado.notifications.length === 0) {

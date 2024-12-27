@@ -3,10 +3,12 @@ import { cnpjMaskConst } from '../../constants/Loja/lojaConstant';
 import { SelectItens } from '../../Interfaces/shared/selectItens';
 import { LojaItens } from '../../Interfaces/Loja/lojaItens';
 import { PaginacaoItens } from '../../Interfaces/shared/PaginacaoItens';
-import { LojaPaginadoService } from "../../services/Loja/lojaPaginadoService";
+import { GetPaginadoService } from "../../services/shared/getPaginadoService";
 import { SelectChangeEvent } from '@mui/material/Select';
 import { Grid } from '@mui/material';
 import { BotaoItens } from '../../Interfaces/Botao/botao';
+import { API_BASE_AGENDA_URL } from "../../config/apiConfig";
+import { UrlPaginado } from "../../constants/Loja/lojaConstant";
 import CampoTexto from '../../components/textbox';
 import Botao from '../../components/button';
 import Dropdown from "../../components/dropdown";
@@ -51,7 +53,7 @@ const SalaoBusca: React.FC<{ selectItens: SelectItens[], onResultadosBusca: (res
             objetoPesquisa: loja,
             objetos: []
         };
-        const lojaResponse = await LojaPaginadoService(paginacao ?? {})
+        const lojaResponse = await GetPaginadoService(paginacao ?? {}, `${API_BASE_AGENDA_URL}${UrlPaginado}`)
         onResultadosBusca(lojaResponse ?? {});
         setIsLoading(false);
     }
@@ -72,8 +74,8 @@ const SalaoBusca: React.FC<{ selectItens: SelectItens[], onResultadosBusca: (res
             objetoPesquisa: {},
             objetos: []
         };
-        const enderecoService = await LojaPaginadoService(paginacao ?? {});
-        onResultadosBusca(enderecoService ?? {});
+        const lojaResponseItem = await GetPaginadoService(paginacao ?? {}, `${API_BASE_AGENDA_URL}${UrlPaginado}`)
+        onResultadosBusca(lojaResponseItem ?? {});
         setIsLoading(false);
     }
 

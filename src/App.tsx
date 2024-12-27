@@ -13,6 +13,7 @@ import Salao from './containers/Loja/Salao';
 import Endereco from './containers/Endereco/Endereco';
 import LojaPortifolio from './containers/LojaPortifolio/LojaPortifolio';
 import Colaborador from './containers/Colaborador/colaborador';
+import ColaboradorProfissional from './containers/ColaboradorProfissional/colaboradorProfissional';
 
 const App: React.FC = () => {
   return (
@@ -32,6 +33,7 @@ const App: React.FC = () => {
         <Route path="/enderecoloja" element={<Endereco />} />
         <Route path="/PortifolioLoja" element={<LojaPortifolio />} />
         <Route path="/Colaborador" element={<Colaborador />} />
+        <Route path="/ColaboradorProfissional" element={<ColaboradorProfissional />} /> 
       </Routes>
     </div>
   );

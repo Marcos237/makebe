@@ -2,21 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import { Box, Grid } from '@mui/material';
-import Banner from '../../components/banner';
-import Footer from '../../components/footer';
-import Mensagem from '../../components/mensagem';
-import { RecuperaText } from '../../constants/Usuario/autenticacaoConstant'
+import { RecuperaText, UrlEsqueciSenha } from '../../constants/Usuario/autenticacaoConstant'
 import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
-import CampoTexto from '../../components/textbox';
 import { BotaoItens } from '../../Interfaces/Botao/botao';
-import { RecuperaSenhaService } from '../../services/Perfil/recuperaSenhaService'
+import { PutService } from '../../services/shared/putService';
+import { API_BASE_URL } from '../../config/apiConfig';
+import { RetornarMessageService } from '../../services/shared/retornarMessageService';
+import { RecuperaSenhaItens } from '../../Interfaces/Usuario/RecuperaSenhaItens';
+import { UsuarioLoginItens } from '../../Interfaces/Usuario/UsuarioLoginItens';
+import { UrlUsuarioLogado } from '../../constants/Usuario/usuarioConstant';
+import { GetAllService } from '../../services/shared/getAllService';
+import { ResponseItem } from '../../Interfaces/shared/ResponseItem';
 import Botao from '../../components/button';
 import RecaptchaComponent from '../../components/recaptcha';
+import Banner from '../../components/banner';
+import Footer from '../../components/footer';
+import CampoTexto from '../../components/textbox';
 import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig'
-import { RetornarMessageService } from '../../services/Perfil/retornarMessageService';
-import { UsuarioLogadoService } from '../../services/Perfil/usuarioLogadoService'
-import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
-import { RecuperaSenhaItens } from '../../Interfaces/Usuario/RecuperaSenhaItens';
+import Mensagem from '../../components/mensagem';
 
 
 import '../../assets/styles/Perfil/recuperasenha.css'
@@ -29,11 +32,10 @@ const RecuperaSenha: React.FC = () => {
     const [confirmacaoSenha, setConfirmacaoSenha] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isMessage, setMessage] = useState<boolean>(false);
-    const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLogadoItens>();
-
+    const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLoginItens>();
 
     const fetchData = async () => {
-        const sessao = await UsuarioLogadoService();
+            const sessao = await GetAllService(`${API_BASE_URL}${UrlUsuarioLogado}`) as ResponseItem<UsuarioLoginItens>;
         setUsuarioLogado(sessao);
     };
     useEffect(() => {
@@ -50,7 +52,7 @@ const RecuperaSenha: React.FC = () => {
             confirmaSenha: confirmacaoSenha ?? '',
             recaptcha: recaptchaValue ?? ''
         }
-        const retorno = await RecuperaSenhaService(recuperaItens);
+        const retorno = await PutService(recuperaItens, `${API_BASE_URL}${UrlEsqueciSenha}`);
         if (!retorno?.notifications || retorno?.notifications?.length === 0) {
             navigate('/login', { state: { retorno } });
         } else {

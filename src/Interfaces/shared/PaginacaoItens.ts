@@ -1,3 +1,4 @@
+import { NotificationItens } from "./NotificationItens";
 
 
 export interface PaginacaoItens<T> {
@@ -8,5 +9,6 @@ export interface PaginacaoItens<T> {
     total?: number;
     objetoPesquisa?: T;
     objetos?: Array<T>;
+    notifications?: NotificationItens[]
 
 }

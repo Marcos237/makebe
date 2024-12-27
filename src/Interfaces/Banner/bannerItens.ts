@@ -1,5 +1,5 @@
-import { UsuarioLogadoItens } from "../Usuario/UsuarioLogadoItens";
+import { UsuarioLoginItens } from "../Usuario/UsuarioLoginItens";
 
 export interface BannerItens {
-    usuarioLogado?: UsuarioLogadoItens;
+    usuarioLogado?: UsuarioLoginItens;
 }

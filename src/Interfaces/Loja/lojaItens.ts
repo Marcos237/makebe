@@ -8,5 +8,4 @@ export interface LojaItens {
     telefone?: string;
     tipoLojaId?: number
     tipoLojaDescricao? : string;
-    notifications? : NotificationItens[];
 }

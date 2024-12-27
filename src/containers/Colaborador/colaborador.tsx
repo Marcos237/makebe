@@ -1,29 +1,33 @@
 
 import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
-import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
-import { UsuarioLogadoService } from '../../services/Perfil/usuarioLogadoService';
+import { UsuarioLoginItens } from '../../Interfaces/Usuario/UsuarioLoginItens';
+import { GetAllService } from '../../services/shared/getAllService';
 import { PersistirItens } from "../../Interfaces/shared/persistirItens";
-import { BuscarPermissaoServce } from '../../services/Colaboradores/buscarPermissaoService';
 import { PaginacaoItens } from '../../Interfaces/shared/PaginacaoItens';
 import { mapToSelectItens } from '../../Interfaces/shared/mapToSelectItens';
 import { Grid } from '@mui/material';
 import { ColaboradorItens } from "../../Interfaces/Colaborador/colaboradorItem";
+import { API_BASE_URL, API_BASE_AGENDA_URL } from '../../config/apiConfig';
+import { UrlUsuarioLogado } from "../../constants/Usuario/usuarioConstant";
 import { GrigViewItens } from "../../Interfaces/shared/gridviewItens";
-import { propertyLabels } from "../../constants/Colaborador/colaboradorConstant";
-import { ColaboradorPaginadoService } from '../../services/Colaboradores/colaboradorPaginadoService';
-import { BuscarColaboradorPorIdService } from "../../services/Colaboradores/buscarColaboradorPorIdService";
+import { propertyLabels, UrlBuscarPaginado, UrlBuscarPermissao, UrlColaborador } from "../../constants/Colaborador/colaboradorConstant";
+import { GetPaginadoService } from '../../services/shared/getPaginadoService';
+import { GetByIdService } from "../../services/shared/getByIdService";
+import { ResponseItem } from '../../Interfaces/shared/ResponseItem';
+import ColaboradorBusca from "./colaboradorBusca";
+import { PermissaoItens } from "../../Interfaces/Colaborador/permissaoItens";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import GridViewLista from '../../components/gridview';
 import ColaboradorPersistir from "./colaboradorPersistir";
 import Banner from "../../components/banner";
 import Footer from "../../components/footer";
 import "../../assets/styles/Colaborador/colaborador.css";
-import ColaboradorBusca from "./colaboradorBusca";
+
 
 
 const Colaborador: React.FC = () => {
     const [colaboradorItem, setColaborador] = useState<ColaboradorItens>();
-    const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLogadoItens>();
+    const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLoginItens>();
     const [persistirItens, stePersistirItens] = useState<PersistirItens<ColaboradorItens>>();
     const [resultadosBusca, setResultadosBusca] = useState<PaginacaoItens<ColaboradorItens>>();
     const [gridViewItens, setGridView] = useState<GrigViewItens<ColaboradorItens>>();
@@ -40,7 +44,7 @@ const Colaborador: React.FC = () => {
         };
         if (!resultadosBusca || page !== undefined) {
             paginacao.objetos = []
-            const colaboradorReponse = await ColaboradorPaginadoService(paginacao);
+            const colaboradorReponse = await GetPaginadoService(paginacao, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}` );
             if (colaboradorReponse) {
                 setResultadosBusca(colaboradorReponse);
             }
@@ -49,13 +53,15 @@ const Colaborador: React.FC = () => {
     }, [resultadosBusca]);
 
     const usuarioData = useCallback(async () => {
-        const [sessao] = await Promise.all([UsuarioLogadoService()]);
+        const [sessao] = await Promise.all([
+            GetAllService(`${API_BASE_URL}${UrlUsuarioLogado}`) as ResponseItem<UsuarioLoginItens>
+        ]);
         setUsuarioLogado(sessao);
     }, []);
 
     const fetchPermissaoData = useCallback(async () => {
-        const permissaoResponse = await BuscarPermissaoServce();
-        const itensSelect = mapToSelectItens(permissaoResponse, 'id', 'descricao');
+        const permissaoResponse = await GetAllService(`${API_BASE_URL}${UrlBuscarPermissao}`) as ResponseItem<PermissaoItens>;
+        const itensSelect = mapToSelectItens(permissaoResponse?.datas, 'id', 'descricao');
 
         const persistirProps: PersistirItens<ColaboradorItens> = {
             selectItems: itensSelect,
@@ -68,8 +74,8 @@ const Colaborador: React.FC = () => {
     const handleUpdateClick = useCallback(async (event: React.MouseEvent, colaborador?: any) => {
         event.preventDefault();
         const colaboradorId = colaborador.usuarioId ?? '';
-        const retorno = await BuscarColaboradorPorIdService(colaboradorId);
-        setColaborador(retorno ?? undefined);
+        const retorno = await GetByIdService(colaboradorId, `${API_BASE_AGENDA_URL}${UrlColaborador}`) as ResponseItem<ColaboradorItens>;
+        setColaborador(retorno?.data ?? undefined);
         handleScrollToTop();
         setReadOnly(true);
     }, []);

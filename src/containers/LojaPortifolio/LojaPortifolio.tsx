@@ -1,18 +1,19 @@
 import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { LojaPortifolioItem } from "../../Interfaces/LojaPortifolio/lojaportifolioItem";
 import { Grid } from '@mui/material';
-import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
-import { UsuarioLogadoService } from '../../services/Perfil/usuarioLogadoService';
+import { UsuarioLoginItens } from '../../Interfaces/Usuario/UsuarioLoginItens';
+import { GetAllService } from '../../services/shared/getAllService';
 import { PaginacaoItens } from '../../Interfaces/shared/PaginacaoItens';
 import { ModalItem } from "../../Interfaces/shared/modalItem";
 import { PersistirItens } from "../../Interfaces/shared/persistirItens";
 import { SelectItens } from '../../Interfaces/shared/selectItens';
 import { LojaItens } from "../../Interfaces/Loja/lojaItens";
-import { LojaBuscarTodosService } from '../../services/Loja/lojaBuscarTodosService';
-import { LojaPortifolioPaginadoService } from "../../services/LojaPortifolio/LojaPortifolioPaginadoService";
-import { LojaPortifolioExcluirService } from "../../services/LojaPortifolio/LojaPortifolioExcluirService";
-import { LojaPortifolioBuscaPorIdService } from "../../services/LojaPortifolio/LojaPortifolioBuscarPorIdService";
-import { ModalTexto, propertyLabels } from '../../constants/LojaPortifolio/LojaPortifolioConstant';
+import { API_BASE_URL, API_BASE_AGENDA_URL } from '../../config/apiConfig';
+import { UrlUsuarioLogado } from "../../constants/Usuario/usuarioConstant";
+import { GetPaginadoService } from "../../services/shared/getPaginadoService";
+import { DeleteService } from "../../services/shared/deleteService";
+import { GetByIdService } from "../../services/shared/getByIdService";
+import { ModalTexto, propertyLabels, UrlBuscarPaginado, UrlPortifolio } from '../../constants/LojaPortifolio/LojaPortifolioConstant';
 import { GrigViewItens } from "../../Interfaces/shared/gridviewItens";
 import GridViewLista from "../../components/gridview";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
@@ -22,11 +23,13 @@ import LojaPortifolioPersistir from './LojaPortifolioPersistir';
 import Banner from '../../components/banner';
 import Footer from '../../components/footer';
 import LojaPortifolioBusca from "./lojaPortifolioBusca";
+import { UrlBuscarTodos } from "../../constants/Loja/lojaConstant";
+import { ResponseItem } from "../../Interfaces/shared/ResponseItem";
 
 import '../../assets/styles/Loja/lojaPortifolio.css'
 
 const LojaPortifolio: React.FC = () => {
-    const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLogadoItens>();
+    const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLoginItens>();
     const [persistirItens, setPersistirItems] = useState<PersistirItens<LojaPortifolioItem>>();
     const [resultadosBusca, setResultadosBusca] = useState<PaginacaoItens<LojaPortifolioItem>>();
     const [lojaPortifolio, setLojaPortifolio] = useState<LojaPortifolioItem>();
@@ -34,7 +37,9 @@ const LojaPortifolio: React.FC = () => {
     const [gridViewItens, setGridView] = useState<GrigViewItens<LojaPortifolioItem>>();
 
     const usuarioData = useCallback(async () => {
-        const [sessao] = await Promise.all([UsuarioLogadoService()]);
+        const [sessao] = await Promise.all([
+            GetAllService(`${API_BASE_URL}${UrlUsuarioLogado}`) as ResponseItem<UsuarioLoginItens>
+        ]);
         setUsuarioLogado(sessao);
     }, []);
 
@@ -50,7 +55,7 @@ const LojaPortifolio: React.FC = () => {
 
         if (!resultadosBusca || page !== undefined) {
             paginacao.objetos = []
-            const lojaResponse = await LojaPortifolioPaginadoService(paginacao);
+            const lojaResponse = await GetPaginadoService(paginacao, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`);
             if (lojaResponse) {
                 setResultadosBusca(lojaResponse);
             }
@@ -58,8 +63,8 @@ const LojaPortifolio: React.FC = () => {
     }, [resultadosBusca]);
 
     const fetchLojaData = useCallback(async () => {
-        const lojaResponse = await LojaBuscarTodosService();
-        const itensSelect: SelectItens[] = lojaResponse?.map((loja: LojaItens) => ({
+        const lojaResponse = await GetAllService(`${API_BASE_AGENDA_URL}${UrlBuscarTodos}`) as ResponseItem<LojaItens>;
+        const itensSelect: SelectItens[] = lojaResponse?.datas?.map((loja: LojaItens) => ({
             key: loja.id || '',
             value: loja.razaoSocial
         })) ?? [];
@@ -79,7 +84,7 @@ const LojaPortifolio: React.FC = () => {
     };
 
     const handleModalDesativarLojaPortifolio = useCallback(async (id: number) => {
-        const lojaRetorno = await LojaPortifolioExcluirService(id);
+        const lojaRetorno = await DeleteService(id, `${API_BASE_AGENDA_URL}${UrlPortifolio}`) as ResponseItem<LojaPortifolioItem>;
         if (lojaRetorno) {
             fetchLojaPortifolioData();
         }
@@ -107,10 +112,10 @@ const LojaPortifolio: React.FC = () => {
         event.preventDefault();
         handleScrollToTop();
         const Id = portifolio?.id ?? 0;
-        const retorno = await LojaPortifolioBuscaPorIdService(Id);
+        const retorno = await GetByIdService(Id, `${API_BASE_AGENDA_URL}${UrlPortifolio}`) as ResponseItem<LojaPortifolioItem>;
 
-        setLojaPortifolio(retorno ?? {});
-    },[]);
+        setLojaPortifolio(retorno.data ?? {});
+    }, []);
 
     const actionButtons = useMemo(() => ([
         {
@@ -175,9 +180,9 @@ const LojaPortifolio: React.FC = () => {
                     <LojaPortifolioPersistir persistirProps={{ ...persistirItens, item: lojaPortifolio }} />
                 </div>
                 <div className="busca-lojaPortifolio">
-                    <LojaPortifolioBusca 
-                    selectItens={persistirItens?.selectItems ?? []}
-                    onResultadosBusca={handleResultadosBusca} />
+                    <LojaPortifolioBusca
+                        selectItens={persistirItens?.selectItems ?? []}
+                        onResultadosBusca={handleResultadosBusca} />
                 </div>
             </div>
             <div className="lista-lojaPortifolio">

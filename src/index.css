@@ -98,6 +98,14 @@ body {
     width: 80%;
     padding: 2px !important;
 }
+.gridBotoes {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    top: -25vh; 
+    padding-left: 10vh;
+    padding-right: 10vh;
+}
 
 @media (max-width: 900px) {
     .hiddenTelaPequena {
@@ -116,7 +124,7 @@ body {
     .gridEsquerdo,
     .gridDireito {
         height: auto !important;
-        margin-top: 0 !important;
+        margin-top: -36px !important;
     }
 
 
@@ -137,5 +145,8 @@ body {
     .formItemMenor {
         width: 100%;
         padding: 2px !important;
+    }
+    .gridBotoes {
+        top: -15vh; 
     }
 }

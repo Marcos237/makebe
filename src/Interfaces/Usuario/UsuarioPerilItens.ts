@@ -15,5 +15,4 @@ export interface UsuarioPerilItens {
     permissaoId?: string;
     servicoId?: number;
     urlInicial?: string;
-    notifications?: NotificationItens[]
 }

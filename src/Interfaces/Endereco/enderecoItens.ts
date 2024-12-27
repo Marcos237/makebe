@@ -10,5 +10,4 @@ export interface EnderecoItens {
     cep?: string;
     estado?: string;
     cidade?: string;
-    notifications?: NotificationItens[]
 }

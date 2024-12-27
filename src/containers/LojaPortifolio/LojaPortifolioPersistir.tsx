@@ -7,15 +7,16 @@ import { EditorTextoItem } from '../../Interfaces/shared/editorTextoItem';
 import {
     primeiraImagemBanner, segundaImagemBanner, terceiraImagemBanner, imagensSessaoBanner, imagensSessaoVitrine,
     imagensSessaoVitrinePrimeiro, imagensSessaoVitrinesegundo, Editor, EditorPlaceHolder, SessaoImagens,
-    SessaoTitulos, SessaoTexto
+    SessaoTitulos, SessaoTexto,
+    UrlPortifolio
 } from '../../constants/LojaPortifolio/LojaPortifolioConstant';
 import { SessaoItens } from '../../Interfaces/shared/sessaoItens';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
 import { BotaoItens } from '../../Interfaces/Botao/botao';
 import { LojaPortifolioImagemItem } from '../../Interfaces/LojaPortifolio/lojaportifolioImagemItem';
-import { LojaPortifolioPersistirService } from "../../services/LojaPortifolio/LojaPortifolioPersistirService";
-import { RetornarMessageService } from '../../services/Perfil/retornarMessageService';
+import { PostService } from "../../services/shared/postService";
+import { RetornarMessageService } from '../../services/shared/retornarMessageService';
 import Botao from '../../components/button';
 import CampoTexto from '../../components/textbox';
 import Upload from "../../components/upload";
@@ -24,7 +25,9 @@ import Sessao from "../../components/sessao";
 import Dropdown from "../../components/dropdown";
 import Mensagem from '../../components/mensagem';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { API_BASE_AGENDA_URL } from "../../config/apiConfig";
 import "../../assets/styles/Loja/lojaPortifolio.css"
+
 
 const LojaPortifolioPersistir: React.FC<{ persistirProps: PersistirItens<LojaPortifolioItem> }> = ({ persistirProps }) => {
     const [isMessage, setMessage] = useState<boolean>(false);
@@ -145,7 +148,7 @@ const LojaPortifolioPersistir: React.FC<{ persistirProps: PersistirItens<LojaPor
             lojaId: Number(lojaId) || 0,
         }
 
-        const retorno = await LojaPortifolioPersistirService(portifolio);
+        const retorno = await PostService(portifolio, `${API_BASE_AGENDA_URL}${UrlPortifolio}`);
         if (!retorno?.notifications || retorno?.notifications?.length === 0) {
 
             const messageRetorno = await RetornarMessageService(true, true, [])

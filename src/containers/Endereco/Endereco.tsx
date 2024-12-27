@@ -1,19 +1,22 @@
 import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { Grid } from '@mui/material';
-import { UsuarioLogadoItens } from '../../Interfaces/Usuario/UsuarioLogadoItens';
-import { UsuarioLogadoService } from '../../services/Perfil/usuarioLogadoService';
+import { UsuarioLoginItens } from '../../Interfaces/Usuario/UsuarioLoginItens';
+import { GetAllService } from '../../services/shared/getAllService';
 import { GrigViewItens } from "../../Interfaces/shared/gridviewItens";
 import { EnderecoItens } from '../../Interfaces/Endereco/enderecoItens'
 import { PersistirItens } from "../../Interfaces/shared/persistirItens";
 import { PaginacaoItens } from '../../Interfaces/shared/PaginacaoItens';
 import { LojaItens } from "../../Interfaces/Loja/lojaItens";
 import { SelectItens } from '../../Interfaces/shared/selectItens';
-import { propertyLabels, modalTexto } from '../../constants/Endereco/enderecoConstants';
+import { propertyLabels, modalTexto, UrlBuscarPaginado, UrlEndereco } from '../../constants/Endereco/enderecoConstants';
 import { ModalItem } from "../../Interfaces/shared/modalItem";
-import { EnderecoExcluirService } from '../../services/Endereco/enderecoExcluirService';
-import { LojaBuscarTodosService } from '../../services/Loja/lojaBuscarTodosService';
-import { EnderecoPaginacaoService } from "../../services/Endereco/enderecoPaginacaoService";
-import { EnderecoBuscarPorIdService } from "../../services/Endereco/enderecoBuscarPorIdService";
+import { UrlUsuarioLogado } from "../../constants/Usuario/usuarioConstant";
+import { API_BASE_URL, API_BASE_AGENDA_URL } from '../../config/apiConfig';
+import { DeleteService } from '../../services/shared/deleteService';
+import { UrlBuscarTodos } from "../../constants/Loja/lojaConstant";
+import { GetPaginadoService } from "../../services/shared/getPaginadoService";
+import { GetByIdService } from "../../services/shared/getByIdService";
+import { ResponseItem } from "../../Interfaces/shared/ResponseItem";
 import ModalGeneric from "../../componentsGenerics/modalGeneric";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -23,14 +26,12 @@ import EnderecoBuscar from "./EnderecoBuscar";
 import Banner from "../../components/banner";
 import Footer from "../../components/footer";
 
-
-
 import '../../assets/styles/Endereco/endereco.css'
 
 
 const Endereco: React.FC = () => {
     const [enderecoItem, setEnderecoItem] = useState<EnderecoItens>();
-    const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLogadoItens>();
+    const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLoginItens>();
     const [gridViewItens, setGridView] = useState<GrigViewItens<EnderecoItens>>();
     const [resultadosBusca, setResultadosBusca] = useState<PaginacaoItens<EnderecoItens>>();
     const [modalOpen, setModalOpen] = useState<ModalItem>();
@@ -48,7 +49,7 @@ const Endereco: React.FC = () => {
 
         if (!resultadosBusca || page !== undefined) {
             paginacao.objetos = []
-            const enderecoResponse = await EnderecoPaginacaoService(paginacao);
+            const enderecoResponse = await GetPaginadoService(paginacao, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`);
             if (enderecoResponse) {
                 setResultadosBusca(enderecoResponse);
             }
@@ -56,7 +57,7 @@ const Endereco: React.FC = () => {
     }, [resultadosBusca]);
 
     const handleModalDesativarEndereco = useCallback(async (id: number) => {
-        const lojaRetorno = await EnderecoExcluirService(id);
+        const lojaRetorno = await DeleteService(id, `${API_BASE_AGENDA_URL}${UrlEndereco}`);
         if (lojaRetorno) {
 
             fetchEnderecoData();
@@ -67,20 +68,20 @@ const Endereco: React.FC = () => {
     const handleUpdateClick = useCallback(async (event: React.MouseEvent, endereco?: any) => {
         event.preventDefault();
         const enderecoId = endereco.id ?? 0;
-        const retorno = await EnderecoBuscarPorIdService(enderecoId);
-        setEnderecoItem(retorno ?? {});
+        const retorno = await GetByIdService(enderecoId, `${API_BASE_AGENDA_URL}${UrlEndereco}`) as ResponseItem<EnderecoItens>;
+        setEnderecoItem(retorno.data ?? {});
         handleScrollToTop();
     }, []);
 
     const handleDeleteClick = useCallback(async (event: React.MouseEvent, endereco?: any) => {
         event.preventDefault();
 
-        const modalprops: ModalItem =    {
-            open: true, 
+        const modalprops: ModalItem = {
+            open: true,
             onClose: () => handleModalDesativarEndereco(endereco.id),
             title: `${endereco.logradouro} - ${endereco?.numero}`,
             texto: modalTexto,
-        };   
+        };
         setModalOpen(modalprops)
 
     }, [handleModalDesativarEndereco]);
@@ -109,8 +110,8 @@ const Endereco: React.FC = () => {
     };
 
     const fetchLojaData = useCallback(async () => {
-        const lojaResponse = await LojaBuscarTodosService();
-        const itensSelect: SelectItens[] = lojaResponse?.map((loja: LojaItens) => ({
+        const lojaResponse = await GetAllService(`${API_BASE_AGENDA_URL}${UrlBuscarTodos}`) as ResponseItem<LojaItens>;
+        const itensSelect: SelectItens[] = lojaResponse?.datas?.map((loja: LojaItens) => ({
             key: loja.id || '',
             value: loja.razaoSocial
         })) ?? [];
@@ -129,7 +130,9 @@ const Endereco: React.FC = () => {
 
 
     const usuarioData = useCallback(async () => {
-        const [sessao] = await Promise.all([UsuarioLogadoService()]);
+        const [sessao] = await Promise.all([
+            GetAllService(`${API_BASE_URL}${UrlUsuarioLogado}`) as ResponseItem<UsuarioLoginItens>
+        ]);
         setUsuarioLogado(sessao);
     }, []);
 
