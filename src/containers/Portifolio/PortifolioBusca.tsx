@@ -150,7 +150,7 @@ const PortifolioBusca: React.FC<{
                     <Grid container spacing={3}>
                         <Grid item xs={11} md={4}>
                             <div className="formItens formItemMenor">
-                                {tipoUsuarioPortifolioId?.toString() == TipoUsuarioPortifolioLojaId && (
+                                {tipoUsuarioPortifolioId?.toString() === TipoUsuarioPortifolioLojaId && (
                                     <div className="formItens">
                                         <Dropdown
                                             dropProps={{

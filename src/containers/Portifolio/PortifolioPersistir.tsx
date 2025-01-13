@@ -55,7 +55,9 @@ const PortifolioPersistir: React.FC<{
     const [tipoUsuarioPortifolioId, setTipoUsuarioPortifolioId] = useState<number>();
     const colaboradorProps = persistirDropProps.find((item) => item.name === "colaborador")?.selectItems ?? [];
     const lojaProps = persistirDropProps.find((item) => item.name === "loja")?.selectItems ?? [];
-    const portifolioImagemItem: PortifolioImagemItem[] = persistirProps?.item?.portifolioImagens ?? [];
+    const portifolioImagemItem: PortifolioImagemItem[] = useMemo(() => {
+        return persistirProps?.item?.portifolioImagens ?? [];
+    }, [persistirProps]);
 
     const fetchPortifolioData = useCallback(async () => {
         setId(persistirProps?.item?.id ?? 0);
@@ -95,7 +97,7 @@ const PortifolioPersistir: React.FC<{
             uploadItemsRetorno.push(uploadImagem);
             setUploadItems(uploadItemsRetorno)
         });
-    }, [persistirProps]);
+    }, [persistirProps, id, portifolioImagemItem, tipoUsuarioPortifolio, tiposPortifolioImagem]);
 
     const addImagemItem = useCallback(
         (uploadsItemAtualizado: UploadItens[]): PortifolioImagemItem[] => {
@@ -214,8 +216,8 @@ const PortifolioPersistir: React.FC<{
 
     const limparCampos = useCallback(async (imagem?: Array<TipoPortifolioImagemItem>) => {
         const uploadItemsRetorno: UploadItens[] = [];
-        imagem?.map((tipos, index) => {
-
+    
+        imagem?.forEach((tipos, index) => { 
             const uploadImagem: UploadItens = {
                 uploadProps: {
                     nomeImagem: "",
@@ -227,8 +229,9 @@ const PortifolioPersistir: React.FC<{
             };
             uploadItemsRetorno.push(uploadImagem);
         });
+    
         setUploadItems(uploadItemsRetorno);
-
+    
         setId(0);
         setTitulo('');
         setSubTitulo('');
@@ -351,7 +354,7 @@ const PortifolioPersistir: React.FC<{
                     <div className="conteudo">
                         <Grid item md={6} xs={12} className="gridEsquerdo">
                             <div className="conteudoLojaPortifolioPersistirEsquerdo conteudoMenorEsquerdo">
-                                {tipoUsuarioPortifolioId?.toString() == TipoUsuarioPortifolioLojaId && (
+                                {tipoUsuarioPortifolioId?.toString() === TipoUsuarioPortifolioLojaId && (
                                     <div className="formItens">
                                         <Dropdown
                                             dropProps={{
