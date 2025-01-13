@@ -11,6 +11,7 @@ const Upload: React.FC<UploadItens> = ({ uploadProps, onUpload }) => {
     const [urlImagem, setUrlImagem] = useState<string>('');
     const [tituloImagem, setTituloImagem] = useState<string>('');
     const [id , setId] = useState<string>('');
+    const [tituloSessao , setTituloSessao] = useState<string>('');
 
     useEffect(() => {
         if (uploadProps) {
@@ -19,6 +20,7 @@ const Upload: React.FC<UploadItens> = ({ uploadProps, onUpload }) => {
             setUrlImagem(uploadProps?.urlImagem ?? '');
             setTituloImagem(uploadProps.tituloImagem ?? '')
             setId(uploadProps.id ?? '')
+            setTituloSessao(uploadProps?.tituloSessao ?? '');
         }
     }, [uploadProps]);
 
@@ -29,7 +31,7 @@ const Upload: React.FC<UploadItens> = ({ uploadProps, onUpload }) => {
             reader.onloadend = () => {
                 const base64String = reader.result as string;
                 if (onUpload) {
-                    onUpload(base64String ?? '', file.name ?? '', tituloImagem, id ?? '');
+                    onUpload(base64String ?? '', file.name ?? '', tituloImagem, id ?? '', tituloSessao ?? '');
                 }
             };
             reader.readAsDataURL(file);
@@ -40,7 +42,7 @@ const Upload: React.FC<UploadItens> = ({ uploadProps, onUpload }) => {
         setNomeImagem('');
         setUrlImagem('');
         if (onUpload) {
-            onUpload("", "", tituloImagem, id);
+            onUpload("", "", tituloImagem, id, tituloSessao);
         }
     };
 

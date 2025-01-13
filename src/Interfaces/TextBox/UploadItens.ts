@@ -4,6 +4,7 @@ export interface UploadItens {
         urlImagem?: string;
         tituloImagem?: string;
         id?: string;
+        tituloSessao?: string;
     }
-    onUpload?: (base64String: string, fileName: string, titulo?: string, index?: string) => void;
+    onUpload?: (base64String: string, fileName: string, titulo?: string, index?: string, tituloSessao?: string) => void;
 }

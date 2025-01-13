@@ -11,7 +11,7 @@ import AlteraSenha from './containers/Login/alterasenha'
 import RecuperaSenha from './containers/Perfil/RecuperaSenha';
 import Salao from './containers/Loja/Salao';
 import Endereco from './containers/Endereco/Endereco';
-import LojaPortifolio from './containers/LojaPortifolio/LojaPortifolio';
+import Portifolio from './containers/Portifolio/Portifolio';
 import Colaborador from './containers/Colaborador/colaborador';
 import ColaboradorProfissional from './containers/ColaboradorProfissional/colaboradorProfissional';
 
@@ -31,7 +31,7 @@ const App: React.FC = () => {
         <Route path="/recuperaSenha/:chave" element={<RecuperaSenha />} />
         <Route path="/loja" element={<Salao />} />
         <Route path="/enderecoloja" element={<Endereco />} />
-        <Route path="/PortifolioLoja" element={<LojaPortifolio />} />
+        <Route path="/Portifolio/:urlParametro" element={<Portifolio />} />
         <Route path="/Colaborador" element={<Colaborador />} />
         <Route path="/ColaboradorProfissional" element={<ColaboradorProfissional />} /> 
       </Routes>
