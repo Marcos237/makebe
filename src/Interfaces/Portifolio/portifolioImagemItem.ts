@@ -1,4 +1,4 @@
-export interface LojaPortifolioImagemItem {
+export interface PortifolioImagemItem {
     lojaPortifolioId?: number;
     lojaPortifolioImagemId?: number;
     urlImagem?: string;

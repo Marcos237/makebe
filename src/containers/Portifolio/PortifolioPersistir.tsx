@@ -1,22 +1,26 @@
 import React, { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { PersistirItens } from "../../Interfaces/shared/persistirItens";
 import { Grid } from '@mui/material';
-import { LojaPortifolioItem } from "../../Interfaces/LojaPortifolio/lojaportifolioItem";
+import { PortifolioItem } from "../../Interfaces/Portifolio/portifolioItem";
 import { UploadItens } from "../../Interfaces/TextBox/UploadItens";
 import { EditorTextoItem } from '../../Interfaces/shared/editorTextoItem';
 import {
-    primeiraImagemBanner, segundaImagemBanner, terceiraImagemBanner, imagensSessaoBanner, imagensSessaoVitrine,
-    imagensSessaoVitrinePrimeiro, imagensSessaoVitrinesegundo, Editor, EditorPlaceHolder, SessaoImagens,
-    SessaoTitulos, SessaoTexto,
-    UrlPortifolio
-} from '../../constants/LojaPortifolio/LojaPortifolioConstant';
+    imagensSessaoBanner, imagensSessaoVitrine, Editor, EditorPlaceHolder, SessaoImagens,
+    SessaoTitulos, SessaoTexto, UrlPortifolio, TipoUsuarioPortifolioColaboradorId, TipoUsuarioPortifolioLojaId,
+    UrlTipoPortifolioImagem
+} from '../../constants/Portifolio/PortifolioConstant';
 import { SessaoItens } from '../../Interfaces/shared/sessaoItens';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
 import { BotaoItens } from '../../Interfaces/Botao/botao';
-import { LojaPortifolioImagemItem } from '../../Interfaces/LojaPortifolio/lojaportifolioImagemItem';
+import { PortifolioImagemItem } from '../../Interfaces/Portifolio/portifolioImagemItem';
 import { PostService } from "../../services/shared/postService";
 import { RetornarMessageService } from '../../services/shared/retornarMessageService';
+import { API_BASE_AGENDA_URL } from "../../config/apiConfig";
+import { TipoPortifolioImagemItem } from "../../Interfaces/Portifolio/tipoPortifolioImagemItem";
+import { ResponseItem } from "../../Interfaces/shared/ResponseItem";
+import { GetByIdService } from "../../services/shared/getByIdService";
+
 import Botao from '../../components/button';
 import CampoTexto from '../../components/textbox';
 import Upload from "../../components/upload";
@@ -25,11 +29,14 @@ import Sessao from "../../components/sessao";
 import Dropdown from "../../components/dropdown";
 import Mensagem from '../../components/mensagem';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { API_BASE_AGENDA_URL } from "../../config/apiConfig";
-import "../../assets/styles/Loja/lojaPortifolio.css"
 
 
-const LojaPortifolioPersistir: React.FC<{ persistirProps: PersistirItens<LojaPortifolioItem> }> = ({ persistirProps }) => {
+const PortifolioPersistir: React.FC<{
+    persistirProps: PersistirItens<PortifolioItem>;
+    tiposPortifolioImagem: Array<TipoPortifolioImagemItem>;
+    persistirDropProps: Array<PersistirItens<PortifolioItem>>;
+    tipoUsuarioPortifolio?: string;
+}> = ({ persistirProps, tiposPortifolioImagem, persistirDropProps, tipoUsuarioPortifolio }) => {
     const [isMessage, setMessage] = useState<boolean>(false);
     const [messageItens, setMessageItens] = useState<MensagemItens>();
     const [id, setId] = useState<number>();
@@ -37,54 +44,62 @@ const LojaPortifolioPersistir: React.FC<{ persistirProps: PersistirItens<LojaPor
     const [subTitulo, setSubTitulo] = useState<string>('');
     const [texto, setTexto] = useState<string>('');
     const [lojaId, setLojaId] = useState<number>();
-    const [imagens, setImagens] = useState<LojaPortifolioImagemItem[]>([]);
+    const [imagens, setImagens] = useState<PortifolioImagemItem[]>([]);
     const sessoesItens: Array<SessaoItens> = [];
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isOpen, setIsOpen] = useState<number>();
     const [uploadItems, setUploadItems] = useState<Array<UploadItens>>([]);
-
-    const titulos: Array<string> = useMemo(() => [
-        primeiraImagemBanner,
-        segundaImagemBanner,
-        terceiraImagemBanner,
-        imagensSessaoVitrinePrimeiro,
-        imagensSessaoVitrinesegundo,
-    ], []);
+    const [colaboradorId, setColaboradorId] = useState<number>();
+    const [colaboradorPortifolioId, setColaboradorPortifolioId] = useState<number>();
+    const [lojaPortifolioId, setLojaPortifolioId] = useState<number>();
+    const [tipoUsuarioPortifolioId, setTipoUsuarioPortifolioId] = useState<number>();
+    const colaboradorProps = persistirDropProps.find((item) => item.name === "colaborador")?.selectItems ?? [];
+    const lojaProps = persistirDropProps.find((item) => item.name === "loja")?.selectItems ?? [];
+    const portifolioImagemItem: PortifolioImagemItem[] = persistirProps?.item?.portifolioImagens ?? [];
 
     const fetchPortifolioData = useCallback(async () => {
-        const { id = 0, lojaId = 0, titulo = '', subTitulo = '', texto = '', lojaPortifolioImagens = [] } = persistirProps.item ?? {};
-
-        setId(id);
-        setLojaId(lojaId);
-        setTitulo(titulo);
-        setSubTitulo(subTitulo);
-        setTexto(texto);
-        setImagens(lojaPortifolioImagens);
+        setId(persistirProps?.item?.id ?? 0);
+        setLojaId(persistirProps?.item?.lojaId ?? 0);
+        setTitulo(persistirProps?.item?.titulo ?? '');
+        setSubTitulo(persistirProps?.item?.subTitulo ?? '');
+        setTexto(persistirProps?.item?.texto ?? '');
+        setImagens(portifolioImagemItem);
         setIsOpen(id);
+        setColaboradorId(persistirProps?.item?.colaboradorId);
+        setColaboradorPortifolioId(persistirProps?.item?.colaboradorPortifolioId);
+        setLojaPortifolioId(persistirProps?.item?.lojaPortifolioId);
+        setTipoUsuarioPortifolioId(Number(tipoUsuarioPortifolio));
+
         const uploadItemsRetorno: UploadItens[] = [];
-        titulos.forEach((titulo, index) => {
-            const imagemEncontrada = lojaPortifolioImagens.find((imagem) => imagem.tituloImagem === titulo);
+        tiposPortifolioImagem.forEach((tipos, index) => {
+            const imagemEncontrada = portifolioImagemItem.find((imagem) => imagem.tituloImagem === tipos.descricao);
+
             const uploadImagem: UploadItens = imagemEncontrada ? {
                 uploadProps: {
                     nomeImagem: imagemEncontrada.nomeImagem,
                     urlImagem: imagemEncontrada.urlImagem,
                     tituloImagem: imagemEncontrada.tituloImagem,
+                    tituloSessao: tipos?.titulo,
                     id: (index + 1).toString()
                 }
             } : {
                 uploadProps: {
-                    tituloImagem: titulo,
+                    nomeImagem: "",
+                    urlImagem: "",
+                    tituloImagem: tipos.descricao,
+                    tituloSessao: tipos?.titulo,
                     id: `${(index + 1).toString()}`
                 }
             };
+
             uploadItemsRetorno.push(uploadImagem);
             setUploadItems(uploadItemsRetorno)
         });
-    }, [persistirProps, titulos]);
+    }, [persistirProps]);
 
     const addImagemItem = useCallback(
-        (uploadsItemAtualizado: UploadItens[]): LojaPortifolioImagemItem[] => {
-            const imagensFiltradas: LojaPortifolioImagemItem[] = uploadsItemAtualizado
+        (uploadsItemAtualizado: UploadItens[]): PortifolioImagemItem[] => {
+            const imagensFiltradas: PortifolioImagemItem[] = uploadsItemAtualizado
                 .filter(
                     (upload) =>
                         upload.uploadProps.nomeImagem && upload.uploadProps.nomeImagem.trim() !== ''
@@ -96,33 +111,31 @@ const LojaPortifolioPersistir: React.FC<{ persistirProps: PersistirItens<LojaPor
                     urlImagem: upload.uploadProps.urlImagem || '',
                     tituloImagem: upload.uploadProps.tituloImagem || '',
                 }));
-
             setImagens(imagensFiltradas);
             return imagensFiltradas;
         },
         []
     );
-    const handleImageUpload = useCallback(
-        (base64String: string, fileName: string, tituloImagem?: string, index?: string) => {
-            if (!index) return;
+    const handleImageUpload = useCallback((base64String: string, fileName: string, tituloImagem?: string, index?: string, tituloSessao?: string) => {
+        if (!index) return;
+        setUploadItems((prevState) => {
+            const updatedItems = [...prevState];
+            const position = Number(index) - 1;
 
-            setUploadItems((prevState) => {
-                const updatedItems = [...prevState];
-                const position = Number(index) - 1;
-
-                if (position >= 0) {
-                    updatedItems[position] = {
-                        uploadProps: {
-                            nomeImagem: fileName,
-                            urlImagem: base64String,
-                            tituloImagem: tituloImagem ?? '',
-                            id: index,
-                        },
-                    };
-                }
-                return updatedItems;
-            });
-        },
+            if (position >= 0) {
+                updatedItems[position] = {
+                    uploadProps: {
+                        nomeImagem: fileName,
+                        urlImagem: base64String,
+                        tituloImagem: tituloImagem ?? '',
+                        tituloSessao: tituloSessao ?? "",
+                        id: index,
+                    },
+                };
+            }
+            return updatedItems;
+        });
+    },
         []
     );
 
@@ -138,46 +151,103 @@ const LojaPortifolioPersistir: React.FC<{ persistirProps: PersistirItens<LojaPor
         setIsLoading(true);
 
         const imagensAtualizadas = addImagemItem(uploadItems) ?? imagens;
-
-        const portifolio: LojaPortifolioItem = {
+        const portifolio: PortifolioItem = {
             id: id || 0,
             titulo: titulo || '',
             subTitulo: subTitulo || '',
             texto: texto || '',
-            lojaPortifolioImagens: imagensAtualizadas || [],
-            lojaId: Number(lojaId) || 0,
-        }
+            lojaId: lojaId || 0,
+            colaboradorId: Number(colaboradorId) || 0,
+            colaboradorPortifolioId: colaboradorPortifolioId || 0,
+            lojaPortifolioId: lojaPortifolioId || 0,
+            portifolioImagens: imagensAtualizadas || [],
+            tipoUsuarioPortifolioId: tipoUsuarioPortifolioId
 
+        }
         const retorno = await PostService(portifolio, `${API_BASE_AGENDA_URL}${UrlPortifolio}`);
+        retornoPost(retorno);
+        enviarSatusMessage();
+        setIsLoading(false);
+
+        const tipoPortifolioImagensResponse = await GetByIdService(tipoUsuarioPortifolio ?? "", `${API_BASE_AGENDA_URL}${UrlTipoPortifolioImagem}`
+        ) as ResponseItem<TipoPortifolioImagemItem>;
+
+        await limparCampos(tipoPortifolioImagensResponse.datas);
+    }
+    const retornoPost = async (retorno: ResponseItem<PortifolioItem>) => {
         if (!retorno?.notifications || retorno?.notifications?.length === 0) {
 
             const messageRetorno = await RetornarMessageService(true, true, [])
             setMessageItens(messageRetorno)
-            persistirProps.onSave?.();
+            persistirDropProps.forEach(item => {
+                item.onSave?.();
+            });
+
             setIsLoading(false);
-            limparCampos();
         } else {
 
             const messageRetorno = await RetornarMessageService(false, false, retorno?.notifications ?? [])
             setMessageItens(messageRetorno)
         }
-        enviarSatusMessage();
-        setIsLoading(false);
     }
-    const limparCampos = useCallback(() => {
-        limparUploads();
+    const handleCloseMessage = () => {
+        setMessage(false);
+    };
+
+    const messageProps: MensagemItens = {
+        texto: messageItens?.texto,
+        cor: messageItens?.cor,
+        isVisible: isMessage,
+        onClick: handleCloseMessage
+    }
+    const handleButtonClickLimpar = async () => {
+        limparCampos(tiposPortifolioImagem);
+    }
+
+    const botaoLimparProps: BotaoItens = {
+        tooltip: 'limpar',
+        width: '20px',
+        onIconClick: handleButtonClickLimpar,
+        color: 'success',
+        icon: RefreshIcon
+    };
+
+    const limparCampos = useCallback(async (imagem?: Array<TipoPortifolioImagemItem>) => {
+        const uploadItemsRetorno: UploadItens[] = [];
+        imagem?.map((tipos, index) => {
+
+            const uploadImagem: UploadItens = {
+                uploadProps: {
+                    nomeImagem: "",
+                    urlImagem: "",
+                    tituloImagem: tipos.descricao,
+                    tituloSessao: tipos?.titulo,
+                    id: `${(index + 1).toString()}`
+                }
+            };
+            uploadItemsRetorno.push(uploadImagem);
+        });
+        setUploadItems(uploadItemsRetorno);
+
         setId(0);
         setTitulo('');
         setSubTitulo('');
-        setLojaId(0);
+        if (tipoUsuarioPortifolio === TipoUsuarioPortifolioLojaId) {
+            setLojaId(0);
+        }
+        if (tipoUsuarioPortifolio === TipoUsuarioPortifolioColaboradorId) {
+            setColaboradorId(0);
+        }
         setTexto('');
-    }, []);
+    }, [tipoUsuarioPortifolio]);
 
-    const limparUploads = () => {
-        setUploadItems([{ uploadProps: {} }]);
-    };
-    const handleDropdownChange = (e: SelectChangeEvent<string>) => {
-        setLojaId(Number(e.target.value));
+    const handleDropdownChange = (e: SelectChangeEvent<string>, tipo: string) => {
+        if (tipo === "colaborador") {
+            setColaboradorId(Number(e.target.value))
+        }
+        if (tipo === "loja") {
+            setLojaId(Number(e.target.value))
+        }
     };
 
     const editorProps: EditorTextoItem = {
@@ -207,8 +277,8 @@ const LojaPortifolioPersistir: React.FC<{ persistirProps: PersistirItens<LojaPor
             setMessage(false);
         }, 6000);
     }
-    const prevItemRef = useRef(persistirProps.item);
 
+    const prevItemRef = useRef(persistirProps.item);
     useEffect(() => {
         const prevItem = prevItemRef.current;
         if (persistirProps.item && prevItem !== persistirProps.item) {
@@ -232,18 +302,20 @@ const LojaPortifolioPersistir: React.FC<{ persistirProps: PersistirItens<LojaPor
                                     <h5>{imagensSessaoBanner}</h5>
                                 </div>
                                 <div className="formItensHorizontal">
-                                    <div className="formItens">
-                                        <Upload uploadProps={uploadItems[0] ? uploadItems[0].uploadProps : {}} onUpload={handleImageUpload} />
-                                    </div>
-                                    <div className="formItens">
-                                        <Upload uploadProps={uploadItems[1] ? uploadItems[1].uploadProps : {}} onUpload={handleImageUpload} />
-                                    </div>
-                                    <div className="formItens">
-                                        <Upload uploadProps={uploadItems[2] ? uploadItems[2].uploadProps : {}} onUpload={handleImageUpload} />
-                                    </div>
+                                    {uploadItems
+                                        .filter((item) => item.uploadProps.tituloSessao === imagensSessaoBanner)
+                                        .map((item, index) => (
+                                            <div key={index} className="formItens">
+                                                <Upload
+                                                    uploadProps={item ? item.uploadProps : {}}
+                                                    onUpload={handleImageUpload}
+                                                />
+                                            </div>
+                                        ))}
                                 </div>
                             </div>
                         </Grid>
+
                         <div className="separador"></div>
                         <Grid item md={6} xs={12} className="gridDireito">
                             <div className="conteudoLojaPortifolioPersistirDireito">
@@ -251,12 +323,16 @@ const LojaPortifolioPersistir: React.FC<{ persistirProps: PersistirItens<LojaPor
                                     <h5>{imagensSessaoVitrine}</h5>
                                 </div>
                                 <div className="formItensHorizontal">
-                                    <div className="formItens">
-                                        <Upload uploadProps={uploadItems[3] ? uploadItems[3].uploadProps : {}} onUpload={handleImageUpload} />
-                                    </div>
-                                    <div className="formItens">
-                                        <Upload uploadProps={uploadItems[4] ? uploadItems[4].uploadProps : {}} onUpload={handleImageUpload} />
-                                    </div>
+                                    {uploadItems
+                                        .filter((item) => item.uploadProps?.tituloSessao === imagensSessaoVitrine)
+                                        .map((item, index) => (
+                                            <div key={index} className="formItens">
+                                                <Upload
+                                                    uploadProps={item ? item.uploadProps : {}}
+                                                    onUpload={handleImageUpload}
+                                                />
+                                            </div>
+                                        ))}
                                     <div className="itemVazio"></div>
                                 </div>
                             </div>
@@ -265,7 +341,7 @@ const LojaPortifolioPersistir: React.FC<{ persistirProps: PersistirItens<LojaPor
                 </Grid>
             </>
         )
-    }
+    };
 
     const sessaoItemTitulos: SessaoItens = {
         nome: SessaoTitulos,
@@ -275,19 +351,32 @@ const LojaPortifolioPersistir: React.FC<{ persistirProps: PersistirItens<LojaPor
                     <div className="conteudo">
                         <Grid item md={6} xs={12} className="gridEsquerdo">
                             <div className="conteudoLojaPortifolioPersistirEsquerdo conteudoMenorEsquerdo">
-
-                                <div className="formItens">
-                                    <Dropdown
-                                        dropProps={{
-                                            name: "Loja",
-                                            label: "Loja*",
-                                            itens: persistirProps?.selectItems ?? [],
-                                            selectedId: lojaId?.toString() || '',
-                                            onChange: handleDropdownChange
-                                        }}
-                                    />
-                                </div>
-
+                                {tipoUsuarioPortifolioId?.toString() == TipoUsuarioPortifolioLojaId && (
+                                    <div className="formItens">
+                                        <Dropdown
+                                            dropProps={{
+                                                name: "Loja",
+                                                label: "Loja*",
+                                                itens: lojaProps ?? [],
+                                                selectedId: lojaId?.toString() || '',
+                                                onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "loja")
+                                            }}
+                                        />
+                                    </div>
+                                )}
+                                {tipoUsuarioPortifolioId?.toString() === TipoUsuarioPortifolioColaboradorId && (
+                                    <div className="formItens-drop">
+                                        <Dropdown
+                                            dropProps={{
+                                                name: "Colaborador",
+                                                label: "Colaborador*",
+                                                itens: colaboradorProps,
+                                                selectedId: colaboradorId || '0',
+                                                onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "colaborador"),
+                                            }}
+                                        />
+                                    </div>
+                                )}
 
                                 <div className="formItens">
                                     <CampoTexto
@@ -350,27 +439,6 @@ const LojaPortifolioPersistir: React.FC<{ persistirProps: PersistirItens<LojaPor
     sessoesItens.push(sessaoItemImagem);
     sessoesItens.push(sessaoItemTexto);
 
-    const handleCloseMessage = () => {
-        setMessage(false);
-    };
-
-    const messageProps: MensagemItens = {
-        texto: messageItens?.texto,
-        cor: messageItens?.cor,
-        isVisible: isMessage,
-        onClick: handleCloseMessage
-    }
-    const handleButtonClickLimpar = async () => {
-        limparCampos();
-    }
-
-    const botaoLimparProps: BotaoItens = {
-        tooltip: 'limpar',
-        width: '20px',
-        onIconClick: handleButtonClickLimpar,
-        color: 'success',
-        icon: RefreshIcon
-    };
 
     return (
         <>
@@ -382,14 +450,14 @@ const LojaPortifolioPersistir: React.FC<{ persistirProps: PersistirItens<LojaPor
                     <Sessao sessaoProps={sessoesItens} isOpen={isOpen || 0} ></Sessao>
 
                     <Grid container spacing={2}>
-                        <Grid item md={4} xs={8}>
+                        <Grid item md={3} xs={7}>
                             <div className='formItens botaoItem'>
                                 <div className='botao'>
                                     <Botao botaoProps={botaoLimparProps} />
                                 </div>
                             </div>
                         </Grid>
-                        <Grid item md={8} xs={4}>
+                        <Grid item md={7} xs={3}>
                             <div className='formItens botaoItemSalvar'>
                                 <div className='botao'>
                                     <Botao botaoProps={botaoProps} />
@@ -404,14 +472,38 @@ const LojaPortifolioPersistir: React.FC<{ persistirProps: PersistirItens<LojaPor
             <div className='camposInvisiveis'>
                 <CampoTexto
                     textBoxProps={{
-                        name: "id",
-                        value: id?.toString(),
+                        name: "colaboradorId",
+                        value: colaboradorId?.toString(),
                         type: 'hidden',
-                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setId(Number(e.target.value))
+                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setColaboradorId(Number(e.target.value))
+                    }} />
+
+                <CampoTexto
+                    textBoxProps={{
+                        name: "lojaPortifolioId",
+                        value: lojaPortifolioId?.toString(),
+                        type: 'hidden',
+                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setLojaPortifolioId(Number(e.target.value))
+                    }} />
+
+                <CampoTexto
+                    textBoxProps={{
+                        name: "colaboradorPortifolioId",
+                        value: colaboradorPortifolioId?.toString(),
+                        type: 'hidden',
+                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setColaboradorPortifolioId(Number(e.target.value))
+                    }} />
+
+                <CampoTexto
+                    textBoxProps={{
+                        name: "tipoUsuarioPortifolioId",
+                        value: tipoUsuarioPortifolioId?.toString(),
+                        type: 'hidden',
+                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setTipoUsuarioPortifolioId(Number(e.target.value))
                     }} />
             </div>
         </>
     );
 };
 
-export default LojaPortifolioPersistir;
+export default PortifolioPersistir;
