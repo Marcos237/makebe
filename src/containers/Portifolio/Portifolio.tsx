@@ -59,7 +59,7 @@ const Portifolio: React.FC = () => {
 
     const fetchPortifolioData = useCallback(async (tipoUsuarioPortifolioId?: string, page: number = 1) => {
 
-        const tipoUsuarioPortifolioIte =
+        const tipoUsuarioPortifolioItem =
         urlParametro === "Loja" ? TipoUsuarioPortifolioLojaId : urlParametro === "Colaborador" ? TipoUsuarioPortifolioColaboradorId : "";
 
 
@@ -76,13 +76,13 @@ const Portifolio: React.FC = () => {
             paginacao.objetos = [];
 
             paginacao.objetoPesquisa = resultadosBusca?.objetoPesquisa || {};
-            paginacao.objetoPesquisa.tipoUsuarioPortifolioId = Number(tipoUsuarioPortifolioId) || Number(tipoUsuarioPortifolioIte);
+            paginacao.objetoPesquisa.tipoUsuarioPortifolioId = Number(tipoUsuarioPortifolioId) || Number(tipoUsuarioPortifolioItem);
             const response = await GetPaginadoService(paginacao, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`);
             if (response) {
                 setResultadosBusca(response ?? {});
             }
         }
-    }, [resultadosBusca]);
+    }, [resultadosBusca, urlParametro]);
 
     const fetchLojaData = useCallback(async () => {
         const lojaResponse = await GetAllService(`${API_BASE_AGENDA_URL}${UrlBuscarTodos}`) as ResponseItem<LojaItens>;
@@ -132,7 +132,7 @@ const Portifolio: React.FC = () => {
         if (lojaRetorno) {
             fetchPortifolioData(tipoUsuarioPortifolioId);
         }
-    }, [fetchPortifolioData]);
+    }, [fetchPortifolioData, tipoUsuarioPortifolioId]);
 
     const handleDeleteClick = useCallback(
         async (event: React.MouseEvent, portifolio?: any) => {
@@ -150,7 +150,7 @@ const Portifolio: React.FC = () => {
 
     const handlePageChange = useCallback((event: React.ChangeEvent<unknown>, page: number) => {
         fetchPortifolioData(tipoUsuarioPortifolioId, page);
-    }, [fetchPortifolioData])
+    }, [fetchPortifolioData, tipoUsuarioPortifolioId])
 
     const handleUpdateClick = useCallback(async (event: React.MouseEvent, portifolio?: any) => {
         event.preventDefault();
@@ -164,7 +164,7 @@ const Portifolio: React.FC = () => {
 
         handleScrollToTop();
 
-    }, []);
+    }, [tipoUsuarioPortifolioId]);
     const actionButtons = useMemo(() => ([
         {
             id: 1,
@@ -193,13 +193,13 @@ const Portifolio: React.FC = () => {
         if (resultadosBusca) {     
             return {
                 paginacao: resultadosBusca,
-                propertyLabels: tipoUsuarioPortifolioId == TipoUsuarioPortifolioLojaId ? propertyLabelsLoja : propertyLabelsColaborador,
+                propertyLabels: tipoUsuarioPortifolioId === TipoUsuarioPortifolioLojaId ? propertyLabelsLoja : propertyLabelsColaborador,
                 onPageChange: handlePageChange,
                 actionButtons: actionButtons,
             } as GrigViewItens<PortifolioItem>;;
         }
         return undefined;
-    }, [resultadosBusca, actionButtons, handlePageChange]);
+    }, [resultadosBusca, actionButtons, handlePageChange, tipoUsuarioPortifolioId]);
     const hasFetchedData = useRef(false);
     useEffect(() => {
         if (!hasFetchedData.current) {
@@ -215,7 +215,8 @@ const Portifolio: React.FC = () => {
         fetchLojaData,
         fetchPortifolioData,
         fetchTipoUsuariosImagens,
-        fetchColaboradorData
+        fetchColaboradorData,
+        tipoUsuarioPortifolioId
     ]);
 
     useEffect(() => {
@@ -229,7 +230,7 @@ const Portifolio: React.FC = () => {
             fetchPortifolioData(tipoUsuarioPortifolioId);
             fetchTipoUsuariosImagens()
         }
-    }, [urlParametro]);
+    }, [urlParametro, tipoUsuarioPortifolioId, fetchPortifolioData, fetchTipoUsuariosImagens]);
     return <>
         <div className='banner'>
             <Banner usuarioLogado={useUsuarioLogado} />
