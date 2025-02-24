@@ -6,4 +6,5 @@ export interface PersistirItens<T> {
     name?: string;
     id? : string;
     onSave?: () => void;
+    isSave?: boolean;
 }

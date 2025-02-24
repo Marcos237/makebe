@@ -11,7 +11,7 @@ export interface ColaboradorItens {
     descricaoPermissao? : string;
     nomeImagem?: string;
     urlImagem?: string;
-    status: boolean;
+    status?: boolean;
     instagram?: string;
     descricaoStatus?: string;
 }

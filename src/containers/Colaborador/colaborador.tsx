@@ -1,10 +1,10 @@
 
-import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { UsuarioLoginItens } from '../../Interfaces/Usuario/UsuarioLoginItens';
 import { GetAllService } from '../../services/shared/getAllService';
 import { PersistirItens } from "../../Interfaces/shared/persistirItens";
 import { PaginacaoItens } from '../../Interfaces/shared/PaginacaoItens';
-import { mapToSelectItens } from '../../Interfaces/shared/mapToSelectItens';
+import { mapToSelectItens } from '../../functions/mapToSelectItens';
 import { Grid } from '@mui/material';
 import { ColaboradorItens } from "../../Interfaces/Colaborador/colaboradorItem";
 import { API_BASE_URL, API_BASE_AGENDA_URL } from '../../config/apiConfig';
@@ -14,16 +14,18 @@ import { propertyLabels, UrlBuscarPaginado, UrlBuscarPermissao, UrlColaborador }
 import { GetPaginadoService } from '../../services/shared/getPaginadoService';
 import { GetByIdService } from "../../services/shared/getByIdService";
 import { ResponseItem } from '../../Interfaces/shared/ResponseItem';
-import ColaboradorBusca from "./colaboradorBusca";
 import { PermissaoItens } from "../../Interfaces/Colaborador/permissaoItens";
+import { paginar } from "../../functions/paginacao";
+import ColaboradorBusca from "./colaboradorBusca";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import GridViewLista from '../../components/gridview';
 import ColaboradorPersistir from "./colaboradorPersistir";
 import Banner from "../../components/banner";
 import Footer from "../../components/footer";
+import useUpdateGrid from "../../hooks/useUpdateGrid";
+import useUpdateFetch from '../../hooks/useUpdateFetch';
+
 import "../../assets/styles/Colaborador/colaborador.css";
-
-
 
 const Colaborador: React.FC = () => {
     const [colaboradorItem, setColaborador] = useState<ColaboradorItens>();
@@ -34,14 +36,7 @@ const Colaborador: React.FC = () => {
     const [readOnly,  setReadOnly] = useState<boolean>(false);
 
     const fetchColaboradorData = useCallback(async (page: number = 1) => {
-        const paginacao: PaginacaoItens<ColaboradorItens> = {
-            quantidadePagina: resultadosBusca?.quantidadePagina || 6,
-            paginaAtual: page,
-            totalPaginas: resultadosBusca?.totalPaginas || 1,
-            total: resultadosBusca?.total || 0,
-            objetoPesquisa: resultadosBusca?.objetoPesquisa || undefined,
-            objetos: resultadosBusca?.objetos ?? []
-        };
+        const paginacao = paginar(resultadosBusca, page)
         if (!resultadosBusca || page !== undefined) {
             paginacao.objetos = []
             const colaboradorReponse = await GetPaginadoService(paginacao, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}` );
@@ -105,23 +100,20 @@ const Colaborador: React.FC = () => {
         }
         return undefined;
     }, [resultadosBusca, actionButtons, handlePageChange]);
+    
+    useUpdateFetch([usuarioData, fetchPermissaoData, fetchColaboradorData],
+        [fetchColaboradorData, fetchPermissaoData, usuarioData]
+    );
 
-    const hasFetchedData = useRef(false);
-    useEffect(() => {
-        if (!hasFetchedData.current) {
-            usuarioData();
-            fetchPermissaoData();
+    useUpdateGrid(gridViewItensMemo, setGridView, [persistirItens], () => {
+        if (persistirItens?.isSave) {
+            stePersistirItens(prev => ({
+                ...prev,
+                isSave: false,
+            }));
             fetchColaboradorData();
-            hasFetchedData.current = true;
         }
-    }, [fetchColaboradorData, fetchPermissaoData, usuarioData]);
-
-
-    useEffect(() => {
-        if (gridViewItensMemo) {
-            setGridView(gridViewItensMemo)
-        }
-    }, [gridViewItensMemo, fetchColaboradorData]);
+    });
 
     const handleResultadosBusca = (resultados: PaginacaoItens<ColaboradorItens>) => {
         fetchResultadoPesquisa(resultados);

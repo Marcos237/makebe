@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useCallback} from "react";
 import { cnpjMaskConst, UrlLoja } from '../../constants/Loja/lojaConstant';
 import { Grid } from '@mui/material';
 import { PersistirItens } from "../../Interfaces/shared/persistirItens";
@@ -16,6 +16,7 @@ import Mensagem from '../../components/mensagem';
 import Botao from '../../components/button';
 import Dropdown from "../../components/dropdown";
 import CampoTexto from '../../components/textbox';
+import updatePersistirPrev from "../../hooks/useUpdatePersistirPrev";
 
 import '../../assets/styles/Loja/lojapersistir.css'
 
@@ -41,14 +42,8 @@ const SalaoPersistir: React.FC<{ persistirProps: PersistirItens<LojaItens> }> = 
         setTelefone(persistirProps.item.telefone ?? '');
     }, [persistirProps]);
 
-    const prevItemRef = useRef(persistirProps.item);
-    useEffect(() => {
-        const prevItem = prevItemRef.current;
-        if (persistirProps.item && prevItem !== persistirProps.item) {
-            fetchLojaData();
-        }
-        prevItemRef.current = persistirProps.item;
-    }, [fetchLojaData, persistirProps.item]);
+
+    updatePersistirPrev(fetchLojaData,undefined, persistirProps.item);
 
     const handleButtonClick = () => {
         const fakeEvent = {

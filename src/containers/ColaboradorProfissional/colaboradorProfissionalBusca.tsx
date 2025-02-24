@@ -8,6 +8,7 @@ import { GetPaginadoService } from "../../services/shared/getPaginadoService";
 import { API_BASE_AGENDA_URL } from "../../config/apiConfig";
 import { UrlBuscarPaginado } from "../../constants/ColaboradorProfissional/colaboradorProfissionalConstant";
 import { PersistirItens } from "../../Interfaces/shared/persistirItens";
+import { paginar } from "../../functions/paginacao";
 import Dropdown from "../../components/dropdown";
 import CampoTexto from '../../components/textbox';
 import Botao from '../../components/button';
@@ -83,20 +84,18 @@ const ColaboradorProfissionalBusca: React.FC<{
             descricaoServico: servico ?? "",
             descricao: descricaoBusca ?? ""
         }
-        const paginacao: PaginacaoItens<ColaboradorProfissionalItem> = {
-            quantidadePagina: 6,
-            paginaAtual: 1,
-            totalPaginas: 1,
-            total: 0,
-            objetoPesquisa: colaboradorProfissional,
-            objetos: []
-        };
+        const paginacao = paginar(colaboradorProfissional, 1);
         const colaboradorProfissionalResponse = await GetPaginadoService(paginacao, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`);
         onResultadosBusca(colaboradorProfissionalResponse ?? {});
         setIsLoading(false);
     }
     const handleButtonClickLimpar = async () => {
         limparItens();
+        const colaboradorProfissional: ColaboradorProfissionalItem = {}
+        const paginacao = paginar(colaboradorProfissional, 1)
+        const colaboradorService = await GetPaginadoService(paginacao ?? {}, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`);
+        onResultadosBusca(colaboradorService ?? {});
+        setIsLoading(false);
     }
 
     const limparItens = () => {

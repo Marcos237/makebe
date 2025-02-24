@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useState, useCallback } from "react";
 import { PersistirItens } from "../../Interfaces/shared/persistirItens";
 import { ColaboradorProfissionalItem } from "../../Interfaces/ColaboradorProfissional/colaboradorProfissionalItem";
 import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
@@ -14,6 +14,7 @@ import Dropdown from "../../components/dropdown";
 import CampoTexto from '../../components/textbox';
 import Mensagem from '../../components/mensagem';
 import Botao from '../../components/button';
+import updatePersistirPrev from "../../hooks/useUpdatePersistirPrev";
 
 const ColaboradorProfissionalPersistir: React.FC<{
     persistirProps: PersistirItens<ColaboradorProfissionalItem>; persistirDropProps: Array<PersistirItens<ColaboradorProfissionalItem>>;
@@ -43,14 +44,8 @@ const ColaboradorProfissionalPersistir: React.FC<{
 
     }, [persistirProps])
 
-    const prevItemRef = useRef(persistirProps.item);
-    useEffect(() => {
-        const prevItem = prevItemRef.current;
-        if (persistirProps.item && prevItem !== persistirProps.item) {
-            fetchColaboradorProfissionalData();
-        }
-        prevItemRef.current = persistirProps.item;
-    }, [fetchColaboradorProfissionalData, persistirProps.item]);
+
+    updatePersistirPrev(fetchColaboradorProfissionalData,undefined, persistirProps.item);
 
     const handleCloseMessage = () => {
         setMessage(false);

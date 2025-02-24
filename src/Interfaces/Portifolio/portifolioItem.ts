@@ -5,7 +5,7 @@ export interface PortifolioItem {
     titulo?: string;
     subTitulo?: string;
     texto?: string;
-    tipoUsuarioPortifolioId?: number;
+    tipoUsuarioId?: number;
     colaboradorPortifolioId?: number;
     nomeColaborador?: string;
     colaboradorId?: number;

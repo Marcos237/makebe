@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import React, { useState, useCallback, useMemo} from "react";
 import { UsuarioLoginItens } from '../../Interfaces/Usuario/UsuarioLoginItens';
 import { GetAllService } from '../../services/shared/getAllService';
 import { PersistirItens } from "../../Interfaces/shared/persistirItens";
@@ -8,10 +8,10 @@ import { UrlUsuarioLogado } from "../../constants/Usuario/usuarioConstant";
 import { ResponseItem } from '../../Interfaces/shared/ResponseItem';
 import { UrlColaborador } from '../../constants/Colaborador/colaboradorConstant';
 import { UrlBuscarPaginado, UrlColaboradorProfissional, UrlServico, ModalTexto, propertyLabels }
- from "../../constants/ColaboradorProfissional/colaboradorProfissionalConstant";
+    from "../../constants/ColaboradorProfissional/colaboradorProfissionalConstant";
 import { UrlLoja } from "../../constants/Loja/lojaConstant";
 import { PaginacaoItens } from '../../Interfaces/shared/PaginacaoItens';
-import { mapToSelectItens } from '../../Interfaces/shared/mapToSelectItens';
+import { mapToSelectItens } from '../../functions/mapToSelectItens';
 import { Grid } from '@mui/material';
 import { ColaboradorProfissionalItem } from "../../Interfaces/ColaboradorProfissional/colaboradorProfissionalItem";
 import { GrigViewItens } from "../../Interfaces/shared/gridviewItens";
@@ -22,6 +22,7 @@ import { LojaItens } from "../../Interfaces/Loja/lojaItens";
 import { ServicosItens } from "../../Interfaces/Colaborador/servicosItens";
 import { ModalItem } from "../../Interfaces/shared/modalItem";
 import { DeleteService } from "../../services/shared/deleteService";
+import { paginar } from "../../functions/paginacao";
 import ColaboradorProfissionalBusca from '../ColaboradorProfissional/colaboradorProfissionalBusca';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import GridViewLista from '../../components/gridview';
@@ -30,6 +31,8 @@ import Footer from "../../components/footer";
 import DeleteIcon from '@mui/icons-material/Delete';
 import ColaboradorPersistir from './colaboradorProfissionalPersistir';
 import ModalGeneric from "../../componentsGenerics/modalGeneric";
+import useUpdateGrid from "../../hooks/useUpdateGrid";
+import useUpdateFetch from '../../hooks/useUpdateFetch';
 
 import "../../assets/styles/ColaboradorProfissional/colaboradorProfissional.css";
 
@@ -44,14 +47,7 @@ const ColaboradorProfissional: React.FC = () => {
     const [modalOpen, setModalOpen] = useState<ModalItem>();
 
     const fetchColaboradorProfissionalData = useCallback(async (page: number = 1) => {
-        const paginacao: PaginacaoItens<ColaboradorProfissionalItem> = {
-            quantidadePagina: resultadosBusca?.quantidadePagina || 6,
-            paginaAtual: page,
-            totalPaginas: resultadosBusca?.totalPaginas || 1,
-            total: resultadosBusca?.total || 0,
-            objetoPesquisa: resultadosBusca?.objetoPesquisa || undefined,
-            objetos: resultadosBusca?.objetos ?? []
-        };
+        const paginacao = paginar(resultadosBusca, page)
         if (!resultadosBusca || page !== undefined) {
             paginacao.objetos = []
             const colaboradorReponse = await GetPaginadoService(paginacao, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`);
@@ -158,23 +154,17 @@ const ColaboradorProfissional: React.FC = () => {
         setModalOpen(undefined);
     }, []);
 
-    const hasFetchedData = useRef(false);
-    useEffect(() => {
-        if (!hasFetchedData.current) {
-            usuarioData();
-            fetchLojaData();
-            fetchColaboradorData();
-            fetchServicoData();
-            fetchColaboradorProfissionalData();
-            hasFetchedData.current = true;
-        }
-    }, [
-        usuarioData,
-        fetchLojaData,
-        fetchColaboradorData,
-        fetchServicoData,
-        fetchColaboradorProfissionalData
-    ]);
+
+
+    useUpdateFetch([usuarioData, fetchLojaData, fetchColaboradorData, fetchServicoData, fetchColaboradorProfissionalData],
+        [
+            usuarioData,
+            fetchLojaData,
+            fetchColaboradorData,
+            fetchServicoData,
+            fetchColaboradorProfissionalData
+        ]);
+
     const gridViewItensMemo = useMemo(() => {
         if (resultadosBusca) {
             return {
@@ -188,11 +178,13 @@ const ColaboradorProfissional: React.FC = () => {
     }, [resultadosBusca, actionButtons, handlePageChange]);
 
 
-    useEffect(() => {
-        if (gridViewItensMemo) {
-            setGridView(gridViewItensMemo)
+    useUpdateGrid(gridViewItensMemo, setGridView, [persistirItensList], () => {
+        let isSave = persistirItensList.find(item => item.isSave)?.isSave;
+        if (isSave) {
+            persistirItensList.map(item => item.isSave = false)
+            fetchColaboradorProfissionalData()
         }
-    }, [gridViewItensMemo, fetchColaboradorProfissionalData]);
+    });
 
     const handleResultadosBusca = (resultados: PaginacaoItens<ColaboradorProfissionalItem>) => {
         fetchResultadoPesquisa(resultados);
