@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useState, useCallback } from "react";
 import { PersistirItens } from "../../Interfaces/shared/persistirItens";
 import { ColaboradorItens } from "../../Interfaces/Colaborador/colaboradorItem";
 import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
@@ -19,6 +19,7 @@ import CampoTexto from '../../components/textbox';
 import Mensagem from '../../components/mensagem';
 import Upload from '../../components/upload';
 import Botao from '../../components/button';
+import updatePersistirPrev from "../../hooks/useUpdatePersistirPrev";
 
 
 const ColaboradorPersistir: React.FC<{
@@ -63,14 +64,7 @@ const ColaboradorPersistir: React.FC<{
 
     }, [persistirProps, readOnly])
 
-    const prevItemRef = useRef(persistirProps.item);
-    useEffect(() => {
-        const prevItem = prevItemRef.current;
-        if (persistirProps.item && prevItem !== persistirProps.item) {
-            fetchColaboradorData();
-        }
-        prevItemRef.current = persistirProps.item;
-    }, [fetchColaboradorData, persistirProps.item]);
+    updatePersistirPrev(fetchColaboradorData, undefined, persistirProps.item);
 
     const handleCloseMessage = () => {
         setMessage(false);
@@ -297,7 +291,7 @@ const ColaboradorPersistir: React.FC<{
                         </div>
                     </div>
                 </Grid>
-                
+
                 <Grid item xs={12}>
                     <div className="formItens gridBotoes">
                         <div className="botao">

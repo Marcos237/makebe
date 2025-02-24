@@ -10,6 +10,7 @@ import { SwitchButtonItem } from "../../Interfaces/shared/switchButtonItem";
 import { GetPaginadoService } from "../../services/shared/getPaginadoService";
 import { API_BASE_AGENDA_URL } from "../../config/apiConfig";
 import { UrlBuscarPaginado } from "../../constants/Colaborador/colaboradorConstant";
+import { paginar } from "../../functions/paginacao";
 import SwitchButton from "../../components/switchButton";
 import Dropdown from "../../components/dropdown";
 import CampoTexto from '../../components/textbox';
@@ -52,20 +53,24 @@ const ColaboradorBusca: React.FC<{
             permissaoId: permissaoIdBusca || '',
             status: statusBusca || false
         }
-        const paginacao: PaginacaoItens<ColaboradorItens> = {
-            quantidadePagina: 6,
-            paginaAtual: 1,
-            totalPaginas: 1,
-            total: 0,
-            objetoPesquisa: colaborador,
-            objetos: []
-        };
-        const colaboradorResponse  = await GetPaginadoService(paginacao, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`);
+        const paginacao = paginar(colaborador, 1);
+        const colaboradorResponse = await GetPaginadoService(paginacao, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`);
         onResultadosBusca(colaboradorResponse ?? {});
         setIsLoading(false);
     }
     const handleButtonClickLimpar = async () => {
         limparItens();
+
+        const colaborador: ColaboradorItens = {
+            nome: '',
+            cpf: '',
+            email: '',
+            permissaoId:'',
+            status: true
+        }
+        const paginacao = paginar(colaborador, 1)
+        const colaboradorService = await GetPaginadoService(paginacao ?? {}, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`);
+        onResultadosBusca(colaboradorService ?? {});
     }
 
     const limparItens = () => {

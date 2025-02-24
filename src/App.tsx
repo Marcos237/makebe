@@ -30,7 +30,7 @@ const App: React.FC = () => {
         <Route path="/alteraSenha" element={<AlteraSenha />} />
         <Route path="/recuperaSenha/:chave" element={<RecuperaSenha />} />
         <Route path="/loja" element={<Salao />} />
-        <Route path="/enderecoloja" element={<Endereco />} />
+        <Route path="/Endereco/:urlParametro" element={<Endereco />} />
         <Route path="/Portifolio/:urlParametro" element={<Portifolio />} />
         <Route path="/Colaborador" element={<Colaborador />} />
         <Route path="/ColaboradorProfissional" element={<ColaboradorProfissional />} /> 

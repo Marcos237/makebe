@@ -9,6 +9,7 @@ import { Grid } from '@mui/material';
 import { BotaoItens } from '../../Interfaces/Botao/botao';
 import { API_BASE_AGENDA_URL } from "../../config/apiConfig";
 import { UrlPaginado } from "../../constants/Loja/lojaConstant";
+import { paginar } from "../../functions/paginacao";
 import CampoTexto from '../../components/textbox';
 import Botao from '../../components/button';
 import Dropdown from "../../components/dropdown";
@@ -66,14 +67,8 @@ const SalaoBusca: React.FC<{ selectItens: SelectItens[], onResultadosBusca: (res
         setTipoLojaBusca(0);
 
         setIsLoading(true);
-        const paginacao: PaginacaoItens<LojaItens> = {
-            quantidadePagina: 6,
-            paginaAtual: 1,
-            totalPaginas: 1,
-            total: 0,
-            objetoPesquisa: {},
-            objetos: []
-        };
+        const loja: LojaItens = {};
+        const paginacao = paginar(loja, 1);
         const lojaResponseItem = await GetPaginadoService(paginacao ?? {}, `${API_BASE_AGENDA_URL}${UrlPaginado}`)
         onResultadosBusca(lojaResponseItem ?? {});
         setIsLoading(false);

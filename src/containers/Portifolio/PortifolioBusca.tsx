@@ -7,7 +7,8 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import { PersistirItens } from "../../Interfaces/shared/persistirItens";
 import { GetPaginadoService } from "../../services/shared/getPaginadoService";
 import { API_BASE_AGENDA_URL } from "../../config/apiConfig";
-import { UrlBuscarPaginado, TipoUsuarioPortifolioLojaId, TipoUsuarioPortifolioColaboradorId } from "../../constants/Portifolio/PortifolioConstant";
+import { UrlBuscarPaginado } from "../../constants/Portifolio/PortifolioConstant";
+import { TipoUsuarioLojaId, TipoUsuarioColaboradorId } from '../../constants/Usuario/usuarioConstant';
 import CampoTexto from "../../components/textbox";
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -17,10 +18,10 @@ import Dropdown from "../../components/dropdown";
 
 const PortifolioBusca: React.FC<{
     selectItens: Array<PersistirItens<PortifolioItem>>,
-    tipoUsuarioPortifolioId: string,
+    tipoUsuarioId: string,
     onResultadosBusca: (resultado: PaginacaoItens<PortifolioItem>) => void
 }> =
-    ({ selectItens, tipoUsuarioPortifolioId, onResultadosBusca }) => {
+    ({ selectItens, tipoUsuarioId, onResultadosBusca }) => {
         const [titulo, setTitulo] = useState<string>('');
         const [subTitulo, setSubTitulo] = useState<string>('');
         const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -43,13 +44,13 @@ const PortifolioBusca: React.FC<{
             event.preventDefault();
             setIsLoading(true);
             const portifolio: PortifolioItem = {
-                nomeColaborador: tipoUsuarioPortifolioId === TipoUsuarioPortifolioColaboradorId ? colaborador ?? "" : "",
-                razaoSocial: tipoUsuarioPortifolioId === TipoUsuarioPortifolioLojaId ? loja ?? "" : "",
+                nomeColaborador: tipoUsuarioId === TipoUsuarioColaboradorId ? colaborador ?? "" : "",
+                razaoSocial: tipoUsuarioId === TipoUsuarioLojaId ? loja ?? "" : "",
                 titulo: titulo || '',
                 subTitulo: subTitulo || '',
-                lojaId: tipoUsuarioPortifolioId === TipoUsuarioPortifolioLojaId ? lojaId ?? 0 : 0,
-                colaboradorId: tipoUsuarioPortifolioId === TipoUsuarioPortifolioColaboradorId ? colaboradorId ?? 0 : 0,
-                tipoUsuarioPortifolioId : Number(tipoUsuarioPortifolioId) ?? 0
+                lojaId: tipoUsuarioId === TipoUsuarioLojaId ? lojaId ?? 0 : 0,
+                colaboradorId: tipoUsuarioId === TipoUsuarioColaboradorId ? colaboradorId ?? 0 : 0,
+                tipoUsuarioId : Number(tipoUsuarioId) ?? 0
             }
             buscarPaginado(portifolio);
         }
@@ -77,7 +78,7 @@ const PortifolioBusca: React.FC<{
                 subTitulo: '',
                 lojaId: lojaId,
                 colaboradorId: colaboradorId,
-                tipoUsuarioPortifolioId : Number(tipoUsuarioPortifolioId) ?? 0
+                tipoUsuarioId : Number(tipoUsuarioId) ?? 0
             }
             buscarPaginado(portifolio)
         };
@@ -150,7 +151,7 @@ const PortifolioBusca: React.FC<{
                     <Grid container spacing={3}>
                         <Grid item xs={11} md={4}>
                             <div className="formItens formItemMenor">
-                                {tipoUsuarioPortifolioId?.toString() === TipoUsuarioPortifolioLojaId && (
+                                {tipoUsuarioId?.toString() === TipoUsuarioLojaId && (
                                     <div className="formItens">
                                         <Dropdown
                                             dropProps={{
@@ -163,7 +164,7 @@ const PortifolioBusca: React.FC<{
                                         />
                                     </div>
                                 )}
-                                {tipoUsuarioPortifolioId?.toString() === TipoUsuarioPortifolioColaboradorId && (
+                                {tipoUsuarioId?.toString() === TipoUsuarioColaboradorId && (
                                     <div className="formItens-drop">
                                         <Dropdown
                                             dropProps={{

@@ -1,4 +1,4 @@
-import { SelectItens } from "./selectItens";
+import { SelectItens } from "../Interfaces/shared/selectItens";
 
 export const mapToSelectItens = <T>(
     data: T[] | null | undefined,

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { PortifolioItem } from "../../Interfaces/Portifolio/portifolioItem";
 import { Grid } from '@mui/material';
@@ -14,16 +14,15 @@ import { GetPaginadoService } from "../../services/shared/getPaginadoService";
 import { DeleteService } from "../../services/shared/deleteService";
 import { GetByIdService } from "../../services/shared/getByIdService";
 import {
-    ModalTexto, propertyLabelsColaborador, UrlBuscarPaginado, UrlPortifolio, TipoUsuarioPortifolioColaboradorId,
-    TipoUsuarioPortifolioLojaId, UrlTipoPortifolioImagem,
-    propertyLabelsLoja
+    ModalTexto, propertyLabelsColaborador, UrlBuscarPaginado, UrlPortifolio, UrlTipoPortifolioImagem, propertyLabelsLoja
 } from '../../constants/Portifolio/PortifolioConstant';
+import { TipoUsuarioLojaId, TipoUsuarioColaboradorId } from '../../constants/Usuario/usuarioConstant';
 import { GrigViewItens } from "../../Interfaces/shared/gridviewItens";
 import { UrlBuscarTodos } from "../../constants/Loja/lojaConstant";
 import { ResponseItem } from "../../Interfaces/shared/ResponseItem";
 import { TipoPortifolioImagemItem } from "../../Interfaces/Portifolio/tipoPortifolioImagemItem";
 import { UrlColaborador } from "../../constants/Colaborador/colaboradorConstant";
-import { mapToSelectItens } from '../../Interfaces/shared/mapToSelectItens';
+import { mapToSelectItens } from '../../functions/mapToSelectItens';
 import { ColaboradorItens } from "../../Interfaces/Colaborador/colaboradorItem";
 import GridViewLista from "../../components/gridview";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
@@ -33,6 +32,9 @@ import PortifolioPersistir from './PortifolioPersistir';
 import Banner from '../../components/banner';
 import Footer from '../../components/footer';
 import PortifolioBusca from "./PortifolioBusca";
+import useUpdateGrid from "../../hooks/useUpdateGrid";
+import useUpdateFetch from '../../hooks/useUpdateFetch';
+import useFetchTipo from "../../hooks/useFetchTipo";
 
 
 import '../../assets/styles/Portifolio/Portifolio.css'
@@ -47,8 +49,8 @@ const Portifolio: React.FC = () => {
     const [tipoPortifolioImagem, setTipoPortifolioImagem] = useState<Array<TipoPortifolioImagemItem>>([])
     const { urlParametro } = useParams();
 
-    const tipoUsuarioPortifolioId =
-        urlParametro === "Loja" ? TipoUsuarioPortifolioLojaId : urlParametro === "Colaborador" ? TipoUsuarioPortifolioColaboradorId : "";
+    const tipoUsuarioId =
+        urlParametro === "Loja" ? TipoUsuarioLojaId : urlParametro === "Colaborador" ? TipoUsuarioColaboradorId : "";
     const usuarioData = useCallback(async () => {
         const [sessao] = await Promise.all([
             GetAllService(`${API_BASE_URL}${UrlUsuarioLogado}`) as ResponseItem<UsuarioLoginItens>
@@ -56,13 +58,10 @@ const Portifolio: React.FC = () => {
         setUsuarioLogado(sessao);
     }, []);
 
+    const fetchPortifolioData = useCallback(async (tipoUsuarioId?: string, page: number = 1) => {
 
-    const fetchPortifolioData = useCallback(async (tipoUsuarioPortifolioId?: string, page: number = 1) => {
-
-        const tipoUsuarioPortifolioItem =
-        urlParametro === "Loja" ? TipoUsuarioPortifolioLojaId : urlParametro === "Colaborador" ? TipoUsuarioPortifolioColaboradorId : "";
-
-
+        const TipoUsuarioItem =
+            urlParametro === "Loja" ? TipoUsuarioLojaId : urlParametro === "Colaborador" ? TipoUsuarioColaboradorId : "";
         const paginacao: PaginacaoItens<PortifolioItem> = {
             quantidadePagina: resultadosBusca?.quantidadePagina || 6,
             paginaAtual: page,
@@ -76,7 +75,7 @@ const Portifolio: React.FC = () => {
             paginacao.objetos = [];
 
             paginacao.objetoPesquisa = resultadosBusca?.objetoPesquisa || {};
-            paginacao.objetoPesquisa.tipoUsuarioPortifolioId = Number(tipoUsuarioPortifolioId) || Number(tipoUsuarioPortifolioItem);
+            paginacao.objetoPesquisa.tipoUsuarioId = Number(tipoUsuarioId) || Number(TipoUsuarioItem);
             const response = await GetPaginadoService(paginacao, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`);
             if (response) {
                 setResultadosBusca(response ?? {});
@@ -90,22 +89,22 @@ const Portifolio: React.FC = () => {
         const persistirPropsLoja: PersistirItens<LojaItens> = {
             selectItems: itensSelect,
             name: 'loja',
-            onSave: async (tipoUsuarioPortifolioId?: string) => {
-                await fetchPortifolioData(tipoUsuarioPortifolioId ?? '');
+            onSave: async (tipoUsuarioId?: string) => {
+                await fetchPortifolioData(tipoUsuarioId ?? '');
             },
         };
         setPersistirItensList((prevList) => [...prevList, persistirPropsLoja]);
     }, [fetchPortifolioData]);
 
+
     const fetchTipoUsuariosImagens = useCallback(async () => {
-        const tipoPortifolioImagensResponse = await GetByIdService(
-            tipoUsuarioPortifolioId,
-            `${API_BASE_AGENDA_URL}${UrlTipoPortifolioImagem}`
+
+        const tipoPortifolioImagensResponse = await GetByIdService(tipoUsuarioId, `${API_BASE_AGENDA_URL}${UrlTipoPortifolioImagem}`
         ) as ResponseItem<TipoPortifolioImagemItem>;
 
         setTipoPortifolioImagem(tipoPortifolioImagensResponse?.datas ?? []);
-        await fetchPortifolioData(tipoUsuarioPortifolioId ?? '');
-    }, [tipoUsuarioPortifolioId, fetchPortifolioData]);
+        await fetchPortifolioData(tipoUsuarioId ?? '');
+    }, [tipoUsuarioId, fetchPortifolioData]);
 
     const handleScrollToTop = () => {
         window.scrollTo({
@@ -120,8 +119,8 @@ const Portifolio: React.FC = () => {
         const persistirPropsColaborador: PersistirItens<ColaboradorItens> = {
             selectItems: itensSelect,
             name: 'colaborador',
-            onSave: async (tipoUsuarioPortifolioId?: string) => {
-                await fetchPortifolioData(tipoUsuarioPortifolioId ?? '');
+            onSave: async (tipoUsuarioId?: string) => {
+                await fetchPortifolioData(tipoUsuarioId ?? '');
             },
         };
         setPersistirItensList((prevList) => [...prevList, persistirPropsColaborador]);
@@ -130,9 +129,9 @@ const Portifolio: React.FC = () => {
     const handleModalDesativarPortifolio = useCallback(async (id: number) => {
         const lojaRetorno = await DeleteService(id, `${API_BASE_AGENDA_URL}${UrlPortifolio}`) as ResponseItem<PortifolioItem>;
         if (lojaRetorno) {
-            fetchPortifolioData(tipoUsuarioPortifolioId);
+            fetchPortifolioData(tipoUsuarioId);
         }
-    }, [fetchPortifolioData, tipoUsuarioPortifolioId]);
+    }, [fetchPortifolioData, tipoUsuarioId]);
 
     const handleDeleteClick = useCallback(
         async (event: React.MouseEvent, portifolio?: any) => {
@@ -149,8 +148,8 @@ const Portifolio: React.FC = () => {
     );
 
     const handlePageChange = useCallback((event: React.ChangeEvent<unknown>, page: number) => {
-        fetchPortifolioData(tipoUsuarioPortifolioId, page);
-    }, [fetchPortifolioData, tipoUsuarioPortifolioId])
+        fetchPortifolioData(tipoUsuarioId, page);
+    }, [fetchPortifolioData, tipoUsuarioId])
 
     const handleUpdateClick = useCallback(async (event: React.MouseEvent, portifolio?: any) => {
         event.preventDefault();
@@ -158,13 +157,13 @@ const Portifolio: React.FC = () => {
         const retorno = await GetByIdService(Id, `${API_BASE_AGENDA_URL}${UrlPortifolio}`) as ResponseItem<PortifolioItem>;
         retorno.data = {
             ...retorno.data,
-            tipoUsuarioPortifolioId: Number(tipoUsuarioPortifolioId ?? 0),
+            tipoUsuarioId: Number(tipoUsuarioId ?? 0),
         };
         setPortifolio(retorno.data);
 
         handleScrollToTop();
 
-    }, [tipoUsuarioPortifolioId]);
+    }, [tipoUsuarioId]);
     const actionButtons = useMemo(() => ([
         {
             id: 1,
@@ -190,47 +189,39 @@ const Portifolio: React.FC = () => {
         fetchResultadoPesquisa(resultados);
     };
     const gridViewItensMemo = useMemo(() => {
-        if (resultadosBusca) {     
+        if (resultadosBusca) {
             return {
                 paginacao: resultadosBusca,
-                propertyLabels: tipoUsuarioPortifolioId === TipoUsuarioPortifolioLojaId ? propertyLabelsLoja : propertyLabelsColaborador,
+                propertyLabels: tipoUsuarioId === TipoUsuarioLojaId ? propertyLabelsLoja : propertyLabelsColaborador,
                 onPageChange: handlePageChange,
                 actionButtons: actionButtons,
             } as GrigViewItens<PortifolioItem>;;
         }
         return undefined;
-    }, [resultadosBusca, actionButtons, handlePageChange, tipoUsuarioPortifolioId]);
-    const hasFetchedData = useRef(false);
-    useEffect(() => {
-        if (!hasFetchedData.current) {
-            usuarioData();
-            fetchLojaData();
-            fetchPortifolioData(tipoUsuarioPortifolioId);
-            fetchColaboradorData();
-            fetchTipoUsuariosImagens();
-            hasFetchedData.current = true;
-        }
-    }, [
-        usuarioData,
-        fetchLojaData,
-        fetchPortifolioData,
-        fetchTipoUsuariosImagens,
-        fetchColaboradorData,
-        tipoUsuarioPortifolioId
-    ]);
+    }, [resultadosBusca, actionButtons, handlePageChange, tipoUsuarioId]);
 
-    useEffect(() => {
-        if (gridViewItensMemo) {
-            setGridView(gridViewItensMemo);    
-        }
-    }, [gridViewItensMemo, fetchPortifolioData]);
 
-    useEffect(() => {
-        if (urlParametro) {
-            fetchPortifolioData(tipoUsuarioPortifolioId);
-            fetchTipoUsuariosImagens()
+    useUpdateFetch([() => usuarioData(), () => fetchLojaData(), () => fetchColaboradorData(), () => fetchPortifolioData(tipoUsuarioId),
+        fetchTipoUsuariosImagens
+    ],
+        [tipoUsuarioId]
+    );
+
+    useFetchTipo(
+        urlParametro ?? "", [() => fetchPortifolioData(tipoUsuarioId),  fetchTipoUsuariosImagens],
+        TipoUsuarioLojaId,
+        TipoUsuarioColaboradorId
+      );
+      
+
+    useUpdateGrid(gridViewItensMemo, setGridView, [persistirItensList], () => {
+        let isSave = persistirItensList.find(item => item.isSave)?.isSave;
+        if (isSave) {
+            persistirItensList.map(item => item.isSave = false)
+            fetchPortifolioData(tipoUsuarioId)
         }
-    }, [urlParametro, tipoUsuarioPortifolioId, fetchPortifolioData, fetchTipoUsuariosImagens]);
+    });
+
     return <>
         <div className='banner'>
             <Banner usuarioLogado={useUsuarioLogado} />
@@ -242,13 +233,13 @@ const Portifolio: React.FC = () => {
                         persistirProps={{ item: portifolioitem }}
                         tiposPortifolioImagem={tipoPortifolioImagem}
                         persistirDropProps={persistirItensList}
-                        tipoUsuarioPortifolio={tipoUsuarioPortifolioId}
+                        tipoUsuario={tipoUsuarioId}
                     />
                 </div>
                 <div className="busca-Portifolio">
                     <PortifolioBusca
                         selectItens={persistirItensList ?? []}
-                        tipoUsuarioPortifolioId={tipoUsuarioPortifolioId}
+                        tipoUsuarioId={tipoUsuarioId}
                         onResultadosBusca={handleResultadosBusca} />
                 </div>
             </div>

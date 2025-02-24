@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import React, { useState, useCallback, useMemo} from "react";
 import { Grid } from '@mui/material';
+import { useParams } from "react-router-dom";
 import { UsuarioLoginItens } from '../../Interfaces/Usuario/UsuarioLoginItens';
 import { GetAllService } from '../../services/shared/getAllService';
 import { GrigViewItens } from "../../Interfaces/shared/gridviewItens";
@@ -7,8 +8,9 @@ import { EnderecoItens } from '../../Interfaces/Endereco/enderecoItens'
 import { PersistirItens } from "../../Interfaces/shared/persistirItens";
 import { PaginacaoItens } from '../../Interfaces/shared/PaginacaoItens';
 import { LojaItens } from "../../Interfaces/Loja/lojaItens";
-import { SelectItens } from '../../Interfaces/shared/selectItens';
-import { propertyLabels, modalTexto, UrlBuscarPaginado, UrlEndereco } from '../../constants/Endereco/enderecoConstants';
+import { mapToSelectItens } from '../../functions/mapToSelectItens';
+import { propertyLabelsLoja, propertyLabelsColaborador, modalTexto, UrlBuscarPaginado, UrlEndereco } from '../../constants/Endereco/enderecoConstants';
+import { TipoUsuarioLojaId, TipoUsuarioColaboradorId } from '../../constants/Usuario/usuarioConstant';
 import { ModalItem } from "../../Interfaces/shared/modalItem";
 import { UrlUsuarioLogado } from "../../constants/Usuario/usuarioConstant";
 import { API_BASE_URL, API_BASE_AGENDA_URL } from '../../config/apiConfig';
@@ -17,6 +19,9 @@ import { UrlBuscarTodos } from "../../constants/Loja/lojaConstant";
 import { GetPaginadoService } from "../../services/shared/getPaginadoService";
 import { GetByIdService } from "../../services/shared/getByIdService";
 import { ResponseItem } from "../../Interfaces/shared/ResponseItem";
+import { ColaboradorItens } from "../../Interfaces/Colaborador/colaboradorItem";
+import { UrlColaborador } from "../../constants/Colaborador/colaboradorConstant";
+import { paginar } from "../../functions/paginacao";
 import ModalGeneric from "../../componentsGenerics/modalGeneric";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -25,6 +30,9 @@ import GridViewLista from '../../components/gridview';
 import EnderecoBuscar from "./EnderecoBuscar";
 import Banner from "../../components/banner";
 import Footer from "../../components/footer";
+import useUpdateGrid from "../../hooks/useUpdateGrid";
+import useUpdateFetch from '../../hooks/useUpdateFetch';
+import useFetchTipo from "../../hooks/useFetchTipo";
 
 import '../../assets/styles/Endereco/endereco.css'
 
@@ -35,35 +43,61 @@ const Endereco: React.FC = () => {
     const [gridViewItens, setGridView] = useState<GrigViewItens<EnderecoItens>>();
     const [resultadosBusca, setResultadosBusca] = useState<PaginacaoItens<EnderecoItens>>();
     const [modalOpen, setModalOpen] = useState<ModalItem>();
-    const [persistirItens, setPersistirItems] = useState<PersistirItens<LojaItens>>();
+    const [persistirItensList, setPersistirItensList] = useState<Array<PersistirItens<any>>>([]);
+    const { urlParametro } = useParams();
 
-    const fetchEnderecoData = useCallback(async (page: number = 1) => {
-        const paginacao: PaginacaoItens<EnderecoItens> = {
-            quantidadePagina: resultadosBusca?.quantidadePagina || 6,
-            paginaAtual: page,
-            totalPaginas: resultadosBusca?.totalPaginas || 1,
-            total: resultadosBusca?.total || 0,
-            objetoPesquisa: resultadosBusca?.objetoPesquisa || undefined,
-            objetos: resultadosBusca?.objetos ?? []
-        };
+    const tipoUsuarioId =
+        urlParametro === "Loja" ? TipoUsuarioLojaId : urlParametro === "Colaborador" ? TipoUsuarioColaboradorId : "";
 
-        if (!resultadosBusca || page !== undefined) {
-            paginacao.objetos = []
-            const enderecoResponse = await GetPaginadoService(paginacao, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`);
-            if (enderecoResponse) {
-                setResultadosBusca(enderecoResponse);
+        
+        const fetchEnderecoData = useCallback(async (tipoUsuarioId?: string, page: number = 1) => {
+            const paginacao = paginar(resultadosBusca, page)
+            if (!resultadosBusca || page !== undefined) {
+                paginacao.objetoPesquisa = resultadosBusca?.objetoPesquisa || {};
+                paginacao.objetoPesquisa.tipoUsuarioId = Number(tipoUsuarioId);
+    
+                const enderecoResponse = await GetPaginadoService(paginacao,  `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`);
+    
+                if (enderecoResponse) {
+                    setResultadosBusca(enderecoResponse);
+                }
             }
-        }
-    }, [resultadosBusca]);
+        }, [resultadosBusca]);
+
+    const fetchLojaData = useCallback(async () => {
+        const lojaResponse = await GetAllService(`${API_BASE_AGENDA_URL}${UrlBuscarTodos}`) as ResponseItem<LojaItens>;
+        const itensSelect = mapToSelectItens(lojaResponse?.datas, 'id', 'razaoSocial');
+        const persistirPropsLoja: PersistirItens<LojaItens> = {
+            selectItems: itensSelect,
+            name: 'loja',
+            onSave: async (tipoUsuarioId?: string) => {
+                await fetchEnderecoData(tipoUsuarioId ?? '');
+            },
+        };
+        setPersistirItensList((prevList) => [...prevList, persistirPropsLoja]);
+    }, [fetchEnderecoData]);
+
+    const fetchColaboradorData = useCallback(async () => {
+        const colaboradorResponse = await GetAllService(`${API_BASE_AGENDA_URL}${UrlColaborador}`) as ResponseItem<ColaboradorItens>;
+        const itensSelect = mapToSelectItens(colaboradorResponse?.datas, 'id', 'nome');
+        const persistirPropsColaborador: PersistirItens<ColaboradorItens> = {
+            selectItems: itensSelect,
+            name: 'colaborador',
+            onSave: async (tipoUsuarioId?: string) => {
+                await fetchEnderecoData(tipoUsuarioId ?? '');
+            },
+        };
+        setPersistirItensList((prevList) => [...prevList, persistirPropsColaborador]);
+    }, [fetchEnderecoData]);
 
     const handleModalDesativarEndereco = useCallback(async (id: number) => {
         const lojaRetorno = await DeleteService(id, `${API_BASE_AGENDA_URL}${UrlEndereco}`);
         if (lojaRetorno) {
 
-            fetchEnderecoData();
+            fetchEnderecoData(tipoUsuarioId);
             setModalOpen(undefined);
         }
-    }, [fetchEnderecoData]);
+    }, [fetchEnderecoData, tipoUsuarioId]);
 
     const handleUpdateClick = useCallback(async (event: React.MouseEvent, endereco?: any) => {
         event.preventDefault();
@@ -103,30 +137,13 @@ const Endereco: React.FC = () => {
         }
     ]), [handleUpdateClick, handleDeleteClick]);
 
-
-
     const handleResultadosBusca = (resultados: PaginacaoItens<EnderecoItens>) => {
         fetchResultadoPesquisa(resultados);
     };
 
-    const fetchLojaData = useCallback(async () => {
-        const lojaResponse = await GetAllService(`${API_BASE_AGENDA_URL}${UrlBuscarTodos}`) as ResponseItem<LojaItens>;
-        const itensSelect: SelectItens[] = lojaResponse?.datas?.map((loja: LojaItens) => ({
-            key: loja.id || '',
-            value: loja.razaoSocial
-        })) ?? [];
-        const enderecoBuscarProps: PersistirItens<LojaItens> = {
-            selectItems: itensSelect,
-            onSave: fetchEnderecoData,
-        };
-        setPersistirItems(enderecoBuscarProps);
-    }, [fetchEnderecoData]);
-
-
-
     const handlePageChange = useCallback((event: React.ChangeEvent<unknown>, page: number) => {
-        fetchEnderecoData(page);
-    }, [fetchEnderecoData])
+        fetchEnderecoData(tipoUsuarioId, page);
+    }, [fetchEnderecoData, tipoUsuarioId])
 
 
     const usuarioData = useCallback(async () => {
@@ -136,38 +153,37 @@ const Endereco: React.FC = () => {
         setUsuarioLogado(sessao);
     }, []);
 
-    const fetchResultadoPesquisa = useCallback((resultados: PaginacaoItens<LojaItens>) => {
+    const fetchResultadoPesquisa = useCallback((resultados: PaginacaoItens<EnderecoItens>) => {
         setResultadosBusca(resultados);
     }, []);
 
-
-    const hasFetchedData = useRef(false);
-    useEffect(() => {
-        if (!hasFetchedData.current) {
-            usuarioData();
-            fetchLojaData();
-            fetchEnderecoData();
-            hasFetchedData.current = true;
-        }
-    });
     const gridViewItensMemo = useMemo(() => {
         if (resultadosBusca) {
+
             return {
                 paginacao: resultadosBusca,
-                propertyLabels: propertyLabels,
+                propertyLabels: tipoUsuarioId === TipoUsuarioLojaId ? propertyLabelsLoja : propertyLabelsColaborador,
                 actionButtons: actionButtons,
                 onPageChange: handlePageChange
-            } as GrigViewItens<LojaItens>;
+            } as GrigViewItens<EnderecoItens>;
         }
         return undefined;
-    }, [resultadosBusca, actionButtons, handlePageChange]);
+    }, [resultadosBusca, actionButtons, handlePageChange, tipoUsuarioId]);
 
-    useEffect(() => {
-        if (gridViewItensMemo) {
-            setGridView(gridViewItensMemo);
+    useUpdateFetch([() => usuarioData(), () => fetchLojaData(), () => fetchColaboradorData(), () => fetchEnderecoData(tipoUsuarioId)],
+        [tipoUsuarioId]
+    );
+
+    useUpdateGrid(gridViewItensMemo, setGridView, [persistirItensList], () => {
+        let isSave = persistirItensList.find(item => item.isSave)?.isSave;
+        if (isSave) {
+            persistirItensList.map(item => item.isSave = false)
+            fetchEnderecoData(tipoUsuarioId)
         }
-    }, [gridViewItensMemo, fetchEnderecoData]);
+    });
 
+    useFetchTipo( urlParametro ?? "", [() => fetchEnderecoData(tipoUsuarioId)], TipoUsuarioLojaId, TipoUsuarioColaboradorId);
+      
     const handleScrollToTop = () => {
         window.scrollTo({
             top: 0,
@@ -184,11 +200,18 @@ const Endereco: React.FC = () => {
             <Grid container className="ContainerGrid" direction="column">
                 <div className="conteudo-inLine">
                     <div className="persistir-endereco">
-                        <EnderecoPersistir persistirProps={{ ...persistirItens, item: enderecoItem }} />
+                        <EnderecoPersistir
+                            persistirProps={{ item: enderecoItem }}
+                            persistirDropProps={persistirItensList}
+                            tipoUsuario={tipoUsuarioId} />
                     </div>
                     <div className="busca-endereco">
-                        <EnderecoBuscar selectItens={persistirItens?.selectItems ?? []}
-                            onResultadosBusca={handleResultadosBusca} />
+                        <EnderecoBuscar
+                            selectItens={persistirItensList ?? []}
+                            tipoUsuarioId={tipoUsuarioId}
+                            onResultadosBusca={handleResultadosBusca}
+                            page={resultadosBusca?.paginaAtual ?? 1}
+                        />
 
                     </div>
                     <div className="lista-endereco">

@@ -20,3 +20,5 @@ export const MensagemCadastro = "Uma mensagem foi enviada para sua caixa de e-ma
 export const MensagemUpDate = "Item atualizado com sucesso.";
 export const UrlUsuarioLogado = "UsuarioSessao";
 export const UrlUsuarioPerfil = "UsuarioPerfil";
+export const TipoUsuarioLojaId = "1";
+export const TipoUsuarioColaboradorId = "2";

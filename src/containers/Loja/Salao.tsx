@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { ModalItem } from "../../Interfaces/shared/modalItem";
 import { modalTexto, UrlTipoLoja, UrlPaginado, UrlLoja } from "../../constants/Loja/lojaConstant";
 import { PaginacaoItens } from '../../Interfaces/shared/PaginacaoItens';
@@ -17,6 +17,7 @@ import { UrlUsuarioLogado } from "../../constants/Usuario/usuarioConstant";
 import { API_BASE_URL, API_BASE_AGENDA_URL } from '../../config/apiConfig';
 import { UsuarioLoginItens } from '../../Interfaces/Usuario/UsuarioLoginItens';
 import { GetAllService } from "../../services/shared/getAllService";
+import { paginar } from "../../functions/paginacao";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Footer from '../../components/footer';
@@ -25,6 +26,8 @@ import SalaoPersistir from '../Loja/SalaoPersitir';
 import GridViewLista from '../../components/gridview';
 import SalaoBusca from "./SalaoBusca";
 import ModalGeneric from "../../componentsGenerics/modalGeneric";
+import useUpdateGrid from "../../hooks/useUpdateGrid";
+import useUpdateFetch from '../../hooks/useUpdateFetch';
 
 import '../../assets/styles/Loja/loja.css';
 
@@ -36,17 +39,8 @@ const Salao: React.FC = () => {
     const [resultadosBusca, setResultadosBusca] = useState<PaginacaoItens<LojaItens>>();
     const [modalOpen, setModalOpen] = useState<ModalItem>();
 
-
     const fetchLojaData = useCallback(async (page: number = 1) => {
-        const paginacao: PaginacaoItens<LojaItens> = {
-            quantidadePagina: resultadosBusca?.quantidadePagina || 6,
-            paginaAtual: page,
-            totalPaginas: resultadosBusca?.totalPaginas || 1,
-            total: resultadosBusca?.total || 0,
-            objetoPesquisa: resultadosBusca?.objetoPesquisa || undefined,
-            objetos: resultadosBusca?.objetos ?? []
-        };
-
+        const paginacao = paginar(resultadosBusca, page);
         if (!resultadosBusca || page !== undefined) {
             paginacao.objetos = []
             const lojaResponse = await GetPaginadoService(paginacao, `${API_BASE_AGENDA_URL}${UrlPaginado}`);
@@ -59,7 +53,7 @@ const Salao: React.FC = () => {
     const handleUpdateClick = useCallback(async (event: React.MouseEvent, loja?: any) => {
         event.preventDefault();
         const lojaId = loja.id ?? 0;
-        const retorno = await GetByIdService(lojaId, `${API_BASE_AGENDA_URL}${UrlLoja}` ) as ResponseItem<LojaItens>;
+        const retorno = await GetByIdService(lojaId, `${API_BASE_AGENDA_URL}${UrlLoja}`) as ResponseItem<LojaItens>;
         setLojaItem(retorno.data ?? {});
         handleScrollToTop();
     }, []);
@@ -134,15 +128,11 @@ const Salao: React.FC = () => {
         setResultadosBusca(resultados);
     }, []);
 
-    const hasFetchedData = useRef(false);
-    useEffect(() => {
-        if (!hasFetchedData.current) {
-            fetchTipoLojaData();
-            usuarioData();
-            fetchLojaData();
-            hasFetchedData.current = true;
-        }
-    }, [fetchLojaData, fetchTipoLojaData, usuarioData]);
+    useUpdateFetch([() => usuarioData(), () => fetchLojaData(), () => fetchTipoLojaData()],
+        []
+    );
+
+
 
     const gridViewItensMemo = useMemo(() => {
         if (resultadosBusca) {
@@ -156,11 +146,16 @@ const Salao: React.FC = () => {
         return undefined;
     }, [resultadosBusca, actionButtons, handlePageChange]);
 
-    useEffect(() => {
-        if (gridViewItensMemo) {
-            setGridView(gridViewItensMemo);
+
+    useUpdateGrid(gridViewItensMemo, setGridView, [persistirItens], () => {
+        if (persistirItens?.isSave) {
+            setPersistirItems(prev => ({
+                ...prev,
+                isSave: false,
+            }));
+            fetchLojaData();
         }
-    }, [gridViewItensMemo, fetchLojaData]);
+    });
 
     const handleResultadosBusca = (resultados: PaginacaoItens<LojaItens>) => {
         fetchResultadoPesquisa(resultados);
