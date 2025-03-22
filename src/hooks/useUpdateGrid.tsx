@@ -9,7 +9,6 @@ const useUpdateGrid = (
   const prevGridDataRef = useRef(gridData); 
   const [deps, setDeps] = useState(dependencies);
 
-  // Memoriza updateGrid corretamente, garantindo que não mude desnecessariamente
   const stableUpdateGrid = useCallback((data: any) => {
     updateGrid(data);
   }, [updateGrid]);

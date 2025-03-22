@@ -3,7 +3,7 @@ import { SelectItens } from '../../Interfaces/shared/selectItens';
 import { PaginacaoItens } from '../../Interfaces/shared/PaginacaoItens';
 import { ColaboradorItens } from "../../Interfaces/Colaborador/colaboradorItem";
 import { Grid } from '@mui/material';
-import { cpfMaskConst } from '../../constants/Usuario/usuarioConstant';
+import { cpfMaskConst } from '../../utils/mascaras';
 import { BotaoItens } from '../../Interfaces/Botao/botao';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { SwitchButtonItem } from "../../Interfaces/shared/switchButtonItem";

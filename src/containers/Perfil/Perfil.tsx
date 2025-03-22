@@ -2,7 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { Grid } from '@mui/material';
 import { BotaoItens } from '../../Interfaces/Botao/botao';
 import { UsuarioPerilItens } from '../../Interfaces/Usuario/UsuarioPerilItens'
-import { cpfMaskConst, foneMaskConst, UrlUsuarioPerfil } from '../../constants/Usuario/usuarioConstant';
+import {  UrlUsuarioPerfil } from '../../constants/Usuario/usuarioConstant';
+import { cpfMaskConst, foneMaskConst } from '../../utils/mascaras';
 import { UploadItens } from '../../Interfaces/TextBox/UploadItens';
 import { PostService } from '../../services/shared/postService';
 import { PutService } from '../../services/shared/putService';

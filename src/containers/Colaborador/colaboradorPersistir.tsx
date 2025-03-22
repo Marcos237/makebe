@@ -4,7 +4,7 @@ import { ColaboradorItens } from "../../Interfaces/Colaborador/colaboradorItem";
 import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
 import { Grid } from "@mui/material";
 import { UploadItens } from '../../Interfaces/TextBox/UploadItens';
-import { cpfMaskConst, foneMaskConst } from '../../constants/Usuario/usuarioConstant';
+import { cpfMaskConst, foneMaskConst } from '../../utils/mascaras';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { SwitchButtonItem } from "../../Interfaces/shared/switchButtonItem";
 import { BotaoItens } from '../../Interfaces/Botao/botao';

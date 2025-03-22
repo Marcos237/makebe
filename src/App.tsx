@@ -13,6 +13,7 @@ import Salao from './containers/Loja/Salao';
 import Endereco from './containers/Endereco/Endereco';
 import Portifolio from './containers/Portifolio/Portifolio';
 import Colaborador from './containers/Colaborador/colaborador';
+import Servico from './containers/Produtos/servico';
 import ColaboradorProfissional from './containers/ColaboradorProfissional/colaboradorProfissional';
 
 const App: React.FC = () => {
@@ -34,6 +35,7 @@ const App: React.FC = () => {
         <Route path="/Portifolio/:urlParametro" element={<Portifolio />} />
         <Route path="/Colaborador" element={<Colaborador />} />
         <Route path="/ColaboradorProfissional" element={<ColaboradorProfissional />} /> 
+        <Route path="/Produtos/Servico" element={<Servico />} /> 
       </Routes>
     </div>
   );

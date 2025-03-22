@@ -60,8 +60,7 @@ const PortifolioPersistir: React.FC<{
     }, [persistirProps]);
 
 
-    const fetchPortifolioData = useCallback(async () => {
-
+    const fetchPortifolioData = useCallback(async () => {  
         setId(persistirProps?.item?.id ?? 0);
         setLojaId(persistirProps?.item?.lojaId ?? 0);
         setTitulo(persistirProps?.item?.titulo ?? '');
@@ -77,30 +76,30 @@ const PortifolioPersistir: React.FC<{
         const uploadItemsRetorno: UploadItens[] = [];
         tiposPortifolioImagem.forEach((tipos, index) => {
             const imagemEncontrada = portifolioImagemItem.find((imagem) => imagem.tituloImagem === tipos.descricao);
-
-            const uploadImagem: UploadItens = imagemEncontrada ? {
-                uploadProps: {
-                    nomeImagem: imagemEncontrada.nomeImagem,
-                    urlImagem: imagemEncontrada.urlImagem,
-                    tituloImagem: imagemEncontrada.tituloImagem,
-                    tituloSessao: tipos?.titulo,
-                    id: (index + 1).toString()
-                }
-            } : {
-                uploadProps: {
-                    nomeImagem: "",
-                    urlImagem: "",
-                    tituloImagem: tipos.descricao,
-                    tituloSessao: tipos?.titulo,
-                    id: `${(index + 1).toString()}`
-                }
-            };
-
+            const uploadImagem: UploadItens = imagemEncontrada
+                ? {
+                      uploadProps: {
+                          nomeImagem: imagemEncontrada.nomeImagem,
+                          urlImagem: imagemEncontrada.urlImagem,
+                          tituloImagem: imagemEncontrada.tituloImagem,
+                          tituloSessao: tipos?.titulo,
+                          id: (index + 1).toString(),
+                      },
+                  }
+                : {
+                      uploadProps: {
+                          nomeImagem: "",
+                          urlImagem: "",
+                          tituloImagem: tipos.descricao,
+                          tituloSessao: tipos?.titulo,
+                          id: `${(index + 1).toString()}`,
+                      },
+                  };
+            
             uploadItemsRetorno.push(uploadImagem);
-            setUploadItems(uploadItemsRetorno)
+            setUploadItems(uploadItemsRetorno);
         });
-
-    }, [persistirProps,  tipoUsuario,idPersitir, portifolioImagemItem,tiposPortifolioImagem]);
+    }, [persistirProps, tipoUsuario, idPersitir, tiposPortifolioImagem, portifolioImagemItem]);
 
 
     const limparUpload = async () => {
@@ -120,11 +119,8 @@ const PortifolioPersistir: React.FC<{
             };
             uploadItemsRetorno.push(uploadImagem);
         });
-
         setUploadItems(uploadItemsRetorno);
     }
-
-    updatePersistirPrev(fetchPortifolioData,  limparUpload,  persistirProps?.item);
     const limparCampos = async  () => {
         await limparUpload();
         setId(0);
@@ -139,6 +135,7 @@ const PortifolioPersistir: React.FC<{
         setTexto('');     
     };
 
+    updatePersistirPrev(fetchPortifolioData,  limparCampos,  persistirProps.item);
     const addImagemItem = useCallback(
         (uploadsItemAtualizado: UploadItens[]): PortifolioImagemItem[] => {
             const imagensFiltradas: PortifolioImagemItem[] = uploadsItemAtualizado
@@ -287,7 +284,6 @@ const PortifolioPersistir: React.FC<{
             setMessage(false);
         }, 6000);
     }
-
     const sessaoItemImagem: SessaoItens = {
         nome: SessaoImagens,
         conteudo: (

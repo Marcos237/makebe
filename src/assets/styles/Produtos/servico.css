@@ -1,0 +1,57 @@
+.persistir-servico,
+.busca-servico,
+.lista-servico {
+    position: relative;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.conteudoServico {
+
+    padding: 20px;
+    margin-left: 10px;
+}
+
+.conteudoDireitoServico {
+    margin-top: -3vh;
+}
+
+.conteudoEsquerdoServico,
+.conteudoDireitoServico {
+    padding: 60px;
+}
+
+.conteudoBusca {
+    width: 100%;
+    margin-left: 5vh;
+}
+
+.busca-servico::after {
+    margin-top: 10px;
+    content: '';
+    position: absolute;
+    left: 25%;
+    width: 50%;
+    border-bottom: 0.2px solid #34495e;
+    bottom: 0;
+}
+.switch-item {
+    margin-top: -20px;
+}
+.formItemServicoBusca {
+    margin-top: -32px !important;
+}
+
+
+
+@media (max-width: 900px) {
+    .conteudoDireitoServico {
+        padding: auto;
+        margin-top: -7vh !important;
+    }
+
+    /* .datePicker .MuiMultiSectionDigitalClockSection-root {
+        padding: 2vh 12vw !important; 
+    
+    } */
+}

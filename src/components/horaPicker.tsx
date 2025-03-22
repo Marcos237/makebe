@@ -1,0 +1,104 @@
+import { Grid } from "@mui/material";
+import { SelectChangeEvent } from '@mui/material/Select';
+import { SelectItens } from "../Interfaces/shared/selectItens";
+import { useCallback, useEffect, useState } from "react";
+import { HoraItens } from '../Interfaces/shared/horaItens';
+import Dropdown from "./dropdown";
+
+const HoraPicker = (horaProps: HoraItens) => {
+  const [hora, setHora] = useState<string>("0");
+  const [minuto, setMinuto] = useState<string>("0");
+
+  const fetchHora = useCallback(() => {
+    if (horaProps.value) {
+  
+      const valorString = horaProps.value.toString();
+      const [horaParte, minutoParte] = valorString.split(".");
+      setHora(horaParte);
+ 
+      setMinuto((minutoParte || '') === '00' ? '00' : 
+      (minutoParte || '').startsWith('0') ? (minutoParte || '').slice(1) :
+      (minutoParte || '').length === 1 ? `${minutoParte}0` :
+      minutoParte || '');
+
+     }
+     else {
+      setHora("0");
+      setMinuto("0");
+    }
+  }, [horaProps.value]);
+
+  useEffect(() => {
+
+    if (hora === "00") setHora("0");
+    if (minuto === "00") setMinuto("0");
+
+    fetchHora();
+
+  }, [fetchHora, hora, minuto]);
+
+  const horas: SelectItens[] = Array.from({ length: 101 }, (_, i) => ({
+    key: i,
+    value: String(i).padStart(2, "0"), 
+  }));
+
+  const minutos: SelectItens[] = Array.from({ length: 60 }, (_, i) => ({
+    key: i,
+    value: String(i).padStart(2, "0"), 
+  }));
+  
+  const handleDropdownChange = (e: SelectChangeEvent<string>, tipo: string) => {
+    let novaHora = hora;
+    let novoMinuto = minuto;
+
+    if (tipo === "hora") {
+      novaHora = e.target.value;
+      setHora(novaHora);
+    }
+    if (tipo === "minuto") {
+      novoMinuto = e.target.value;
+      setMinuto(novoMinuto);
+    }
+
+    const valorHora = Number(novaHora) || 0;
+    const valorMinuto = Number(novoMinuto) || 0;
+    const valorTotal = parseFloat(`${valorHora}.${valorMinuto.toString().padStart(2, "0")}`);
+
+    horaProps.onChange(Number(valorTotal.toFixed(2)));
+  };
+
+  return (
+    <Grid container spacing={2} alignItems="center">
+      <Grid item xs={12}>
+        <div className='nameLabel'>
+          <label>{horaProps.label}</label>
+        </div>
+      </Grid>
+      <Grid item xs={6}>
+        <Dropdown
+          dropProps={{
+            name: "horas",
+            label: "Horas*",
+            itens: horas ?? [],
+            selectedId: hora,
+            onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "hora"),
+          }}
+        />
+      </Grid>
+
+      <Grid item xs={6}>
+        <Dropdown
+          dropProps={{
+            name: "minutos",
+            label: "Minutos*",
+            itens: minutos ?? [],
+            selectedId: minuto,
+            onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "minuto"),
+          }}
+        />
+      </Grid>
+    </Grid>
+  );
+};
+
+export default HoraPicker;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { cnpjMaskConst } from '../../constants/Loja/lojaConstant';
+import { cnpjMaskConst } from '../../utils/mascaras';
 import { SelectItens } from '../../Interfaces/shared/selectItens';
 import { LojaItens } from '../../Interfaces/Loja/lojaItens';
 import { PaginacaoItens } from '../../Interfaces/shared/PaginacaoItens';

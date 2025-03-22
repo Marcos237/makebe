@@ -1,10 +1,3 @@
-export const cnpjMaskConst = [
-    /\d/, /\d/, '.',
-    /\d/, /\d/, /\d/, '.',
-    /\d/, /\d/, /\d/, '/',
-    /\d/, /\d/, /\d/, /\d/, '-',
-    /\d/, /\d/
-];
 
 export const propertyLabels: { [key: string]: { label: string; ordem?: number }; } = {
 
