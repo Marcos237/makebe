@@ -1,12 +1,3 @@
-export const  cpfMaskConst = [/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/];
-export const foneMaskConst = (rawValue: string) => {
-    const numbers = rawValue.replace(/\D/g, '');
-    if (numbers.length < 10) {
-        return ['(', /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/];;
-    } else {
-        return ['(', /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/] 
-    }
-};
 
 export const NomeConst = "Nome" ;
 export const CpfConst = "Cpf";

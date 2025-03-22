@@ -1,10 +1,10 @@
 
 import React, { useState, useCallback} from "react";
-import { cnpjMaskConst, UrlLoja } from '../../constants/Loja/lojaConstant';
+import { UrlLoja } from '../../constants/Loja/lojaConstant';
 import { Grid } from '@mui/material';
 import { PersistirItens } from "../../Interfaces/shared/persistirItens";
 import { BotaoItens } from '../../Interfaces/Botao/botao';
-import { foneMaskConst } from "../../constants/Usuario/usuarioConstant";
+import { foneMaskConst, cnpjMaskConst } from '../../utils/mascaras';
 import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
 import { LojaItens } from "../../Interfaces/Loja/lojaItens";
 import { PostService } from '../../services/shared/postService';

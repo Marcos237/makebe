@@ -19,7 +19,7 @@ import { ColaboradorItens } from '../../Interfaces/Colaborador/colaboradorItem';
 import { GetPaginadoService } from '../../services/shared/getPaginadoService';
 import { GetByIdService } from "../../services/shared/getByIdService";
 import { LojaItens } from "../../Interfaces/Loja/lojaItens";
-import { ServicosItens } from "../../Interfaces/Colaborador/servicosItens";
+import { ServicosItens } from "../../Interfaces/Produto/servicosItens";
 import { ModalItem } from "../../Interfaces/shared/modalItem";
 import { DeleteService } from "../../services/shared/deleteService";
 import { paginar } from "../../functions/paginacao";

@@ -43,8 +43,6 @@ const ColaboradorProfissionalPersistir: React.FC<{
         setDescricao(persistirProps.item?.descricao ?? '');
 
     }, [persistirProps])
-
-
     updatePersistirPrev(fetchColaboradorProfissionalData,undefined, persistirProps.item);
 
     const handleCloseMessage = () => {

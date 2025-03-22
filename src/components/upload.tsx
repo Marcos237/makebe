@@ -13,6 +13,8 @@ const Upload: React.FC<UploadItens> = ({ uploadProps, onUpload }) => {
     const [id , setId] = useState<string>('');
     const [tituloSessao , setTituloSessao] = useState<string>('');
 
+
+    
     useEffect(() => {
         if (uploadProps) {
 
@@ -20,7 +22,7 @@ const Upload: React.FC<UploadItens> = ({ uploadProps, onUpload }) => {
             setUrlImagem(uploadProps?.urlImagem ?? '');
             setTituloImagem(uploadProps.tituloImagem ?? '')
             setId(uploadProps.id ?? '')
-            setTituloSessao(uploadProps?.tituloSessao ?? '');
+            setTituloSessao(uploadProps?.tituloSessao ?? '');   
         }
     }, [uploadProps]);
 

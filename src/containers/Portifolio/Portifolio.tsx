@@ -101,7 +101,6 @@ const Portifolio: React.FC = () => {
 
         const tipoPortifolioImagensResponse = await GetByIdService(tipoUsuarioId, `${API_BASE_AGENDA_URL}${UrlTipoPortifolioImagem}`
         ) as ResponseItem<TipoPortifolioImagemItem>;
-
         setTipoPortifolioImagem(tipoPortifolioImagensResponse?.datas ?? []);
         await fetchPortifolioData(tipoUsuarioId ?? '');
     }, [tipoUsuarioId, fetchPortifolioData]);
