@@ -16,88 +16,90 @@
 .grid-header {
     display: flex;
     justify-content: center;
-    align-items: center; 
+    align-items: center;
     height: 20px;
-    padding: 10px 0; 
+    padding: 10px 0;
     color: white;
 }
 
 
 .grid-header,
 .grid-row {
-    position: relative; 
+    position: relative;
     display: flex;
     padding: 10px 0;
-    border-bottom: 0.5px solid  #34495e; 
+    border-bottom: 0.5px solid #34495e;
 }
 
 .grid-column-header {
     text-align: center;
     margin-left: -40px;
 }
-.grid-column-header, .grid-column-item {
+
+.grid-column-header,
+.grid-column-item {
     flex: 1;
     padding: 5px;
 }
 
 .grid-column-item {
     display: flex;
-    justify-content: center; 
+    justify-content: center;
     align-items: center;
-    text-align: center; 
+    text-align: center;
     width: 20%;
     max-width: 100%;
-    word-wrap: break-word; 
-    overflow-wrap: break-word; 
-    white-space: normal; 
-    box-sizing: border-box; 
-    overflow: hidden; 
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .grid-text {
-    white-space: normal; 
-    overflow-wrap: break-word; 
+    white-space: normal;
+    overflow-wrap: break-word;
     word-wrap: break-word;
-    max-width: 100%; 
-    box-sizing: border-box; 
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 
 .grid-row {
     display: flex;
-    flex-wrap: nowrap; 
-    width: 100%; 
+    flex-wrap: nowrap;
+    width: 100%;
 }
 
 
 .grid-column-item p {
-    margin: 0; 
+    margin: 0;
     word-break: break-word;
 }
 
 
 
 .grid-column-header {
-    font-weight: bold; 
+    font-weight: bold;
 }
 
 .grid-row {
-    display: flex; 
+    display: flex;
 }
 
 .grid-column-item:last-child {
-    border-bottom: none; 
+    border-bottom: none;
 }
 
 .icons-buttons {
-    display: flex; 
-    justify-content: flex-end; 
-    gap: 5px; 
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
     padding: 5px;
 }
 
 .buttons-itens {
-    display: flex; 
+    display: flex;
     align-items: center;
 }
 
@@ -105,7 +107,7 @@
     display: flex;
     justify-content: center;
     margin-top: 20px;
-} 
+}
 
 .texto-vazio {
     display: flex;
@@ -114,5 +116,51 @@
 }
 
 .paginacaototal {
- color: #a6acaf;
+    color: #a6acaf;
+}
+
+@media (max-width: 900px) {
+    .grid-header {
+        display: none;
+    }
+
+    .grid-row {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        border: 1px solid #444;
+        border-radius: 8px;
+        padding: 12px;
+        max-width: 50vh;
+        margin-bottom: 4px;
+    }
+
+    .grid-column-item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .grid-column-item::before {
+        content: attr(data-label);
+        font-weight: bold;
+        margin-bottom: 4px;
+        color: #ffffff;
+        font-size: 0.9em;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .icons-buttons {
+        margin-top: 12px;
+        align-self: flex-end;
+    }
+
+    .grid-text {
+        margin-left: 4px;
+    }
 }

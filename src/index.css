@@ -62,9 +62,9 @@ body {
 
 .formItensHorizontal {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); 
+    grid-template-columns: repeat(3, 1fr);
     gap: 16px;
-    justify-content: space-between; 
+    justify-content: space-between;
 }
 
 
@@ -100,11 +100,12 @@ body {
     width: 80%;
     padding: 2px !important;
 }
+
 .gridBotoes {
     display: flex;
     justify-content: space-between;
     position: relative;
-    top: -25vh; 
+    top: -25vh;
     padding-left: 10vh;
     padding-right: 10vh;
 }
@@ -148,7 +149,13 @@ body {
         width: 100%;
         padding: 2px !important;
     }
+
     .gridBotoes {
-        top: -15vh; 
+        top: -15vh;
+    }
+
+    .formItensHorizontal {
+        grid-template-columns: 1fr;  
+        gap: 16px; 
     }
 }

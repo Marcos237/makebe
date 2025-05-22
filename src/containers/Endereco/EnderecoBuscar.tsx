@@ -1,9 +1,3 @@
-import React, { useState } from "react";
-import Dropdown from "../../components/dropdown";
-import CampoTexto from "../../components/textbox";
-import Botao from '../../components/button';
-import SearchIcon from '@mui/icons-material/Search';
-import RefreshIcon from '@mui/icons-material/Refresh';
 import { paginar } from "../../functions/paginacao";
 import { SelectChangeEvent } from '@mui/material/Select';
 import { PersistirItens } from "../../Interfaces/shared/persistirItens";
@@ -15,6 +9,13 @@ import { EnderecoItens } from "../../Interfaces/Endereco/enderecoItens";
 import { GetPaginadoService } from '../../services/shared/getPaginadoService';
 import { API_BASE_AGENDA_URL } from "../../config/apiConfig";
 import { UrlBuscarPaginado } from "../../constants/Endereco/enderecoConstants";
+import { getSelectedItemByTipo } from '../../functions/tipoSelectedFunction';
+import React, { useState } from "react";
+import Dropdown from "../../components/dropdown";
+import CampoTexto from "../../components/textbox";
+import Botao from '../../components/button';
+import SearchIcon from '@mui/icons-material/Search';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 import '../../assets/styles/Endereco/enderecoBuscar.css';
 
@@ -22,7 +23,7 @@ import '../../assets/styles/Endereco/enderecoBuscar.css';
 const EnderecoBuscar: React.FC<{
     selectItens: Array<PersistirItens<EnderecoItens>>,
     tipoUsuarioId: string,
-    page:  number,
+    page: number,
     onResultadosBusca: (resultados: PaginacaoItens<EnderecoItens>) => void
 }> =
     ({ selectItens, tipoUsuarioId, onResultadosBusca, page }) => {
@@ -68,8 +69,8 @@ const EnderecoBuscar: React.FC<{
             }
             setIsLoading(true);
 
-            const endereco : EnderecoItens = {
-                tipoUsuarioId : Number(tipoUsuarioId)
+            const endereco: EnderecoItens = {
+                tipoUsuarioId: Number(tipoUsuarioId)
             };
             const paginacao = paginar(endereco, 1)
             const enderecoService = await GetPaginadoService(paginacao ?? {}, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`);
@@ -79,7 +80,7 @@ const EnderecoBuscar: React.FC<{
 
         const handleDropdownChange = (e: SelectChangeEvent<string>, tipo: string) => {
             const selectedKey = e.target.value;
-            const selectedItem = getSelectedItemByTipo(tipo, selectedKey);
+            const selectedItem = getSelectedItemByTipo(tipo, selectedKey, colaboradorProps, lojaProps);
             const selectedValue = selectedItem?.value || '';
 
             switch (tipo) {
@@ -95,17 +96,6 @@ const EnderecoBuscar: React.FC<{
                     setColaboradorId(0);
                     setColaborador('');
                     break;
-                default:
-                    return null;
-            }
-        };
-
-        const getSelectedItemByTipo = (tipo: string, selectedKey: string) => {
-            switch (tipo) {
-                case "colaborador":
-                    return colaboradorProps.find(item => item.key === selectedKey);
-                case "loja":
-                    return lojaProps.find(item => item.key === selectedKey);
                 default:
                     return null;
             }
@@ -137,7 +127,7 @@ const EnderecoBuscar: React.FC<{
 
                     <Grid container spacing={2} className="formItensBusca ">
                         <Grid item md={6} xs={11}>
-                        <div className="formItens formItemMenor">
+                            <div className="formItens formItemMenor">
                                 {tipoUsuarioId?.toString() === TipoUsuarioLojaId && (
                                     <div className="formItens">
                                         <Dropdown

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Box, Button, Menu, MenuItem } from '@mui/material';
 import { URL_IMAGENS } from '../config/apiConfig';
 import { Link } from 'react-router-dom';
@@ -18,32 +18,38 @@ import "../assets/styles/Banner/banner.css";
 
 const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
   const [menuElemento, setMenuElemento] = useState<HTMLElement | null>(null);
-  const [subMenuElemento, setSubElemento] = useState<HTMLElement | null>(null);
   const [openSubMenu, setOpenSubMenu] = useState<number | null>(null);
+  const [subElemento, setSubElemento] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<HTMLElement | null>(null);
+  const [openSubMenuNivel2, setOpenSubMenuNivel2] = useState<number | null>(null);
+  const [subMenuElementoNivel2, setSubMenuElementoNivel2] = useState<null | HTMLElement>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const subMenuRef = useRef<HTMLDivElement | null>(null);
+  const subMenuNivel2Ref = useRef<HTMLDivElement | null>(null);
+
 
   const menuUsuarioItems: MenuUsuarioItens[] = usuarioLogado?.menus?.length
     ? [
-      { id: 1, menuDescricao: 'Perfil', urlMenu: '/perfil' },
-      { id: 2, menuDescricao: 'Alterar Senha', urlMenu: '/alteraSenha' },
-      { id: 3, menuDescricao: 'Sair', urlMenu: '/Deslogar' },
+      { id: 1, menuDescricao: 'Perfil', menuUrl: '/perfil' },
+      { id: 2, menuDescricao: 'Alterar Senha', menuUrl: '/alteraSenha' },
+      { id: 3, menuDescricao: 'Sair', menuUrl: '/Deslogar' },
     ]
     : [
-      { id: 1, menuDescricao: 'Login', urlMenu: '/login' },
-      { id: 2, menuDescricao: 'Cadastro', urlMenu: '/perfil' },
-      { id: 3, menuDescricao: 'Recuperar Senha', urlMenu: '/alteraSenha' },
+      { id: 1, menuDescricao: 'Login', menuUrl: '/login' },
+      { id: 2, menuDescricao: 'Cadastro', menuUrl: '/perfil' },
+      { id: 3, menuDescricao: 'Recuperar Senha', menuUrl: '/alteraSenha' },
     ];
 
   const menuUsuarioLogadoItems: MenuUsuarioItens[] = usuarioLogado?.menus?.length
     ? usuarioLogado.menus.map(menu => ({
       id: menu.id,
       menuDescricao: menu.menuDescricao,
-      urlMenu: menu.urlMenu,
+      menuUrl: menu.menuUrl,
       subMenus: menu.subMenus
     }))
     : [
-      { id: 1, menuDescricao: 'Sobre', urlMenu: '/sobre' },
-      { id: 2, menuDescricao: 'Contato', urlMenu: '/contato' },
+      { id: 1, menuDescricao: 'Sobre', menuUrl: '/sobre' },
+      { id: 2, menuDescricao: 'Contato', menuUrl: '/contato' },
     ];
 
   const handleOpenUser = (event: React.MouseEvent<HTMLElement>) => {
@@ -67,6 +73,8 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
   const handleMenuClose = () => {
     setMenuElemento(null);
     setOpenSubMenu(null);
+    setOpenSubMenuNivel2(null);
+
   };
 
   const handleSubMenuToggle = (event: React.MouseEvent<HTMLElement>, itemId: number) => {
@@ -75,34 +83,112 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
   };
 
 
-  const handleMenuItemClick = (event: React.MouseEvent<HTMLElement>,item: MenuUsuarioItens) => {
+  const handleMenuItemClick = (event: React.MouseEvent<HTMLElement>, item: MenuUsuarioItens) => {
     if (item.subMenus && item.subMenus.length > 0) {
       setOpenSubMenu(item.id);
       setSubElemento(event.currentTarget);
       return;
     }
-    window.location.href = item.urlMenu;
+    window.location.href = item.menuUrl;
     handleMenuClose();
   };
 
 
-  const renderSubMenu = (item: MenuUsuarioItens) => (
-    <Menu
-      id={`submenu-${item.id}`}
-      anchorEl={subMenuElemento}
-      open={openSubMenu === item.id}
-      onClose={() => setOpenSubMenu(null)}
-      MenuListProps={{ 'aria-labelledby': `fade-button-${item.id}` }}
-    >
-      {item?.subMenus?.map(subItem => (
-        <MenuItem key={subItem.subMenuId} onClick={() => setOpenSubMenu(null)}>
-          <Link to={subItem?.subMenuUrl || ''} style={{ textDecoration: 'none', color: 'inherit' }}>
-            {subItem.subMenuDescricao}
-          </Link>
-        </MenuItem>
-      ))}
-    </Menu>
-  );
+  const handleSubMenuNivel2Toggle = (
+    event: React.MouseEvent<HTMLElement>,
+    subMenuId: number
+  ) => {
+    event.stopPropagation();
+    setOpenSubMenuNivel2(prev => (prev === subMenuId ? null : subMenuId));
+    setSubMenuElementoNivel2(event.currentTarget);
+  };
+  const renderSubMenu = (item: MenuUsuarioItens): JSX.Element | null => {
+    const subMenuItens = item?.subMenus?.filter(sub => sub.subMenuPaiId == null) || [];
+    const subMenuFilhos = item?.subMenus?.filter(sub => sub.subMenuPaiId !== null) || [];
+
+    return (
+      <Menu
+        id={`submenu-${item.id}`}
+        anchorEl={subElemento}
+        open={openSubMenu === item.id}
+        onClose={() => {
+          setOpenSubMenu(null);
+          setOpenSubMenuNivel2(null);
+        }}
+        MenuListProps={{ 'aria-labelledby': `fade-button-${item.id}` }}
+        ref={subMenuRef}
+      >
+        {subMenuItens.map(subItem => {
+          const filhos = subMenuFilhos.filter(f => f.subMenuPaiId === subItem.subMenuId);
+
+          const hasFilhos = filhos.length > 0;
+
+          return (
+            <MenuItem
+              key={subItem.subMenuId}
+              onClick={
+                hasFilhos
+                  ? (event) => handleSubMenuNivel2Toggle(event, subItem?.subMenuId ?? 0)
+                  : () => setOpenSubMenu(null)
+              }
+            >
+              {hasFilhos ? (
+                <>
+                  {subItem.subMenuDescricao}
+                  <Menu
+                    anchorEl={subMenuElementoNivel2}
+                    open={openSubMenuNivel2 === subItem.subMenuId}
+                    onClose={() => setOpenSubMenuNivel2(null)}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+                    ref={subMenuNivel2Ref}
+                  >
+                    {filhos.map(filho => (
+                      <MenuItem
+                        key={filho.subMenuId}
+                        onClick={() => {
+                          setOpenSubMenu(null);
+                          setOpenSubMenuNivel2(null);
+                        }}
+                      >
+                        <Link to={filho.subMenuUrl || ''} style={{ textDecoration: 'none', color: 'inherit' }}>
+                          {filho.subMenuDescricao}
+                        </Link>
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                </>
+              ) : (
+                <Link to={subItem.subMenuUrl || ''} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  {subItem.subMenuDescricao}
+                </Link>
+              )}
+            </MenuItem>
+          );
+        })}
+      </Menu>
+    );
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+  
+      const clickedInsideMenu = menuRef.current?.contains(target);
+      const clickedInsideSubMenu = subMenuRef.current?.contains(target);
+      const clickedInsideSubMenuNivel2 = subMenuNivel2Ref.current?.contains(target);
+  
+      if ((!clickedInsideMenu && !clickedInsideSubMenu) ||  clickedInsideSubMenuNivel2) {
+        
+        handleMenuClose();
+      }
+    };
+  
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <>
@@ -138,6 +224,7 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
                 open={Boolean(menuElemento)}
                 onClose={handleMenuClose}
                 anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                ref={menuRef}
               >
                 {menuUsuarioLogadoItems.map((item) => (
                   <Box key={item.id}>
@@ -161,7 +248,7 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
             >
               {menuUsuarioLogadoItems.map(item => (
                 <Box key={item.id}>
-                  <Button component={Link} to={item.urlMenu} onClick={item.subMenus && item.subMenus.length > 0 ? (event) => handleSubMenuToggle(event, item.id) : handleMenuClose} sx={{ my: 2, color: 'white', display: 'block' }}>
+                  <Button component={Link} to={item.menuUrl} onClick={item.subMenus && item.subMenus.length > 0 ? (event) => handleSubMenuToggle(event, item.id) : handleMenuClose} sx={{ my: 2, color: 'white', display: 'block' }}>
                     {item.menuDescricao}
                   </Button>
                   {item.subMenus && renderSubMenu(item)}
@@ -195,7 +282,7 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
               >
                 {menuUsuarioItems.map((item) => (
                   <MenuItem key={item.id} onClick={handleCloseUser}>
-                    <Link to={item.urlMenu} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <Link to={item.menuUrl} style={{ textDecoration: 'none', color: 'inherit' }}>
                       <Typography textAlign="center">{item.menuDescricao}</Typography>
                     </Link>
                   </MenuItem>

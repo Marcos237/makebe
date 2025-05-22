@@ -3,7 +3,7 @@ import { getTokenFromLocalStorage } from '../../config/ArmazenaToken';
 import { ResponseItem } from '../../Interfaces/shared/ResponseItem';
 import { returnErroService } from './returnErroService';
 
-export const GetByIdService = async<T>(id : string | number, url : string): Promise<ResponseItem<T>> => {
+export const GetByIdService = async<T>(id : string | number, url : string, tipo?: number): Promise<ResponseItem<T>> => {
 
     try {
         const token = getTokenFromLocalStorage();
@@ -14,7 +14,7 @@ export const GetByIdService = async<T>(id : string | number, url : string): Prom
             }
         };
 
-        const response = await axios.get(`${url}/${id}`, config);
+        const response = await axios.get(`${url}/${id}${tipo ? `/${tipo}` : ''}`, config);
         return response.data; 
     } catch (error) {
         const responseErro = returnErroService(error);

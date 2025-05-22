@@ -27,6 +27,7 @@ const Dropdown: React.FC<{ dropProps: DropDownItens }> = ({ dropProps }) => {
           value={dropProps.selectedId?.toString() ?? '0'}
           onChange={handleChange}
           label={dropProps.label}
+          disabled={dropProps.isLeitura ?? false}
         >
           <MenuItem value="0">
             {dropProps.placeholder || 'Selecione...'}

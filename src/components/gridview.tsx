@@ -57,6 +57,7 @@ const GridViewLista: React.FC<{ gridviewProps: GrigViewItens<any> }> = ({ gridvi
                                 key={key}
                                 className="grid-column-item"
                                 style={{ display: gridviewProps?.propertyLabels?.[key] ? 'block' : 'none' }}
+                                data-label={gridviewProps?.propertyLabels?.[key]?.label}
                             >
                                 <div className="grid-text">
                                     {item[key] ? item[key] : ''}
