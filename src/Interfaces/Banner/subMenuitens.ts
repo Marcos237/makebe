@@ -3,5 +3,6 @@ export interface SubMenusItens {
         menuId?: number;
         subMenuDescricao?:string;
         subMenuUrl?: string;
+        subMenuPaiId?: string;
         ordem?: number;
 }

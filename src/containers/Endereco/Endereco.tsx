@@ -57,7 +57,7 @@ const Endereco: React.FC = () => {
                 paginacao.objetoPesquisa.tipoUsuarioId = Number(tipoUsuarioId);
     
                 const enderecoResponse = await GetPaginadoService(paginacao,  `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`);
-    
+
                 if (enderecoResponse) {
                     setResultadosBusca(enderecoResponse);
                 }

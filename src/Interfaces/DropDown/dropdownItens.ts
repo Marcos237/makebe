@@ -7,6 +7,7 @@ export interface DropDownItens {
     itens?: Array<SelectItens>,
     name?: string,
     selectedId?: string | number;
+    isLeitura?: boolean;
     onChange?: (event: SelectChangeEvent<string>) => void;
 }
 

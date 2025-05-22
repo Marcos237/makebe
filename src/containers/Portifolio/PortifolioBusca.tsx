@@ -9,6 +9,7 @@ import { GetPaginadoService } from "../../services/shared/getPaginadoService";
 import { API_BASE_AGENDA_URL } from "../../config/apiConfig";
 import { UrlBuscarPaginado } from "../../constants/Portifolio/PortifolioConstant";
 import { TipoUsuarioLojaId, TipoUsuarioColaboradorId } from '../../constants/Usuario/usuarioConstant';
+import { getSelectedItemByTipo } from '../../functions/tipoSelectedFunction';
 import CampoTexto from "../../components/textbox";
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -110,7 +111,7 @@ const PortifolioBusca: React.FC<{
 
         const handleDropdownChange = (e: SelectChangeEvent<string>, tipo: string) => {
             const selectedKey = e.target.value;
-            const selectedItem = getSelectedItemByTipo(tipo, selectedKey);
+            const selectedItem = getSelectedItemByTipo(tipo, selectedKey, colaboradorProps, lojaProps);
             const selectedValue = selectedItem?.value || '';
 
             switch (tipo) {
@@ -126,17 +127,6 @@ const PortifolioBusca: React.FC<{
                     setColaboradorId(0);
                     setColaborador('');
                     break;
-                default:
-                    return null;
-            }
-        };
-
-        const getSelectedItemByTipo = (tipo: string, selectedKey: string) => {
-            switch (tipo) {
-                case "colaborador":
-                    return colaboradorProps.find(item => item.key === selectedKey);
-                case "loja":
-                    return lojaProps.find(item => item.key === selectedKey);
                 default:
                     return null;
             }

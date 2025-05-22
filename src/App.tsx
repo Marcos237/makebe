@@ -15,6 +15,7 @@ import Portifolio from './containers/Portifolio/Portifolio';
 import Colaborador from './containers/Colaborador/colaborador';
 import Servico from './containers/Produtos/servico';
 import ColaboradorProfissional from './containers/ColaboradorProfissional/colaboradorProfissional';
+import Agenda from  './containers/Agenda/Agenda'
 
 const App: React.FC = () => {
   return (
@@ -36,6 +37,7 @@ const App: React.FC = () => {
         <Route path="/Colaborador" element={<Colaborador />} />
         <Route path="/ColaboradorProfissional" element={<ColaboradorProfissional />} /> 
         <Route path="/Produtos/Servico" element={<Servico />} /> 
+        <Route path="/Agenda/:urlParametro" element={<Agenda />} /> 
       </Routes>
     </div>
   );

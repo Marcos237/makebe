@@ -1,4 +1,3 @@
-import { NotificationItens } from "../shared/NotificationItens";
 
 export interface ColaboradorItens {
     id?: number;
