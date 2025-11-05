@@ -22,10 +22,9 @@ build:
 
 deploy:
   stage: deploy
-  image: docker:25.0.2   # se não for alpine, troque apk por apt
+  image: docker:25.0.2  
   before_script:
-    # se essa imagem for alpine funciona,
-    # se for debian use: apt-get update && apt-get install -y sshpass
+
     - apk update && apk add --no-cache sshpass
   script:
     - docker pull makebe:latest || true
@@ -46,6 +45,9 @@ deploy:
     - docker
   only:
     - main
+  when: manual     
+  environment:
+    name: homolog         
 
 deploy-Prod:
   stage: deploy-Prod
@@ -69,4 +71,3 @@ deploy-Prod:
   when: manual
   environment:
     name: production
-
