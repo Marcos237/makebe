@@ -59,11 +59,7 @@ deploy-Prod:
     - chmod 600 ~/.ssh/id_ed25519
     - ssh-keyscan -H "$AWS_HOST" >> ~/.ssh/known_hosts
   script:
-    - ssh "$AWS_USER@$AWS_HOST" "
-        cd $AWS_PATH &&
-        docker compose pull &&
-        docker compose up -d
-      "
+    - ssh "$AWS_USER@$AWS_HOST" "cd \"$AWS_PATH\" && docker compose pull && docker compose up -d"
   tags:
     - docker
   only:
@@ -71,5 +67,6 @@ deploy-Prod:
   when: manual
   environment:
     name: production
+
 
 
