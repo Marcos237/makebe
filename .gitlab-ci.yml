@@ -58,8 +58,9 @@ deploy-Prod:
     - echo "$AWS_DEPLOY_KEY" | base64 -d > ~/.ssh/id_ed25519
     - chmod 600 ~/.ssh/id_ed25519
     - ssh-keyscan -H "$AWS_HOST" >> ~/.ssh/known_hosts
+    - export AWS_PATH_CLEAN="$(printf '%s' "$AWS_PATH")"
   script:
-    - ssh "$AWS_USER@$AWS_HOST" "cd \"$AWS_PATH\" && docker compose pull && docker compose up -d"
+    - ssh "$AWS_USER@$AWS_HOST" "cd \"$AWS_PATH_CLEAN\" && docker compose pull && docker compose up -d"
   tags:
     - docker
   only:
@@ -67,6 +68,7 @@ deploy-Prod:
   when: manual
   environment:
     name: production
+
 
 
 
