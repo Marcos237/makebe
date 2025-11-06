@@ -52,6 +52,7 @@ deploy:
 deploy-Prod:
   stage: deploy-Prod
   image: alpine:latest
+  needs: ["build"]    
   before_script:
     - apk add --no-cache openssh-client
     - mkdir -p ~/.ssh
@@ -60,11 +61,11 @@ deploy-Prod:
     - ssh-keyscan -H "$AWS_HOST" >> ~/.ssh/known_hosts
     - export AWS_PATH_CLEAN="$(printf '%s' "$AWS_PATH")"
   script:
-    - ssh "$AWS_USER@$AWS_HOST" "cd \"$AWS_PATH_CLEAN\" && docker compose pull && docker compose up -d"
-  tags:
-    - docker
-  only:
-    - main
+    - ssh "$AWS_USER@$AWS_HOST" "mkdir -p \"$AWS_PATH_CLEAN/build\""
+    - scp -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no -r build/* "$AWS_USER@$AWS_HOST:$AWS_PATH_CLEAN/build/"
+    - ssh "$AWS_USER@$AWS_HOST" "cd \"$AWS_PATH_CLEAN\" && docker compose up -d"
+  tags: [docker]
+  only: [main]
   when: manual
   environment:
     name: production
