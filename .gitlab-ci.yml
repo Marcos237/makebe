@@ -64,6 +64,8 @@ deploy-Prod:
     - ssh "$AWS_USER@$AWS_HOST" "mkdir -p \"$AWS_PATH_CLEAN/build\""
     - scp -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no -r build/* "$AWS_USER@$AWS_HOST:$AWS_PATH_CLEAN/build/"
     - ssh "$AWS_USER@$AWS_HOST" "cd \"$AWS_PATH_CLEAN\" && docker compose up -d"
+        -v /etc/localtime:/etc/localtime:ro \
+        -v /makebe/app/config:/app/src/config/ \
   tags: [docker]
   only: [main]
   when: manual
