@@ -67,17 +67,13 @@ deploy-Prod:
     - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no "$AWS_USER@$AWS_HOST" "cd \"$AWS_PATH_CLEAN\" && docker build -t makebe:latest ."
     - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no "$AWS_USER@$AWS_HOST" "docker stop makebe 2>/dev/null || true"
     - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no "$AWS_USER@$AWS_HOST" "docker rm makebe 2>/dev/null || true"
-    - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no "$AWS_USER@$AWS_HOST" "
-        docker run -d --name makebe -p 8081:80 \
-          -v /etc/localtime:/etc/localtime:ro \
-          -v /makebe/app/config:/app/src/config/ \
-          makebe:latest
-      "
+    - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no "$AWS_USER@$AWS_HOST" "docker run -d --name makebe -p 8081:80 -v /etc/localtime:/etc/localtime:ro -v /makebe/app/config:/app/src/config/ makebe:latest"
   tags: [docker]
   only: [main]
   when: manual
   environment:
     name: production
+
 
 
 
