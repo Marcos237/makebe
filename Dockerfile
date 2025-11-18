@@ -1,23 +1,12 @@
-# Stage de build
-FROM node:20.9.0 AS build
+# Dockerfile (para homolog e produção)
+
+FROM node:20.9.0
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY build ./build
 
-RUN npm install
-# ou:
-# RUN npm ci
+RUN npm install -g serve
 
-COPY . .
+CMD ["serve", "-s", "build", "-l", "80"]
 
-RUN npm run build
-
-FROM node:20.9.0 AS runtime
-
-WORKDIR /app
-COPY --from=build /app ./
-
-CMD ["tail", "-f", "/dev/null"]
-
-# CMD ["node", "dist/index.js"]
