@@ -5,4 +5,4 @@ export const API_BASE_URL= "http://www.makebe2.com/api/makebe-session/"
 export const API_BASE_AGENDA_URL= "https://localhost:44330/"
 
 export const URL_IMAGENS = "https://www.makebeapp.com.br/imagens";
-export const RECAPTCHA_SITE_KEY = "6Lc2Oy0qAAAAAMsDr9UA8xZ3qD5V4k6tWHoI1dUO";
+export const RECAPTCHA_SITE_KEY = "6Lcb1i0sAAAAADPx6Nbn6e5c6PNfIq8QvYP-XCm3";
