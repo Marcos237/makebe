@@ -11,18 +11,18 @@ import {
     TipoColaborador, TipoLoja
 } from "../../constants/Agenda/agendaConstant";
 import { TipoUsuarioLojaId, TipoUsuarioColaboradorId } from '../../constants/Usuario/usuarioConstant';
-import { BotaoItens } from '../../Interfaces/Botao/botao';
 import { paginar } from "../../functions/paginacao";
 import { GetPaginadoService } from '../../services/shared/getPaginadoService';
 import { API_BASE_AGENDA_URL } from "../../config/apiConfig";
 import { formatarHoraComData } from '../../functions/formatDataHora';
 import { FaTrash } from 'react-icons/fa';
+import { Tooltip } from '@mui/material';
+import { FaSearch } from "react-icons/fa";
 import Icone from '../../components/icone';
 import Dropdown from "../../components/dropdown";
 import dayjs from 'dayjs';
 import DateTimerPicker from '../../components/dateTimerPicker';
-import Botao from '../../components/button';
-import SearchIcon from '@mui/icons-material/Search';
+
 import RefreshIcon from '@mui/icons-material/Refresh';
 
 const AgendaBusca: React.FC<{
@@ -42,7 +42,6 @@ const AgendaBusca: React.FC<{
     const [agendaBloqueadaInicio, setAgendaBloqueadaInicio] = useState<string>('');
     const [agendaBloqueadaFim, setAgendaBloqueadaFim] = useState<string>('');
     const [loja, setLoja] = useState<string>('');
-    const [isLoading, setIsLoading] = useState<boolean>(false);
     const lojaProps = selectItens.find((item) => item.name === "loja")?.selectItems ?? [];
     const semanaProps = selectItens.find((item) => item.name === "semana")?.selectItems ?? [];
     const colaboradorProps = selectItens.find((item) => item.name === "colaborador")?.selectItems ?? [];
@@ -53,7 +52,6 @@ const AgendaBusca: React.FC<{
     };
     const handleSearch = async (event: React.FormEvent) => {
         event.preventDefault();
-        setIsLoading(true);
 
         const agenda: AgendaItens = {
             idLoja: idLoja ?? 0,
@@ -73,7 +71,6 @@ const AgendaBusca: React.FC<{
         paginacao.paginaAtual = 1
         const enderecoService = await GetPaginadoService(paginacao ?? {}, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`);
         onResultadosBusca(enderecoService ?? {});
-        setIsLoading(false);
     };
 
     const handleDropdownChange = (e: SelectChangeEvent<string>, tipo: string) => {
@@ -101,17 +98,7 @@ const AgendaBusca: React.FC<{
         }
     };
 
-    const botaoProps: BotaoItens = {
-        tooltip: 'Buscar',
-        width: '20px',
-        onIconClick: handleButtonClick,
-        isLoading: isLoading,
-        color: 'success',
-        icon: SearchIcon
-    };
-
     const limparItens = () => {
-        setIsLoading(false);
         setAgendaSemanaInicio(0);
         setAgendaSemanaFim(0);
         setAgendaAbertaInicio('');
@@ -152,14 +139,6 @@ const AgendaBusca: React.FC<{
         onResultadosBusca(agendaService ?? {});
     }
 
-    const botaoLimparProps: BotaoItens = {
-        tooltip: 'Limpar',
-        width: '20px',
-        color: 'info',
-        icon: RefreshIcon,
-        onIconClick: handleButtonClickLimpar
-    };
-
     const handleIconClick = (tipo: string) => {
         if (tipo === 'agendaAberta') {
             setAgendaAbertaInicio('');
@@ -177,162 +156,162 @@ const AgendaBusca: React.FC<{
 
 
     return (<>
-        <div className="agendaBuscarConteudo">
-            <div className="gridBuscarAgenda">
-                <div className="titulobusca">
-                    <h4>Buscar</h4>
-                </div>
+        <Grid container spacing={2} className="ContainerGrid">
+            <div className="conteudo">
+                <fieldset className='icone-box icone-box-form'>
+                    <legend>Pesquisar</legend>
+                    <div className="conteudoPesquisa">
+                        <Grid container spacing={2} className="formItensBusca ">
+                            <Grid item md={3} xs={12} className="dropcuston">
 
-                <Grid container spacing={2} className="formItensBusca ">
-                    <Grid item md={3} xs={12}>
-                        <div className="formItens formItemMenor">
+                                {tipoItem?.toString() === TipoLoja && (
+                                    <div className="formItens-drop">
+                                        <Dropdown
+                                            dropProps={{
+                                                name: "Loja",
+                                                label: "Loja*",
+                                                itens: lojaProps ?? [],
+                                                selectedId: idLoja?.toString() || '',
+                                                onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "loja")
+                                            }}
+                                        />
+                                    </div>
+                                )}
+                                {tipoItem?.toString() === TipoColaborador && (
+                                    <div className="formItens-drop">
+                                        <Dropdown
+                                            dropProps={{
+                                                name: "Colaborador",
+                                                label: "Colaborador*",
+                                                itens: colaboradorProps,
+                                                selectedId: idColaborador || '0',
+                                                onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "colaborador"),
+                                            }}
+                                        />
+                                    </div>
+                                )}
+                            </Grid>
 
-                            {tipoItem?.toString() === TipoLoja && (
+
+                            <Grid item md={3} xs={12}>
+
                                 <div className="formItens-drop">
                                     <Dropdown
                                         dropProps={{
-                                            name: "Loja",
-                                            label: "Loja*",
-                                            itens: lojaProps ?? [],
-                                            selectedId: idLoja?.toString() || '',
-                                            onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "loja")
+                                            name: "Dia",
+                                            label: "Dia da semana Início",
+                                            itens: semanaProps,
+                                            selectedId: idAgendaSemanaInicio || '0',
+                                            onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, 'semanaInicio'),
                                         }}
                                     />
                                 </div>
-                            )}
-                            {tipoItem?.toString() === TipoColaborador && (
+                            </Grid>
+
+
+                            <Grid item md={3} xs={12}>
+
                                 <div className="formItens-drop">
                                     <Dropdown
                                         dropProps={{
-                                            name: "Colaborador",
-                                            label: "Colaborador*",
-                                            itens: colaboradorProps,
-                                            selectedId: idColaborador || '0',
-                                            onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "colaborador"),
+                                            name: "Dia",
+                                            label: "Dia da semana Fim",
+                                            itens: semanaProps,
+                                            selectedId: idAgendaSemanaFim || '0',
+                                            onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, 'semanaFim'),
                                         }}
                                     />
                                 </div>
-                            )}
+                            </Grid>
+                            <Grid item md={2} xs={12}>
+                            </Grid>
+                            <Grid item md={3} xs={12}>
 
-                        </div>
-                    </Grid>
-                    <Grid item md={3} xs={12}>
-                        <div className="formItens formItemMenor">
-                            <div className="formItens-drop">
-                                <Dropdown
-                                    dropProps={{
-                                        name: "Dia",
-                                        label: "Dia da semana Início",
-                                        itens: semanaProps,
-                                        selectedId: idAgendaSemanaInicio || '0',
-                                        onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, 'semanaInicio'),
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    </Grid>
-                    <Grid item md={3} xs={12}>
-                        <div className="formItens formItemMenor">
-                            <div className="formItens-drop">
-                                <Dropdown
-                                    dropProps={{
-                                        name: "Dia",
-                                        label: "Dia da semana Fim",
-                                        itens: semanaProps,
-                                        selectedId: idAgendaSemanaFim || '0',
-                                        onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, 'semanaFim'),
-                                    }}
-                                />
-                            </div>
+                                <div className="formItens-drop">
+                                    <DateTimerPicker
+                                        
+                                        label={DataLabelAgendaAberta}
+                                        value={agendaAbertaInicio ? dayjs(agendaAbertaInicio) : null}
+                                        onChange={setAgendaAbertaInicio}
+                                        tipo={"data"}
+                                    />
+                                    <span className="date-time-itens" onClick={() => handleIconClick("agendaAberta")}>
+                                        <Icone iconeProps={{ icone: <FaTrash />, dialogo: "limpar" }} />
+                                    </span >
+                                </div>
+                            </Grid>
 
-                        </div>
-                    </Grid>
-                    <Grid item md={3} xs={12}>
-                    </Grid>
-                    <Grid item md={3} xs={12}>
-                        <div className="formItens formItemMenor">
-                            <div className="formItens-drop">
-                                <DateTimerPicker
-                                    label={DataLabelAgendaAberta}
-                                    value={agendaAbertaInicio ? dayjs(agendaAbertaInicio) : null}
-                                    onChange={setAgendaAbertaInicio}
-                                    width={'360'}
-                                    tipo={"data"}
-                                />
-                                <span className="date-time-itens" onClick={() => handleIconClick("agendaAberta")}>
-                                    <Icone iconeProps={{ icone: <FaTrash />, dialogo: "limpar" }} />
-                                </span >
-                            </div>
-                        </div>
-                    </Grid>
+                            <Grid item md={3} xs={12}>
+                                <div className="formItens-drop">
+                                    <DateTimerPicker
+                                        label={DataLabelAgendaFechada}
+                                        value={agendaAbertaFim ? dayjs(agendaAbertaFim) : null}
+                                        onChange={setAgendaAbertaFim}
+                                        tipo={"data"}
+                                    />
+                                    <span className="date-time-itens" onClick={() => handleIconClick("agendaFechada")}>
+                                        <Icone iconeProps={{ icone: <FaTrash />, dialogo: "limpar" }} />
+                                    </span >
+                                </div>
+                            </Grid>
 
-                    <Grid item md={3} xs={12}>
-                        <div className="formItens formItemMenor">
-                            <div className="formItens-drop">
-                                <DateTimerPicker
-                                    label={DataLabelAgendaFechada}
-                                    value={agendaAbertaFim ? dayjs(agendaAbertaFim) : null}
-                                    onChange={setAgendaAbertaFim}
-                                    width={'360'}
-                                    tipo={"data"}
-                                />
-                                <span className="date-time-itens" onClick={() => handleIconClick("agendaFechada")}>
-                                    <Icone iconeProps={{ icone: <FaTrash />, dialogo: "limpar" }} />
-                                </span >
-                            </div>
-                        </div>
-                    </Grid>
+                            <Grid item md={3} xs={12}>
+                                <div className="formItens-drop">
+                                    <DateTimerPicker
+                                        label={DataLabelBloqueioAberto}
+                                        value={agendaBloqueadaInicio ? dayjs(agendaBloqueadaInicio) : null}
+                                        onChange={setAgendaBloqueadaInicio}
+                                        tipo={"hora"}
+                                    />
+                                    <span className="date-time-itens" onClick={() => handleIconClick("bloquadaInicio")}>
+                                        <Icone iconeProps={{ icone: <FaTrash />, dialogo: "limpar" }} />
+                                    </span >
+                                </div>
+                            </Grid>
 
-                    <Grid item md={3} xs={12}>
-                        <div className="formItens formItemMenor">
-                            <div className="formItens-drop">
-                                <DateTimerPicker
-                                    label={DataLabelBloqueioAberto}
-                                    value={agendaBloqueadaInicio ? dayjs(agendaBloqueadaInicio) : null}
-                                    onChange={setAgendaBloqueadaInicio}
-                                    width={'360'}
-                                    tipo={"hora"}
-                                />
-                                <span className="date-time-itens" onClick={() => handleIconClick("bloquadaInicio")}>
-                                    <Icone iconeProps={{ icone: <FaTrash />, dialogo: "limpar" }} />
-                                </span >
-                            </div>
-                        </div>
-                    </Grid>
+                            <Grid item md={3} xs={12}>
+                                <div className="formItens-drop">
+                                    <DateTimerPicker
+                                        label={DataLabelBloqueioFechado}
+                                        value={agendaBloqueadaFim ? dayjs(agendaBloqueadaFim) : null}
+                                        onChange={setAgendaBloqueadaFim}
+                                        tipo={"hora"}
+                                    />
 
-                    <Grid item md={3} xs={12}>
-                        <div className="formItens formItemMenor">
-                            <div className="formItens-drop">
-                                <DateTimerPicker
-                                    label={DataLabelBloqueioFechado}
-                                    value={agendaBloqueadaFim ? dayjs(agendaBloqueadaFim) : null}
-                                    onChange={setAgendaBloqueadaFim}
-                                    width={'360'}
-                                    tipo={"hora"}
-                                />
-
-                                <span  className="date-time-itens" onClick={() => handleIconClick("bloquadaFim")}>
-                                    <Icone iconeProps={{ icone: <FaTrash />, dialogo: "limpar" }} />
-                                </span >
-                            </div>
-                        </div>
-                    </Grid>
-
-                    <Grid container item xs={11} justifyContent="flex-end" spacing={2}>
-                        <Grid item>
-                            <div className='botaoBuscar'>
-                                <Botao botaoProps={botaoProps} />
-                            </div>
+                                    <span className="date-time-itens" onClick={() => handleIconClick("bloquadaFim")}>
+                                        <Icone iconeProps={{ icone: <FaTrash />, dialogo: "limpar" }} />
+                                    </span >
+                                </div>  
+                            </Grid>
+                            <Grid container item xs={11} justifyContent="flex-end" spacing={2}>
+                                <Grid item>
+                                    <div className='botaoBuscar'>
+                                        <div className="link-busca">
+                                            <button onClick={handleButtonClick} className="botao-link">
+                                                <Tooltip title="buscar">
+                                                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                                        <FaSearch />
+                                                    </span>
+                                                </Tooltip>
+                                            </button>
+                                            <button onClick={handleButtonClickLimpar} className="botao-link">
+                                                <Tooltip title="limpar">
+                                                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                                        <RefreshIcon />
+                                                    </span>
+                                                </Tooltip>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </Grid>
+                            </Grid>
                         </Grid>
-                        <Grid item>
-                            <div className='botaoLimpar'>
-                                <Botao botaoProps={botaoLimparProps} />
-                            </div>
-                        </Grid>
-                    </Grid>
-                </Grid>
+                    </div>
+                </fieldset>
             </div>
-        </div>
+        </Grid >
+
+
     </>
     )
 };

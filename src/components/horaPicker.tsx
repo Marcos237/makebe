@@ -77,11 +77,13 @@ const HoraPicker = (horaProps: HoraItens) => {
       <Grid item xs={6}>
         <Dropdown
           dropProps={{
-            name: "horas",
+            name: "Periodo",
             label: "Horas*",
+            id:"hora",
             itens: horas ?? [],
             selectedId: hora,
             onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "hora"),
+            erroSession:"Periodo"
           }}
         />
       </Grid>
@@ -89,11 +91,13 @@ const HoraPicker = (horaProps: HoraItens) => {
       <Grid item xs={6}>
         <Dropdown
           dropProps={{
-            name: "minutos",
+            name: "Periodo",
+            id:"minuto",
             label: "Minutos*",
             itens: minutos ?? [],
             selectedId: minuto,
             onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "minuto"),
+            erroSession:"Periodo"
           }}
         />
       </Grid>

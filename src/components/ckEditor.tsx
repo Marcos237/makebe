@@ -49,7 +49,7 @@ const EditorTexto: React.FC<{ editorItem: EditorTextoItem }> = ({ editorItem }) 
 
     return (
         <ThemeProvider theme={darkTheme}>
-            <label>{editorItem.nome}</label>
+            <label className='editor-text'>{editorItem.nome}</label>
             <div ref={editorRef} className='editor'>
                 <ReactQuill
                     value={editorItem.value ?? ''}

@@ -15,15 +15,20 @@ import { PostService } from "../../services/shared/postService";
 import { API_BASE_AGENDA_URL } from '../../config/apiConfig';
 import { RetornarMessageService } from '../../services/shared/retornarMessageService';
 import { formatarHoraComData, formatarHora } from '../../functions/formatDataHora';
+import { AgendaItens } from "../../Interfaces/Agenda/AgendaItens";
+import { Tooltip } from '@mui/material';
+import { FaRegTrashAlt } from "react-icons/fa";
+import { useFormErros } from '../../hooks/useFormErros';
+import { ErroItem } from '../../Interfaces/shared/erroItem';
+import { FaSave } from 'react-icons/fa';
 import CampoTexto from '../../components/textbox';
-import Botao from '../../components/button';
+import BotaoSubmit from '../../components/submitButton';
 import Mensagem from '../../components/mensagem';
 import DateTimerPicker from '../../components/dateTimerPicker';
 import Dropdown from "../../components/dropdown";
 import SwitchButton from "../../components/switchButton";
-import RefreshIcon from '@mui/icons-material/Refresh';
 import updatePersistirPrev from "../../hooks/useUpdatePersistirPrev";
-import { AgendaItens } from "../../Interfaces/Agenda/AgendaItens";
+
 
 
 const AgendaLojaPersistir: React.FC<{
@@ -50,8 +55,10 @@ const AgendaLojaPersistir: React.FC<{
     const colaboradorProps = persistirDropProps.find((item) => item.name === "colaborador")?.selectItems ?? [];
     const semanaProps = persistirDropProps.find((item) => item.name === "semana")?.selectItems ?? [];
     const [isLeitura, setIsLeitura] = useState<boolean>(false);
-    const [isLeituraBloqueado, setIsLeituraBloqueado] = useState<boolean>(false);
+    const [erros, setErros] = useState<ErroItem[]>([]);
+    const [erroTrigger, setErroTrigger] = useState(0);
 
+    useFormErros(erros, erroTrigger);
     const fetchAgendaPersistir = useCallback(async () => {
 
         setId(persistirProps?.item?.id ?? 0);
@@ -92,6 +99,7 @@ const AgendaLojaPersistir: React.FC<{
             idColaborador: idColaborador,
             tipo: Number(tipoItem) ?? tipo
         }
+
         const agendaResponse = await PostService(agenda, `${API_BASE_AGENDA_URL}${UrlAgenda}`);
         if (!agendaResponse?.notifications || agendaResponse?.notifications?.length === 0) {
             const messageRetorno = await RetornarMessageService(true, true, [])
@@ -103,8 +111,14 @@ const AgendaLojaPersistir: React.FC<{
             limparItens();
 
         } else {
-            const messageRetorno = await RetornarMessageService(false, false, agendaResponse?.notifications ?? [])
-            setMessageItens(messageRetorno)
+            const errosConvertidos: ErroItem[] = agendaResponse?.notifications?.map((n) => ({
+                Key: n.notificationProps?.Key ?? '',
+                Mensagem: n.notificationProps?.Message ?? '',
+                erroSession: n.notificationProps?.Key ?? ''
+            })) ?? [];
+
+            setErros(errosConvertidos);
+            setErroTrigger(prev => prev + 1);
         }
         enviarSatusMessage();
         setIsLoading(false);
@@ -150,9 +164,6 @@ const AgendaLojaPersistir: React.FC<{
         if (tipo === 'bloquiadoHoje') {
 
             setBloquadoHoje(!isBloqueadoHoje);
-            setAgendaBloqueadaInicio('');
-            setAgendaBloqueadaFim('');
-            setIsLeituraBloqueado(!isBloqueadoHoje);
         }
     };
 
@@ -167,12 +178,6 @@ const AgendaLojaPersistir: React.FC<{
         handleChange: () => handleChange('bloquiadoHoje')
     }
 
-    const handleButtonClick = () => {
-        const fakeEvent = {
-            preventDefault: () => { }
-        } as React.FormEvent;
-        handleSubmit(fakeEvent);
-    };
 
     const enviarSatusMessage = () => {
         setMessage(true)
@@ -202,161 +207,171 @@ const AgendaLojaPersistir: React.FC<{
     }
 
     const botaoProps: BotaoItens = {
-        name: 'Salvar',
-        tooltip: 'Fazer o cadastro',
-        label: 'Salvar',
-        width: '200px',
-        onIconClick: handleButtonClick,
-        color: 'primary',
+        tooltip: 'Salvar',
         isLoading: isLoading,
+        icon: FaSave,
+        marginLeft: '4px',
+        marginRight: '4px'
+
     };
 
-    const botaoLimparProps: BotaoItens = {
-        tooltip: 'limpar',
-        width: '20px',
-        onIconClick: handleButtonClickLimpar,
-        color: 'success',
-        icon: RefreshIcon
-    };
 
     return <>
         <div className='messageTextLoja'>
             <Mensagem mensagemProps={messageProps ?? {}} />
         </div>
-        <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} className="conteudo">
-            <Grid container spacing={2}>
-                <Grid item md={6} xs={10} className='gridEsquerdo'>
-                    <div className='conteudoEsquerdoAgenda conteudoMenorEsquerdo'>
-                        {tipoItem?.toString() === TipoLoja && (
-                            <div className="formItens-drop">
-                                <Dropdown
-                                    dropProps={{
-                                        name: "Loja",
-                                        label: "Loja*",
-                                        itens: lojaProps ?? [],
-                                        selectedId: idLoja?.toString() || '',
-                                        onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "loja")
-                                    }}
-                                />
+        <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} id="frmAgenda">
+            <Grid container spacing={2} className="ContainerGrid">
+                <div className='conteudo'>
+                    <fieldset className='icone-box icone-box-form'>
+                        <legend>Agenda</legend>
+
+                        <div className="links-login">
+                            <button onClick={handleButtonClickLimpar} className="botao-link">
+                                <Tooltip title="limpar">
+                                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                        <FaRegTrashAlt />
+                                    </span>
+                                </Tooltip>
+                            </button>
+                        </div>
+
+                        <Grid item md={6} xs={12} className='gridEsquerdo'>
+                            <div className="conteudoEsquerdo conteudoMenorEsquerdo">
+                                {tipoItem?.toString() === TipoLoja && (
+                                    <div className="formItens-drop">
+                                        <Dropdown
+                                            dropProps={{
+                                                name: "IdLoja",
+                                                label: "Loja*",
+                                                itens: lojaProps ?? [],
+                                                selectedId: idLoja?.toString() || '',
+                                                onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "loja"),
+                                                erroSession: "IdLoja"
+                                            }}
+                                        />
+                                    </div>
+                                )}
+                                {tipoItem?.toString() === TipoColaborador && (
+                                    <div className="formItens-drop">
+                                        <Dropdown
+                                            dropProps={{
+                                                name: "IdColaborador",
+                                                label: "Colaborador*",
+                                                itens: colaboradorProps,
+                                                selectedId: idColaborador || '0',
+                                                onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "colaborador"),
+                                                erroSession: "IdColaborador"
+                                            }}
+                                        />
+                                    </div>
+                                )}
+                                <div className="formItens-drop">
+                                    <SwitchButton switchProps={switchButton} />
+                                </div>
+
+
+
+                                <div className="formItens-drop">
+                                    <Dropdown
+                                        dropProps={{
+                                            name: "IdAgendaSemanaInicio",
+                                            label: "Dia da semana Início*",
+                                            itens: semanaProps,
+                                            selectedId: idAgendaSemanaInicio || '0',
+                                            isLeitura: isLeitura,
+                                            onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, 'semanaInicio'),
+                                            erroSession: "IdAgendaSemanaInicio"
+                                        }}
+                                    />
+                                </div>
+                                <div className="formItens-drop">
+                                    <Dropdown
+                                        dropProps={{
+                                            name: "IdAgendaSemanaFim",
+                                            label: "Dia da semana Fim*",
+                                            itens: semanaProps,
+                                            selectedId: idAgendaSemanaFim || '0',
+                                            isLeitura: isLeitura,
+                                            onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, 'semanaFim'),
+                                            erroSession: "IdAgendaSemanaFim"
+
+                                        }}
+                                    />
+                                </div>
                             </div>
-                        )}
-                        {tipoItem?.toString() === TipoColaborador && (
-                            <div className="formItens-drop">
-                                <Dropdown
-                                    dropProps={{
-                                        name: "Colaborador",
-                                        label: "Colaborador*",
-                                        itens: colaboradorProps,
-                                        selectedId: idColaborador || '0',
-                                        onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "colaborador"),
-                                    }}
-                                />
+                        </Grid>
+                        <div className="separador"></div>
+                        <Grid item md={6} xs={12} className='gridDireito'>
+                            <div className="conteudoDireitoAgenda">
+
+                                <div className="formItensHorizontal itemPicker">
+                                    <DateTimerPicker
+                                        name={"AgendaAbertaInicio"}
+                                        label={DataLabelAgendaAberta}
+                                        value={formatarHora(agendaAbertaInicio)}
+                                        onChange={setAgendaAbertaInicio}
+                                        tipo={"datahora"}
+                                        erroSession="AgendaAbertaInicio"
+                                    />
+
+                                    <DateTimerPicker
+                                        name={"AgendaAbertaFim"}
+                                        label={DataLabelAgendaFechada}
+                                        value={formatarHora(agendaAbertaFim)}
+                                        onChange={setAgendaAbertaFim}
+                                        tipo={"datahora"}
+                                        erroSession="AgendaAbertaFim"
+                                    />
+                                </div>
+
+
+                                <div className="formItens-drop">
+                                    <SwitchButton switchProps={switchButtonBloqueio} />
+                                </div>
+
+
+                                <div className="formItensHorizontal itemPicker itemPickerBaixo">
+                                    <DateTimerPicker
+                                        name={"AgendaBloqueadaInicio"}
+                                        label={DataLabelBloqueioAberto}
+                                        value={formatarHora(agendaBloqueadaInicio)}
+                                        onChange={setAgendaBloqueadaInicio}
+                                        tipo={"hora"}
+                                        isLeituraOnly={false}
+                                        erroSession="AgendaBloqueadaInicio"
+                                    />
+
+
+                                    <DateTimerPicker
+                                        label={DataLabelBloqueioFechado}
+                                        value={formatarHora(agendaBloqueadaFim)}
+                                        onChange={setAgendaBloqueadaFim}
+                                        tipo={"hora"}
+                                        isLeituraOnly={false}
+                                    />
+                                </div>
+                                <div className="gridBotoes">
+                                    <div className="botao botao-salvar">
+                                        <BotaoSubmit botaoProps={botaoProps} />
+                                    </div>
+                                </div>
                             </div>
-                        )}
-
-                        <div className="formItens-drop">
-                            <SwitchButton switchProps={switchButton} />
-                        </div>
-
-                        <div className="">
-                            <div className="formItens-drop">
-                                <Dropdown
-                                    dropProps={{
-                                        name: "Dia",
-                                        label: "Dia da semana Início",
-                                        itens: semanaProps,
-                                        selectedId: idAgendaSemanaInicio || '0',
-                                        isLeitura: isLeitura,
-                                        onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, 'semanaInicio'),
-                                    }}
-                                />
-                            </div>
-                            <div className="formItens-drop">
-                                <Dropdown
-                                    dropProps={{
-                                        name: "Dia",
-                                        label: "Dia da semana Fim",
-                                        itens: semanaProps,
-                                        selectedId: idAgendaSemanaFim || '0',
-                                        isLeitura: isLeitura,
-                                        onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, 'semanaFim'),
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </Grid>
-                <div className="separador"></div>
-                <Grid item md={6} xs={12} className="gridDireito">
-                    <div className='conteudoDireitoAgenda conteudoMenorDireito'>
-                        <div className="formItensHorizontal itemPicker">
-                            <DateTimerPicker
-                                label={DataLabelAgendaAberta}
-                                value={formatarHora(agendaAbertaInicio)}
-                                onChange={setAgendaAbertaInicio}
-                                width={'450'}
-                                tipo={"datahora"}
-                            />
-
-                            <DateTimerPicker
-                                label={DataLabelAgendaFechada}
-                                value={formatarHora(agendaAbertaFim)}
-                                onChange={setAgendaAbertaFim}
-                                width={'450'}
-                                tipo={"datahora"}
-                            />
-                        </div>
-
-                        <div className="formItens-drop">
-                            <SwitchButton switchProps={switchButtonBloqueio} />
-                        </div>
-
-                        <div className="formItensHorizontal itemPicker itemPickerBaixo">
-                            <DateTimerPicker
-                                label={DataLabelBloqueioAberto}
-                                value={formatarHora(agendaBloqueadaInicio)}
-                                onChange={setAgendaBloqueadaInicio}
-                                width={'450'}
-                                tipo={"hora"}
-                                isLeituraOnly={isLeituraBloqueado}
-                            />
-
-
-                            <DateTimerPicker
-                                label={DataLabelBloqueioFechado}
-                                value={formatarHora(agendaBloqueadaFim)}
-                                onChange={setAgendaBloqueadaFim}
-                                width={'450'}
-                                tipo={"hora"}
-                                isLeituraOnly={isLeituraBloqueado}
-                            />
-                        </div>
-
-                    </div>
-
-                    <div className='camposInvisiveis'>
-                        <CampoTexto
-                            textBoxProps={{
-                                name: "id",
-                                value: id?.toString(),
-                                type: 'hidden',
-                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setId(Number(e.target.value))
-                            }} />
-                    </div>
-                </Grid>
-                <Grid item xs={12}>
-                    <div className="formItens gridBotoes">
-                        <div className="botao">
-                            <Botao botaoProps={botaoLimparProps} />
-                        </div>
-                        <div className="botao">
-                            <Botao botaoProps={botaoProps} />
-                        </div>
-                    </div>
-                </Grid>
+                        </Grid>
+                    </fieldset>
+                </div>
             </Grid>
-        </form>
 
+            <div className='camposInvisiveis'>
+                <CampoTexto
+                    textBoxProps={{
+                        name: "id",
+                        value: id?.toString(),
+                        type: 'hidden',
+                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setId(Number(e.target.value))
+                    }} />
+            </div>
+        </form >
     </>
 }
 

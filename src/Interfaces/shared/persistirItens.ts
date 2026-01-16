@@ -6,5 +6,7 @@ export interface PersistirItens<T> {
     name?: string;
     id? : string;
     onSave?: () => void;
+    onInputChange?: (texto: string) => void;
+    onChangeItem?:(id:string) => void;
     isSave?: boolean;
 }

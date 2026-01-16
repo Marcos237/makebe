@@ -9,3 +9,5 @@ export const Semana: SemanaItens[] = [
   { id: 6, dia: 'Sexta-feira' },
   { id: 7, dia: 'Sábado' }
 ];
+
+export const UrlBuscarCliente = "UsuarioCliente";

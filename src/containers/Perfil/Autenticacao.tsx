@@ -7,6 +7,7 @@ import { PutService } from '../../services/shared/putService';
 import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig';
 import { Grid } from '@mui/material';
 import { API_BASE_URL } from '../../config/apiConfig';
+import { FaPlay } from 'react-icons/fa';
 import RecaptchaComponent from '../../components/recaptcha';
 import Botao from '../../components/button';
 import Banner from '../../components/banner';
@@ -48,15 +49,13 @@ const Autenticacao: React.FC = () => {
     }
 
     const botaoProps: BotaoItens = {
-        name: 'Ativar',
-        tooltip: 'Ativar usuario',
-        label: 'Ativar',
-        width: '100px',
+        tooltip: 'Ativar',
         onIconClick: handleButtonClick,
-        color: 'info',
+        icon: FaPlay,
         isLoading: isLoading,
         isDisable: isDisabled
     };
+
 
     return (
         <>
@@ -67,21 +66,23 @@ const Autenticacao: React.FC = () => {
 
             <Grid container className="ContainerGrid">
                 <div className='conteudo'>
-                    <div className='itemAutenticacao'>
-                        <div className='textoAutenticacao'>
+                    <div className='icone-box'>
+                        <div className='itemAutenticacao'>
+                            <div className='textoAutenticacao'>
 
-                            {isVisibleLogin && (
-                                <p>{AtivarUsuario} <a href='/login'>Clique aqui para fazer o login</a></p>
-                            )}
-                            {isVisibleReevia && (
-                                <p>{ReenviatEmail} <a href='/ReenviaAutenticacao'>Clique aqui</a></p>
-                            )}
+                                {isVisibleLogin && (
+                                    <p>{AtivarUsuario} <a href='/login'>Clique aqui para fazer o login</a></p>
+                                )}
+                                {isVisibleReevia && (
+                                    <p>{ReenviatEmail} <a href='/ReenviaAutenticacao'>Clique aqui</a></p>
+                                )}
 
-                            <div className='recaptcha'>
-                                <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
-                            </div>
-                            <div className='botaoAutenticacao'>
-                                <Botao botaoProps={botaoProps}></Botao>
+                                <div className='recaptcha'>
+                                    <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
+                                </div>
+                                <div className='botao botaoAutenticacao'>
+                                    <Botao botaoProps={botaoProps}></Botao>
+                                </div>
                             </div>
                         </div>
                     </div>

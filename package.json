@@ -13,18 +13,19 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.97",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
+    "@types/react": "18.2.75",
+    "@types/react-dom": "18.2.25",
     "axios": "^1.7.2",
     "ckeditor5": "^43.3.1",
     "ckeditor5-premium-features": "^43.3.1",
     "dayjs": "^1.11.13",
+    "lodash.debounce": "^4.0.8",
     "quill": "^2.0.2",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-google-recaptcha": "^3.1.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-google-recaptcha": "2.1.0",
     "react-hook-form": "^7.52.1",
-    "react-icons": "^5.2.1",
+    "react-icons": "4.12.0",
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.23.1",
     "react-scripts": "5.0.1",
@@ -32,7 +33,7 @@
     "react-text-mask": "^5.5.0",
     "slick-carousel": "^1.8.1",
     "swiper": "^11.1.4",
-    "typescript": "^4.9.5",
+    "typescript": "4.9.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -61,7 +62,13 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@types/lodash": "^4.17.20",
     "@types/react-google-recaptcha": "^2.1.9",
-    "@types/react-slick": "^0.23.13"
+    "@types/react-slick": "^0.23.13",
+    "baseline-browser-mapping": "^2.9.15"
+  },
+  "resolutions": {
+    "@types/react": "18.2.75",
+    "@types/react-dom": "18.2.25"
   }
 }

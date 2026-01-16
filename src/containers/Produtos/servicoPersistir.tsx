@@ -10,10 +10,14 @@ import { urlPersistir } from '../../constants/Servicos/servicoConstant';
 import { PostService } from "../../services/shared/postService";
 import { moneyMaskConst } from '../../utils/mascaras';
 import { PeriodoServico } from "../../constants/Servicos/servicoConstant";
-import RefreshIcon from '@mui/icons-material/Refresh';
+import { Tooltip } from '@mui/material';
+import { FaRegTrashAlt } from "react-icons/fa";
+import { FaSave } from 'react-icons/fa';
+import { ErroItem } from '../../Interfaces/shared/erroItem';
+import { useFormErros } from '../../hooks/useFormErros';
 import CampoTexto from '../../components/textbox';
 import Mensagem from '../../components/mensagem';
-import Botao from '../../components/button';
+import BotaoSubmit from '../../components/submitButton';
 import updatePersistirPrev from "../../hooks/useUpdatePersistirPrev";
 import HoraPicker from '../../components/horaPicker';
 
@@ -29,6 +33,10 @@ const ServicoPersistir: React.FC<{
     const [periodo, setPeriodo] = useState<number>(0);
     const [valor, setValor] = useState<number>(0);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [erros, setErros] = useState<ErroItem[]>([]);
+    const [erroTrigger, setErroTrigger] = useState(0);
+
+    useFormErros(erros, erroTrigger);
 
     const fetchServicoData = useCallback(async () => {
         if (!persistirProps?.item) return;
@@ -69,8 +77,14 @@ const ServicoPersistir: React.FC<{
 
         } else {
 
-            const messageRetorno = await RetornarMessageService(false, false, servicoResponse?.notifications ?? [])
-            setMessageItens(messageRetorno)
+            const errosConvertidos: ErroItem[] = servicoResponse?.notifications?.map((n) => ({
+                Key: n.notificationProps?.Key ?? '',
+                Mensagem: n.notificationProps?.Message ?? '',
+                erroSession: n.notificationProps?.Key ?? ''
+            })) ?? [];
+            setErros(errosConvertidos);
+            setErroTrigger(prev => prev + 1);
+
         }
         enviarSatusMessage();
         setIsLoading(false);
@@ -83,21 +97,13 @@ const ServicoPersistir: React.FC<{
         setPeriodo(0);
         setValor(0);
     }
-    const handleButtonClick = () => {
-        const fakeEvent = {
-            preventDefault: () => { }
-        } as React.FormEvent;
-        handleSubmit(fakeEvent);
-    };
-
     const botaoProps: BotaoItens = {
-        name: 'Salvar',
-        tooltip: 'Fazer o cadastro',
-        label: 'Salvar',
-        width: '200px',
-        onIconClick: handleButtonClick,
-        color: 'primary',
+        tooltip: 'Salvar',
         isLoading: isLoading,
+        icon: FaSave,
+        marginLeft: '4px',
+        marginRight: '4px'
+
     };
 
     const enviarSatusMessage = () => {
@@ -110,14 +116,6 @@ const ServicoPersistir: React.FC<{
     const handleButtonClickLimpar = async () => {
         limparItens();
     }
-    const botaoLimparProps: BotaoItens = {
-        tooltip: 'limpar',
-        width: '20px',
-        onIconClick: handleButtonClickLimpar,
-        color: 'success',
-        icon: RefreshIcon
-    };
-
     const handleFormKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
 
         if (event.key === 'Enter') {
@@ -132,68 +130,83 @@ const ServicoPersistir: React.FC<{
         <div className='messageTextLoja'>
             <Mensagem mensagemProps={messageProps ?? {}} />
         </div>
-        <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} className="conteudo">
-            <Grid container spacing={2}>
-                <Grid item md={6} xs={10} className='gridEsquerdo'>
-                    <div className='ConteudoEsquerdoServico conteudoMenorEsquerdo'>
 
-                        <div className='formItens'>
-                            <CampoTexto
-                                textBoxProps={{
-                                    name: "Descrição",
-                                    tooltip: "digite a Descrição",
-                                    label: "Descrição*",
-                                    value: descricao,
-                                    type: 'text',
-                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setDescricao(e.target.value)
-                                }}
-                            />
+        <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} id="frmServico">
+            <Grid container spacing={2} className="ContainerGrid">
+                <div className='conteudo'>
+                    <fieldset className='icone-box icone-box-form'>
+                        <legend>Colaborador</legend>
+
+                        <div className="links-login">
+                            <a href="#limpar"  onClick={handleButtonClickLimpar} className="botao-link">
+                                <Tooltip title="limpar">
+                                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                        <FaRegTrashAlt />
+                                    </span>
+                                </Tooltip>
+                            </a>
                         </div>
 
-                        <div className='formItens'>
+                        <Grid item md={6} xs={12} className='gridEsquerdo'>
+                            <div className="conteudoEsquerdo conteudoMenorEsquerdo">
 
-                            <CampoTexto
-                                textBoxProps={{
-                                    name: "Valor",
-                                    tooltip: "Digite o valor",
-                                    label: "Valor",
-                                    value: moneyMaskConst(valor),
-                                    type: "text",
-                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-                                        const rawValue = e.target.value.replace(/\D/g, "");
-                                        setValor(rawValue === "" ? 0 : Number(rawValue) / 100);
-                                    },
-                                }}
-                            />
-                        </div>
-                    </div>
-                </Grid>
-                <div className="separador"></div>
-                <Grid item md={6} xs={10} className='gridDireito'>
-                    <div className="conteudoDireitoServico conteudoMenorDireito">
+                                <div className='formItens'>
+                                    <CampoTexto
+                                        textBoxProps={{
+                                            name: "Descricao",
+                                            tooltip: "digite a Descrição",
+                                            label: "Descrição*",
+                                            value: descricao,
+                                            type: 'text',
+                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setDescricao(e.target.value),
+                                            erroSession: "Descricao"
+                                        }}
+                                    />
+                                </div>
 
-                        <div className='formItens'>
-                            <HoraPicker
-                                label={PeriodoServico}
-                                value={periodo}
-                                onChange={handlePeriodoChange}
-                            />
-                        </div>
+                                <div className='formItens'>
 
-                    </div>
-                </Grid>
+                                    <CampoTexto
+                                        textBoxProps={{
+                                            name: "Valor",
+                                            tooltip: "Digite o valor",
+                                            label: "Valor*",
+                                            value: moneyMaskConst(valor),
+                                            type: "text",
+                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                                                const rawValue = e.target.value.replace(/\D/g, "");
+                                                setValor(rawValue === "" ? 0 : Number(rawValue) / 100);
+                                            },
+                                            erroSession:"Valor"
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        </Grid>
+                        <div className="separador"></div>
+                        <Grid item md={6} xs={12} className='gridDireito'>
+                            <div className="conteudoDireito datahora-servico">
+                                <div className='formItens hora-picker'>
+                                    <HoraPicker
+                                        label={PeriodoServico}
+                                        value={periodo}
+                                        onChange={handlePeriodoChange}
+                                        name="Periodo"
+                                        erroSession="Perido"
+                                    />
+                                </div>
+                                <div className="gridBotoes">
+                                    <div className="botao botao-salvar">
+                                        <BotaoSubmit botaoProps={botaoProps} />
+                                    </div>
+                                </div>
 
-                <Grid item xs={12}>
-                    <div className="formItens gridBotoes">
-                        <div className="botao">
-                            <Botao botaoProps={botaoLimparProps} />
-                        </div>
-                        <div className="botao">
-                            <Botao botaoProps={botaoProps} />
-                        </div>
-                    </div>
-                </Grid>
+                            </div>
+                        </Grid>
+                    </fieldset>
+                </div>
             </Grid>
+
             <div className='camposInvisiveis'>
                 <CampoTexto
                     textBoxProps={{
@@ -203,7 +216,7 @@ const ServicoPersistir: React.FC<{
                         onChange: (e: React.ChangeEvent<HTMLInputElement>) => setId(Number(e.target.value))
                     }} />
             </div>
-        </form>
+        </form >
     </>
 }
 export default ServicoPersistir;

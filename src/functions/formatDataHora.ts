@@ -41,3 +41,13 @@ export const formatarHora = (dataHora: string | null | undefined): Dayjs | null 
   const dataFormat = dayjs(dataHora, 'DD/MM/YYYY HH:mm:ss', true);
   return dataFormat.isValid() ? dataFormat : null;
 };
+
+export const formatarData = (s: string | null | undefined) => {
+  if (!s) return null;
+  const d = dayjs(s, "DD/MM/YYYY", true);
+  return d.isValid() ? d : null;
+};
+export const formatarSomenteData = (d: Dayjs | null | undefined): string => {
+  return d && d.isValid() ? d.format("DD/MM/YYYY") : "";
+};
+

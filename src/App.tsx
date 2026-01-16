@@ -15,7 +15,8 @@ import Portifolio from './containers/Portifolio/Portifolio';
 import Colaborador from './containers/Colaborador/colaborador';
 import Servico from './containers/Produtos/servico';
 import ColaboradorProfissional from './containers/ColaboradorProfissional/colaboradorProfissional';
-import Agenda from  './containers/Agenda/Agenda'
+import Agenda from  './containers/Agenda/Agenda';
+import Agendamento from './containers/Agendamento/Agendamento';
 
 const App: React.FC = () => {
   return (
@@ -34,10 +35,11 @@ const App: React.FC = () => {
         <Route path="/loja" element={<Salao />} />
         <Route path="/Endereco/:urlParametro" element={<Endereco />} />
         <Route path="/Portifolio/:urlParametro" element={<Portifolio />} />
-        <Route path="/Colaborador" element={<Colaborador />} />
+        <Route path="/Colaborador/:urlParametro" element={<Colaborador />} />
         <Route path="/ColaboradorProfissional" element={<ColaboradorProfissional />} /> 
         <Route path="/Produtos/Servico" element={<Servico />} /> 
         <Route path="/Agenda/:urlParametro" element={<Agenda />} /> 
+        <Route path="/Agendamento" element={<Agendamento />} />
       </Routes>
     </div>
   );

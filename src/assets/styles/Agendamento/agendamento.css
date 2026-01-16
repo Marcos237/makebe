@@ -1,0 +1,185 @@
+.persistir-agenda,
+.busca-agenda,
+.lista-agenda {
+    position: relative;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.conteudoagendamneto {
+
+    padding: 20px;
+    margin-left: 10px;
+}
+
+.conteudoDireitoAgendamento {
+    margin-left: 130px;
+}
+
+
+.conteudoEsquerdoAgendamento,
+.conteudoDireitoAgendamento {
+    padding: 20px;
+}
+
+.itemPicker {
+    padding-top: 10px;
+    padding-bottom: 30px;
+}
+
+.itemPickerBaixo {
+    padding-top: 10px;
+}
+
+.titulobusca {
+    margin-left: 30px;
+}
+
+.formItensBusca {
+    padding: 10px;
+}
+
+.busca-agendamento::after {
+    margin-top: 10px;
+    content: '';
+    position: absolute;
+    left: 25%;
+    width: 50%;
+    border-bottom: 0.2px solid #34495e;
+    bottom: 0;
+}
+
+.switch-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.date-time-itens {
+    padding: 4px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.drop-ano {
+    padding-left: 60px !important;
+}
+
+.grid-avatar {
+    display: grid;
+    align-content: center;
+    justify-content: center;
+    align-items: baseline;
+    padding: 20px;
+}
+
+.nome-avatar,
+.data-avatar {
+    color: #ed145b;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+}
+
+.horas-itens {
+    display: flex !important;
+    justify-content: flex-end;
+    margin-right: -68px;
+    margin-top: 60px;
+}
+
+
+.agendados-item {
+    display: flex;
+    justify-content: flex-end;
+    position: absolute;
+    top: 152px;
+    right: 12px;
+    z-index: 10;
+}
+
+.agendados-item .data-box {
+    padding: 20px 40px;
+    margin-left: 0;
+    margin-top: 20px;
+}
+
+.item-horas {
+    padding: 20px;
+    gap: 8;
+    margin-top: 20px;
+    margin-left: -100px !important;
+}
+
+.gridBotoes {
+    display: flex;
+    margin-top: 18vh;
+}
+
+@media (max-width: 900px) {
+    .conteudoDireitoAgendamento {
+        padding: auto;
+        margin-top: -2vh !important;
+        margin-left: 10px;
+    }
+
+    .drop-ano {
+        padding-left: 10px !important;
+    }
+
+    .gridBotoes {
+        margin-top: 10px !important;
+        max-width: 93%;
+    }
+
+    .horas-itens {
+        display: flex !important;
+        justify-content: flex-end;
+        margin-right: 4px;
+        margin-top: -50px;
+        max-width: 640px;
+    }
+
+    .agendados-item .data-box {
+        padding: 20px 16px;
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .agendados-item {
+        display: block;
+        position: absolute;
+        top: auto;
+        z-index: 12;
+        float: right;
+        width: max-content;
+        margin-top: 0;
+        width: auto;
+        max-width: 100%;
+    }
+
+    .item-horas {
+        padding: 0;
+        gap: 0;
+        margin-top: 20px;
+        margin-left: 0px !important;
+        z-index: 1;
+    }
+
+    .MuiInputBase-root {
+        margin-bottom: 10px;
+        z-index: 1;
+        max-width: 630px;
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    .MuiInputBase-root {
+        margin-bottom: 10px;
+        z-index: 1;
+        max-width: 260px !important;
+    }
+}

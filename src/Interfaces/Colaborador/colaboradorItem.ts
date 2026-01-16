@@ -1,6 +1,6 @@
 
 export interface ColaboradorItens {
-    id?: number;
+    id?: string;
     usuarioId?: string;
     nome?: string;
     cpf?: string;
@@ -13,4 +13,6 @@ export interface ColaboradorItens {
     status?: boolean;
     instagram?: string;
     descricaoStatus?: string;
+    nomeColaboradorRazaoSocial?: string;
+    tipo?: number;
 }

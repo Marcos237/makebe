@@ -3,47 +3,51 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import { Box, Grid } from '@mui/material';
 import { RecuperaText, UrlEsqueciSenha } from '../../constants/Usuario/autenticacaoConstant'
-import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
 import { BotaoItens } from '../../Interfaces/Botao/botao';
 import { PutService } from '../../services/shared/putService';
 import { API_BASE_URL } from '../../config/apiConfig';
-import { RetornarMessageService } from '../../services/shared/retornarMessageService';
 import { RecuperaSenhaItens } from '../../Interfaces/Usuario/RecuperaSenhaItens';
 import { UsuarioLoginItens } from '../../Interfaces/Usuario/UsuarioLoginItens';
-import { UrlUsuarioLogado } from '../../constants/Usuario/usuarioConstant';
-import { GetAllService } from '../../services/shared/getAllService';
-import { ResponseItem } from '../../Interfaces/shared/ResponseItem';
-import Botao from '../../components/button';
+import { FaLock } from 'react-icons/fa';
+import { ErroItem } from '../../Interfaces/shared/erroItem';
+import { useFormErros } from '../../hooks/useFormErros';
+import { useUsuarioLogado } from "../../hooks/useUsuarioLogado";
+import BotaoSubmit from '../../components/submitButton';
 import RecaptchaComponent from '../../components/recaptcha';
 import Banner from '../../components/banner';
 import Footer from '../../components/footer';
 import CampoTexto from '../../components/textbox';
 import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig'
-import Mensagem from '../../components/mensagem';
+
 
 
 import '../../assets/styles/Perfil/recuperasenha.css'
 
 const RecuperaSenha: React.FC = () => {
     const navigate = useNavigate();
-    const [messageItens, setMessageItens] = useState<MensagemItens>();
     const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
     const [senha, setSenha] = useState<string>('');
     const [confirmacaoSenha, setConfirmacaoSenha] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isMessage, setMessage] = useState<boolean>(false);
-    const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLoginItens>();
+    const [useUsuarioLogadoItem, setUsuarioLogado] = useState<UsuarioLoginItens>();
+    const [erros, setErros] = useState<ErroItem[]>([]);
+    const [erroTrigger, setErroTrigger] = useState(0);
 
-    const fetchData = async () => {
-            const sessao = await GetAllService(`${API_BASE_URL}${UrlUsuarioLogado}`) as ResponseItem<UsuarioLoginItens>;
-        setUsuarioLogado(sessao);
-    };
+    useFormErros(erros, erroTrigger);
+
+    const { fetchUsuarioLogado } = useUsuarioLogado();
+
     useEffect(() => {
-        fetchData();
-    }, []);
+        const carregarUsuario = async () => {
+            const usuario = await fetchUsuarioLogado();
+            setUsuarioLogado(usuario);
+        };
 
+        carregarUsuario();
+    }, [fetchUsuarioLogado]);
     const { chave } = useParams();
     const handleSubmit = async (event: React.FormEvent) => {
+
         event.preventDefault();
         setIsLoading(true);
         const recuperaItens: RecuperaSenhaItens = {
@@ -56,9 +60,14 @@ const RecuperaSenha: React.FC = () => {
         if (!retorno?.notifications || retorno?.notifications?.length === 0) {
             navigate('/login', { state: { retorno } });
         } else {
-            const messageRetorno = await RetornarMessageService(false, false, retorno?.notifications ?? [])
-            setMessageItens(messageRetorno);
-            enviarSatusMessage();
+            const errosConvertidos: ErroItem[] = retorno.notifications.map((n) => ({
+                Key: n.notificationProps?.Key ?? '',
+                Mensagem: n.notificationProps?.Message ?? '',
+                erroSession: n.notificationProps?.Key ?? ''
+            }));
+
+            setErros(errosConvertidos);
+            setErroTrigger(prev => prev + 1);
             setIsLoading(false);
         }
     };
@@ -67,63 +76,44 @@ const RecuperaSenha: React.FC = () => {
         setRecaptchaValue(value);
     };
 
-    const enviarSatusMessage = () => {
-        setMessage(true)
-        setTimeout(() => {
-            setMessage(false);
-        }, 6000);
-    }
-    const handleCloseMessage = () => {
-        setMessage(false);
-    };
-    const handleButtonClick = () => {
-        const fakeEvent = {
-            preventDefault: () => { }
-        } as React.FormEvent;
-        handleSubmit(fakeEvent);
+    const handleFormKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
+
+        if (event.key === 'Enter') {
+            handleSubmit(event);
+        }
     };
 
-    const messageProps: MensagemItens = {
-        texto: messageItens?.texto,
-        cor: messageItens?.cor,
-        isVisible: isMessage,
-        onClick: handleCloseMessage
-    }
 
     const botaoProps: BotaoItens = {
-        name: 'Salvar',
-        tooltip: 'Fazer o cadastro',
-        label: 'Salvar',
-        width: '200px',
-        onIconClick: handleButtonClick,
-        color: 'primary',
+        tooltip: 'Enviar',
         isLoading: isLoading,
+        icon: FaLock,
+        marginLeft: '4px',
+        marginRight: '4px'
+
     };
     return (
         <>
             <div className='banner'>
-                <Banner usuarioLogado={useUsuarioLogado} />
+                <Banner usuarioLogado={useUsuarioLogadoItem} />
             </div>
-
             <Box>
-                <form>
+                <form id='frmRecuperarSenha' onSubmit={handleSubmit} onKeyDown={handleFormKeyDown}>
 
                     <Grid container className="ContainerGrid">
                         <div className='conteudo'>
-                            <div className='messageError'>
-                                <Mensagem mensagemProps={messageProps}></Mensagem>
-                            </div>
-                            <Grid item md={6} xs={12} className='gridEsquerdo hiddenTelaPequena'>
-                                <div className='conteudoEsquedoRecupera'>
-                                    <h2>Por favor!</h2>
-                                    <p>{RecuperaText}</p>
+                            <div className='icone-box'>
+                                <Grid item md={6} xs={12} className='gridEsquerdo hiddenTelaPequena'>
+                                    <div className='conteudoEsquedoRecupera'>
+                                        <h2>Por favor!</h2>
+                                        <p>{RecuperaText}</p>
 
-                                </div>
-                            </Grid>
-                            <div className="separador"></div>
-                            <Grid item md={6} xs={12} className='gridDireito'>
-                                <div className='conteudoDireitoRecupera'>
-                                    <form>
+                                    </div>
+                                </Grid>
+                                <div className="separador"></div>
+                                <Grid item md={6} xs={12} className='gridDireito'>
+                                    <div className='conteudoDireitoRecupera'>
+
                                         <div className="formItensRecupera">
                                             <CampoTexto
                                                 textBoxProps={{
@@ -132,6 +122,7 @@ const RecuperaSenha: React.FC = () => {
                                                     label: "Senha",
                                                     type: "password",
                                                     value: senha,
+                                                    erroSession: 'Senha',
                                                     onChange: (e: React.ChangeEvent<HTMLInputElement>) => setSenha(e.target.value)
                                                 }}
                                             />
@@ -139,11 +130,12 @@ const RecuperaSenha: React.FC = () => {
                                         <div className="formItensRecupera">
                                             <CampoTexto
                                                 textBoxProps={{
-                                                    name: "ConfirmaSenha",
+                                                    name: "ConfirmacaoSenha",
                                                     tooltip: "Confirme sua Senha",
                                                     label: "Confirma Senha*",
                                                     value: confirmacaoSenha,
                                                     type: 'password',
+                                                    erroSession: 'ConfirmacaoSenha',
                                                     onChange: (e: React.ChangeEvent<HTMLInputElement>) => setConfirmacaoSenha(e.target.value)
                                                 }}
                                             />
@@ -155,21 +147,16 @@ const RecuperaSenha: React.FC = () => {
 
                                         <div className='formItens'>
                                             <div className='botao'>
-                                                <Botao botaoProps={botaoProps} />
+                                                <BotaoSubmit botaoProps={botaoProps} />
                                             </div>
                                         </div>
-
-                                    </form>
-                                </div>
-                            </Grid>
+                                    </div>
+                                </Grid>
+                            </div>
                         </div>
                     </Grid>
-
-
-
                 </form>
-
-            </Box>
+            </Box >
 
             <div>
                 <Footer />

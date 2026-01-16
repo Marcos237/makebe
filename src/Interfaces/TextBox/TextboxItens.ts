@@ -13,5 +13,8 @@ export interface TextBoxItens {
     mask?: Array<string | RegExp>;
     readonly?: boolean;
     maxLength?: number;
+    errorClass?: string;
+    messageErro?: string;
+    erroSession?: string;
   };
 }

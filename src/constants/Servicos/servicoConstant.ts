@@ -13,4 +13,5 @@ export const UrlBuscarPaginado = "Servico/BuscarPaginado";
 export const UrlBuscarPermissao = "Servico";
 export const urlPersistir = 'Servico';
 export const PeriodoServico = 'Periodo';
+export const BuscarPorColaborador = 'Servico/GetByColaboradorId';
 

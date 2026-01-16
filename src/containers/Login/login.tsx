@@ -3,18 +3,20 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BotaoItens } from '../../Interfaces/Botao/botao';
 import { UsuarioLoginItens } from '../../Interfaces/Usuario/UsuarioLoginItens';
-import { SiInstagram, SiFacebook, SiGoogle } from 'react-icons/si';
 import { PostService } from '../../services/shared/postService';
-import { MensagemItens } from '../../Interfaces/Mensagens/MensagemItens';
-import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
 import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig'
 import { API_BASE_URL } from '../../config/apiConfig';
 import { UrlLogin } from '../../constants/login/loginConstant';
 import { saveTokenToLocalStorage } from '../../config/ArmazenaToken';
 import { UsuarioPerilItens } from '../../Interfaces/Usuario/UsuarioPerilItens'
-import Icone from '../../components/icone';
-import Botao from '../../components/button';
-import Mensagem from '../../components/mensagem';
+import { Tooltip } from '@mui/material';
+import { FaKey, FaUserPlus } from 'react-icons/fa';
+import { FaLock } from 'react-icons/fa';
+import { SocialIconItem } from '../../Interfaces/shared/socialIconItem';
+import { ErroItem } from '../../Interfaces/shared/erroItem';
+import { useFormErros } from '../../hooks/useFormErros';
+import SocialIcons from '../../components/socialIcons';
+import BotaoSubmit from '../../components/submitButton';
 import RecaptchaComponent from '../../components/recaptcha';
 import CampoTexto from '../../components/textbox';
 import Banner from '../../components/banner';
@@ -29,10 +31,13 @@ const Login: React.FC = () => {
     const [login, setLogin] = useState<string>('');
     const [senha, setSenha] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [messageRetorno, setMessageRetorno] = useState<NotificationItens[]>([]);
     const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
-    const [isMessage, setMessage] = useState<boolean>(false);
+    const [erros, setErros] = useState<ErroItem[]>([]);
+    const temErroLogin = erros.some(e => e.Key === 'Login');
+    const messageErro = erros.find(e => e.Key === 'Login')?.Mensagem;
+    const [erroTrigger, setErroTrigger] = useState(0);
 
+    useFormErros(erros, erroTrigger);
     const handleRecaptchaChange = (value: string | null) => {
         setRecaptchaValue(value);
     };
@@ -56,7 +61,16 @@ const Login: React.FC = () => {
             urlInicial: response?.data?.urlInicial,
         };
         setIsLoading(false);
-        setMessageRetorno(response?.notifications ?? []);
+        if (response?.notifications && response.notifications.length > 0) {
+            const errosConvertidos: ErroItem[] = response.notifications.map((n) => ({
+                Key: n.notificationProps?.Key ?? '',
+                Mensagem: n.notificationProps?.Message ?? '',
+            }));
+
+            setErros(errosConvertidos);
+            setErroTrigger(prev => prev + 1);
+
+        }
 
         if (!response?.notifications || response?.notifications?.length === 0) {
             navigate(response?.data?.urlInicial ?? '', { state: { usuarioLogado } });
@@ -66,6 +80,7 @@ const Login: React.FC = () => {
             setSenha('');
         }
     };
+
     const handleFormKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
 
         if (event.key === 'Enter') {
@@ -74,109 +89,105 @@ const Login: React.FC = () => {
         }
     };
 
-    const handleButtonClick = () => {
-        const fakeEvent = {
-            preventDefault: () => { }
-        } as React.FormEvent;
-        handleSubmit(fakeEvent);
-        enviarFormulario();
-    };
 
     const enviarFormulario = () => {
-        setMessage(true)
         setTimeout(() => {
-            setMessage(false);
         }, 3000);
         setIsLoading(true);
     }
 
-    const handleCloseMessage = () => {
-        setMessage(false);
-    };
-    const messageText = messageRetorno[messageRetorno.length - 1] ?? []
-    const errorMensage: MensagemItens = {
-        texto: messageText.notificationProps?.Message,
-        cor: "#F6DDCC",
-        isVisible: isMessage,
-        onClick: handleCloseMessage
-    }
     const botaoProps: BotaoItens = {
-        name: 'Entrar',
         tooltip: 'Fazer o login',
-        label: 'Entrar',
-        onIconClick: handleButtonClick,
-        width: '200px',
-        color: 'primary',
+        icon: FaKey,
         isLoading: isLoading,
+        classIcone: 'icone-rotacionado',
+        marginLeft: '4px',
+        marginRight: '4px'
     };
 
+    const propsIcons: SocialIconItem = {
+        height: '20px',
+        width: '20px'
+    }
     return (
         <>
             <div className='banner'>
                 <Banner />
             </div>
 
-            <Grid container className="ContainerGrid">
+            <Grid container className="ContainerGrid" component="div">
                 <div className='conteudo'>
-                    <div className='messageError'>
-                        <Mensagem mensagemProps={errorMensage}></Mensagem>
-                    </div>
-                    <Grid item md={6} xs={12} className='gridEsquerdo hiddenTelaPequena'>
-                        <div className='conteudoEsquerdoLogin'>
-                            <div className='itensEsquedoLogin'>
-                                <h2>Seja bem vindo!</h2>
-                                <p>Por favor, faça o login para acessar sua conta. Caso ainda não tenha uma você pode se cadastrar.</p>
+                    <div className='icone-box'>
+                        <Grid item md={6} xs={12} className='gridEsquerdo hiddenTelaPequena'>
+                            <div className='conteudoEsquerdoLogin'>
+                                <div className='itensEsquedoLogin'>
+                                    <h2>Seja bem vindo!</h2>
+                                    <p>Por favor, faça o login para acessar sua conta. Caso ainda não tenha uma você pode se cadastrar.</p>
+                                </div>
                             </div>
-                        </div>
-                    </Grid>
-                    <div className="separador"></div>
-                    <Grid item md={6} xs={12} className='gridDireito'>
-                        <div className='conteudoDireitoLogin'>
-                            <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown}>
-                                <CampoTexto
-                                    textBoxProps={{
-                                        name: "Login",
-                                        tooltip: "digite seu login",
-                                        label: "Login",
-                                        value: login,
-                                        type: 'text',
-                                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setLogin(e.target.value)
-                                    }}
-                                />
-                                <CampoTexto
-                                    textBoxProps={{
-                                        name: "Senha",
-                                        tooltip: "digite sua senha",
-                                        label: "Senha",
-                                        type: "password",
-                                        value: senha,
-                                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setSenha(e.target.value)
-                                    }}
-                                />
 
-                                <div className='recaptcha'>
-                                    <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
-                                </div>
-
-                                <div className='botao'>
-                                    <Botao botaoProps={botaoProps} />
-                                </div>
-                            </form>
+                            <div className="social-icons">
+                                <SocialIcons props={propsIcons} />
+                            </div>
+                        </Grid>
+                        <div className="separador"></div>
+                        <Grid item md={6} xs={12} className='gridDireito'>
                             <div className="links-login">
                                 <a href="/AlteraSenha" className="esqueci-link">
-                                    Esqueci minha senha
+                                    <Tooltip title="Recuperar acesso">
+                                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                            <FaLock />
+                                        </span>
+                                    </Tooltip>
                                 </a>
+
                                 <a href="/perfil" className="cadastrar-link">
-                                    Cadastrar
+                                    <Tooltip title="Criar nova conta">
+                                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                            <FaUserPlus />
+                                        </span>
+                                    </Tooltip>
                                 </a>
                             </div>
-                            <div className="social-icons">
-                                <Icone iconeProps={{ icone: <SiInstagram />, dialogo: "Faça o login com Instagram." }} />
-                                <Icone iconeProps={{ icone: <SiFacebook />, dialogo: "Faça o login com Facebook." }} />
-                                <Icone iconeProps={{ icone: <SiGoogle />, dialogo: "Faça o login com Google." }} />
+
+                            <div className='conteudoDireitoLogin'>
+                                <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} id="frmLogin">
+                                    <CampoTexto
+                                        textBoxProps={{
+                                            name: "Login",
+                                            tooltip: "digite seu login",
+                                            label: "Login",
+                                            value: login,
+                                            type: 'text',
+                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setLogin(e.target.value),
+                                            errorClass: temErroLogin ? 'input-error' : '',
+                                            messageErro: messageErro,
+                                            erroSession: 'Login',
+                                        }}
+                                    />
+                                    <CampoTexto
+                                        textBoxProps={{
+                                            name: "Senha",
+                                            tooltip: "digite sua senha",
+                                            label: "Senha",
+                                            type: "password",
+                                            value: senha,
+                                            erroSession: 'Senha',
+                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setSenha(e.target.value)
+                                        }}
+                                    />
+
+                                    <div className='recaptcha'>
+                                        <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
+                                    </div>
+
+                                    <div className='botao'>
+                                        <BotaoSubmit botaoProps={botaoProps} />
+                                    </div>
+                                </form>
                             </div>
-                        </div>
-                    </Grid>
+                        </Grid>
+                    </div>
                 </div>
             </Grid>
 

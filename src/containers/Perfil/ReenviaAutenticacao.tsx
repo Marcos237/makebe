@@ -5,10 +5,12 @@ import { ReenviaItens } from '../../Interfaces/Usuario/ReenviaItens';
 import { ReenviatText, SucessText, UrlReenviaEmail } from '../../constants/Usuario/autenticacaoConstant';
 import { API_BASE_URL, RECAPTCHA_SITE_KEY } from '../../config/apiConfig'
 import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
-import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
 import { PostService } from '../../services/shared/postService';
+import { FaLock } from 'react-icons/fa';
+import { ErroItem } from '../../Interfaces/shared/erroItem';
+import { useFormErros } from '../../hooks/useFormErros';
 import RecaptchaComponent from '../../components/recaptcha';
-import Botao from '../../components/button';
+import BotaoSubmit from '../../components/submitButton';
 import Banner from '../../components/banner';
 import Footer from '../../components/footer';
 import CampoTexto from '../../components/textbox';
@@ -18,11 +20,12 @@ import '../../assets/styles/Perfil/reenvia.css';
 const ReenviaAutenticacao: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [email, setEmail] = useState<string>('');
-    const [messageRetorno, setMessageRetorno] = useState<NotificationItens>();
     const [isMessage, setMessage] = useState<boolean>(false);
     const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
+    const [erros, setErros] = useState<ErroItem[]>([]);
+    const [erroTrigger, setErroTrigger] = useState(0);
 
-
+    useFormErros(erros, erroTrigger);
     const handleRecaptchaChange = (value: string | null) => {
         setRecaptchaValue(value);
     };
@@ -37,13 +40,22 @@ const ReenviaAutenticacao: React.FC = () => {
         };
         const response = await PostService(reenviaItens, `${API_BASE_URL}${UrlReenviaEmail}`);
 
-        if (response?.notifications) {
+        if (response?.notifications && response.notifications.length > 0) {
 
-            const erroEmail = response.notifications[0];
-            setMessageRetorno(erroEmail)
+            const errosConvertidos: ErroItem[] = response.notifications.map((n) => ({
+                Key: n.notificationProps?.Key ?? '',
+                Mensagem: n.notificationProps?.Message ?? '',
+                erroSession: n.notificationProps?.Key ?? ''
+            }));
+
+            setErros(errosConvertidos);
+            setErroTrigger(prev => prev + 1);
+            setIsLoading(false);
+            setMessage(false);
         }
         else {
             setEmail('');
+            setMessage(true);
         }
         setIsLoading(false);
     };
@@ -52,50 +64,24 @@ const ReenviaAutenticacao: React.FC = () => {
         setMessage(false);
     };
 
-
-    const enviarSatusMessage = () => {
-        setMessage(true)
-        setTimeout(() => {
-            setMessage(false);
-        }, 6000);
-    }
-
-
     const handleFormKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
 
         if (event.key === 'Enter') {
             handleSubmit(event);
         }
     };
-    const handleButtonClick = () => {
-        const fakeEvent = {
-            preventDefault: () => { }
-        } as React.FormEvent;
-        handleSubmit(fakeEvent);
-        enviarSatusMessage();
-    };
-
     const botaoProps: BotaoItens = {
-        name: 'Enviar',
-        tooltip: 'Enviar Email',
-        label: 'Enviar',
-        width: '200px',
-        onIconClick: handleButtonClick,
-        color: 'info',
-        isLoading: isLoading
-    };
+        tooltip: 'Enviar',
+        isLoading: isLoading,
+        icon: FaLock,
+        marginLeft: '4px',
+        marginRight: '4px'
 
-    const messagePropsErro: MensagemItens = {
-        texto: messageRetorno?.notificationProps.Message,
-        cor: "#F6DDCC",
-        isVisible: isMessage,
-        onClick: handleCloseMessage
-    }
+    };
 
     const messageProps: MensagemItens = {
         texto: SucessText,
         cor: "#A3E4D7",
-        isVisible: isMessage,
         onClick: handleCloseMessage
     }
 
@@ -104,43 +90,46 @@ const ReenviaAutenticacao: React.FC = () => {
             <div className='banner'>
                 <Banner />
             </div>
-            <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown}>
+            <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} id="frmReenvia">
+                <div className='messageTextReenvia'>
+                    {isMessage && (
+                        <Mensagem mensagemProps={messageProps} />
+                    )}
+                </div>
                 <Grid container className="ContainerGrid">
                     <div className='conteudo'>
-
-                        <div className="formItens">
-                            <div className='messageTextReenvia'>
-                                <Mensagem mensagemProps={messageRetorno?.notificationProps ? messagePropsErro : messageProps} />
-
+                        <div className='icone-box'>
+                            <div className="formItens">
                             </div>
-                        </div>
-                        <div className='itemReenvia'>
-                            <div className='textoReenvia'>
-                                <p>{ReenviatText}</p>
-                                <div className="formItens">
+                            <div className='itemReenvia'>
+                                <div className='textoReenvia'>
+                                    <p>{ReenviatText}</p>
+                                    <div className="formItens">
 
 
-                                    <CampoTexto
-                                        textBoxProps={{
-                                            name: "Email",
-                                            tooltip: "digite seu Email",
-                                            label: "Email*",
-                                            value: email,
-                                            type: 'text',
-                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)
-                                        }}
-                                    />
-                                </div>
-                                <div className='recaptcha'>
-                                    <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
-                                </div>
+                                        <CampoTexto
+                                            textBoxProps={{
+                                                name: "Email",
+                                                tooltip: "digite seu Email",
+                                                label: "Email*",
+                                                value: email,
+                                                type: 'text',
+                                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value),
+                                                erroSession:'Email',
+                                            }}
+                                        />
+                                    </div>
+                                    <div className='recaptcha'>
+                                        <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
+                                    </div>
 
-                                <div className='botaoReenvia'>
-                                    <Botao botaoProps={botaoProps}></Botao>
+                                    <div className='botaoReenvia'>
+                                        <BotaoSubmit botaoProps={botaoProps}/>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div >
+                        </div >
+                    </div>
                 </Grid>
             </form>
             <div>

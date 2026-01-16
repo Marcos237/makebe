@@ -11,24 +11,31 @@ import { BotaoItens } from '../../Interfaces/Botao/botao';
 import { PostService } from '../../services/shared/postService';
 import { RetornarMessageService } from '../../services/shared/retornarMessageService';
 import { API_BASE_AGENDA_URL } from "../../config/apiConfig";
-import { UrlColaborador } from "../../constants/Colaborador/colaboradorConstant";
-import RefreshIcon from '@mui/icons-material/Refresh';
+import { UrlColaborador, TipoCliente } from "../../constants/Colaborador/colaboradorConstant";
+import { Tooltip } from '@mui/material';
+import { FaRegTrashAlt } from "react-icons/fa";
+import { FaSave } from 'react-icons/fa';
+import { useFormErros } from '../../hooks/useFormErros';
+import { ErroItem } from '../../Interfaces/shared/erroItem';
+import { useParams } from "react-router-dom";
 import SwitchButton from "../../components/switchButton";
 import Dropdown from "../../components/dropdown";
 import CampoTexto from '../../components/textbox';
 import Mensagem from '../../components/mensagem';
 import Upload from '../../components/upload';
-import Botao from '../../components/button';
+import BotaoSubmit from '../../components/submitButton';
 import updatePersistirPrev from "../../hooks/useUpdatePersistirPrev";
 
+import '../../assets/styles/Colaborador/colaborador.css';
 
 const ColaboradorPersistir: React.FC<{
     persistirProps: PersistirItens<ColaboradorItens>;
-    readOnly: boolean
-}> = ({ persistirProps, readOnly }) => {
+    readOnly: boolean;
+    tipoItem?: number;
+}> = ({ persistirProps, readOnly, tipoItem }) => {
     const [messageItens, setMessageItens] = useState<MensagemItens>();
     const [isMessage, setMessage] = useState<boolean>(false);
-    const [id, setId] = useState<number>(0);
+    const [id, setId] = useState<string>('');
     const [usuarioId, setUsuarioId] = useState<string>('');
     const [permissaoId, setPermissaoId] = useState<string>('');
     const [nome, setNome] = useState<string>('');
@@ -40,11 +47,17 @@ const ColaboradorPersistir: React.FC<{
     const [uploadItem, setUploadItem] = useState<UploadItens>({ uploadProps: { nomeImagem: '', urlImagem: '', id: '1' } });
     const [status, setStatus] = useState<boolean>(false);
     const [readOnlyItem, setReadOnly] = useState<boolean>(false);
+    const [tipo, setTipo] = useState<number>();
+    const [erros, setErros] = useState<ErroItem[]>([]);
+    const [erroTrigger, setErroTrigger] = useState(0);
+    const { urlParametro } = useParams();
 
+    const usuario = urlParametro === "CadastroCliente" ? "Cliente" : urlParametro === "CadastroColaborador" ? "Colaborador" : "";
 
+    useFormErros(erros, erroTrigger);
     const fetchColaboradorData = useCallback(async () => {
 
-        setId(persistirProps.item?.id || 0);
+        setId(persistirProps.item?.id || '');
         setUsuarioId(persistirProps.item?.usuarioId || '');
         setNome(persistirProps.item?.nome || '');
         setCpf(persistirProps.item?.cpf || '');
@@ -60,9 +73,10 @@ const ColaboradorPersistir: React.FC<{
         setInstagran(persistirProps?.item?.instagram ?? '')
         setPermissaoId(persistirProps.item?.permissaoId || '');
         setStatus(persistirProps.item?.status || false);
-        setReadOnly(readOnly)
+        setReadOnly(readOnly);
+        setTipo(tipoItem);
 
-    }, [persistirProps, readOnly])
+    }, [persistirProps, readOnly, tipoItem])
 
     updatePersistirPrev(fetchColaboradorData, undefined, persistirProps.item);
 
@@ -81,7 +95,7 @@ const ColaboradorPersistir: React.FC<{
         event.preventDefault();
         setIsLoading(true);
         const colabolador: ColaboradorItens = {
-            id: id || 0,
+            id: id || '0',
             usuarioId: usuarioId || '',
             nome: nome || '',
             cpf: cpf || '',
@@ -92,12 +106,11 @@ const ColaboradorPersistir: React.FC<{
             nomeImagem: uploadItem.uploadProps.nomeImagem,
             permissaoId: permissaoId || '',
             status: status || false,
-
+            tipo: Number(tipoItem) ?? tipo
         }
 
         const colaboradorResponse = await PostService(colabolador, `${API_BASE_AGENDA_URL}${UrlColaborador}`);
         if (!colaboradorResponse?.notifications || colaboradorResponse?.notifications?.length === 0) {
-
             const messageRetorno = await RetornarMessageService(true, true, [])
             setMessageItens(messageRetorno)
             persistirProps.onSave?.();
@@ -105,8 +118,13 @@ const ColaboradorPersistir: React.FC<{
 
         } else {
 
-            const messageRetorno = await RetornarMessageService(false, false, colaboradorResponse?.notifications ?? [])
-            setMessageItens(messageRetorno)
+            const errosConvertidos: ErroItem[] = colaboradorResponse?.notifications?.map((n) => ({
+                Key: n.notificationProps?.Key ?? '',
+                Mensagem: n.notificationProps?.Message ?? '',
+                erroSession: n.notificationProps?.Key ?? ''
+            })) ?? [];
+            setErros(errosConvertidos);
+            setErroTrigger(prev => prev + 1);
         }
         enviarSatusMessage();
         setIsLoading(false);
@@ -120,7 +138,7 @@ const ColaboradorPersistir: React.FC<{
 
     const limparItens = () => {
         setIsLoading(false);
-        setId(0);
+        setId('');
         setUsuarioId('');
         setNome('');
         setCpf('');
@@ -156,23 +174,14 @@ const ColaboradorPersistir: React.FC<{
 
     }
 
-    const handleButtonClick = () => {
-        const fakeEvent = {
-            preventDefault: () => { }
-        } as React.FormEvent;
-        handleSubmit(fakeEvent);
-    };
-
     const botaoProps: BotaoItens = {
-        name: 'Salvar',
-        tooltip: 'Fazer o cadastro',
-        label: 'Salvar',
-        width: '200px',
-        onIconClick: handleButtonClick,
-        color: 'primary',
+        tooltip: 'Salvar',
         isLoading: isLoading,
-    };
+        icon: FaSave,
+        marginLeft: '4px',
+        marginRight: '4px'
 
+    };
     const enviarSatusMessage = () => {
         setMessage(true)
         setTimeout(() => {
@@ -183,133 +192,147 @@ const ColaboradorPersistir: React.FC<{
     const handleButtonClickLimpar = async () => {
         limparItens();
     }
-    const botaoLimparProps: BotaoItens = {
-        tooltip: 'limpar',
-        width: '20px',
-        onIconClick: handleButtonClickLimpar,
-        color: 'success',
-        icon: RefreshIcon
-    };
+
     return <>
         <div className='messageTextLoja'>
             <Mensagem mensagemProps={messageProps ?? {}} />
         </div>
-        <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} className="conteudo">
-            <Grid container spacing={2}>
-                <Grid item md={6} xs={10} className='gridEsquerdo'>
-                    <div className='conteudoEsquerdoColaborador conteudoMenorEsquerdo'>
-                        <div className='formItens-imagem'>
-                            <Upload uploadProps={uploadItem.uploadProps} onUpload={handleImageUpload} />
-                        </div>
-                        <div className='formItens'>
-                            <CampoTexto
-                                textBoxProps={{
-                                    name: "Nome",
-                                    tooltip: "digite o nome",
-                                    label: "Nome*",
-                                    value: nome,
-                                    type: 'text',
-                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setNome(e.target.value)
-                                }}
-                            />
-                        </div>
-                        <div className='formItens'>
-                            <CampoTexto
-                                textBoxProps={{
-                                    name: "CPF",
-                                    tooltip: "digite o CPF",
-                                    label: "CPF*",
-                                    value: cpf,
-                                    type: 'text',
-                                    mask: cpfMaskConst,
-                                    readonly: readOnlyItem,
-                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCpf(e.target.value)
 
-                                }}
-                            />
-                        </div>
-                        <div className='formItens'>
-                            <CampoTexto
-                                textBoxProps={{
-                                    name: "Telefone",
-                                    tooltip: "digite o Telefone",
-                                    label: "Telefone*",
-                                    value: telefone,
-                                    type: 'text',
-                                    mask: foneMaskConst(telefone),
-                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setTelefone(e.target.value)
-                                }}
-                            />
+
+        <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} id="frmColaborador">
+            <Grid container spacing={2} className="ContainerGrid">
+                <div className='conteudo'>
+                    <fieldset className='icone-box icone-box-form'>
+                        <legend>{usuario}</legend>
+
+                        <div className="links-login">
+                            <button onClick={handleButtonClickLimpar} className="botao-link">
+                                <Tooltip title="limpar">
+                                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                        <FaRegTrashAlt />
+                                    </span>
+                                </Tooltip>
+                            </button>
                         </div>
 
-                        <div className='formItens'>
-                            <CampoTexto
-                                textBoxProps={{
-                                    name: "Email",
-                                    tooltip: "digite o Email",
-                                    label: "Email*",
-                                    value: email,
-                                    type: 'text',
-                                    readonly: readOnlyItem,
-                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)
-                                }}
-                            />
-                        </div>
-                    </div>
-                </Grid>
+                        <Grid item md={6} xs={12} className='gridEsquerdo'>
+                            <div className="conteudoEsquerdo conteudoMenorEsquerdo">
+                                <div className='formItens-imagem'>
+                                    <Upload uploadProps={uploadItem.uploadProps} onUpload={handleImageUpload} />
+                                </div>
+                                <div className='formItens'>
+                                    <CampoTexto
+                                        textBoxProps={{
+                                            name: "Nome",
+                                            tooltip: "digite o nome",
+                                            label: "Nome*",
+                                            value: nome,
+                                            type: 'text',
+                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setNome(e.target.value),
+                                            erroSession:"Nome"
+                                        }}
+                                    />
+                                </div>
+                                <div className='formItens'>
+                                    <CampoTexto
+                                        textBoxProps={{
+                                            name: "Cpf",
+                                            tooltip: "digite o CPF",
+                                            label: "CPF*",
+                                            value: cpf,
+                                            type: 'text',
+                                            mask: cpfMaskConst,
+                                            readonly: readOnlyItem,
+                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCpf(e.target.value),
+                                            erroSession:"CPF"
 
-                <div className="separador"></div>
-                <Grid item md={6} xs={10} className='gridDireito'>
-                    <div className="conteudoDireitoColaborador conteudoMenorDireito">
-                        <div className="formItens-drop">
-                            <Dropdown
-                                dropProps={{
-                                    name: "Permissao",
-                                    label: "Permissão*",
-                                    itens: persistirProps.selectItems ?? [],
-                                    selectedId: permissaoId || '',
-                                    onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "permissao"),
-                                }}
-                            />
-                        </div>
+                                        }}
+                                    />
+                                </div>
+                                <div className='formItens'>
+                                    <CampoTexto
+                                        textBoxProps={{
+                                            name: "Telefone",
+                                            tooltip: "digite o Telefone",
+                                            label: "Telefone*",
+                                            value: telefone,
+                                            type: 'text',
+                                            mask: foneMaskConst(telefone),
+                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setTelefone(e.target.value),
+                                            erroSession: "Telefone"
+                                        }}
+                                    />
+                                </div>
 
-                        <div className="formItens">
-                            <CampoTexto
-                                textBoxProps={{
-                                    name: "Instagram",
-                                    tooltip: "digite o Instagram",
-                                    label: "Instagram",
-                                    value: instagran,
-                                    type: 'text',
-                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setInstagran(e.target.value)
-                                }}
-                            />
-                        </div>
+                                <div className='formItens'>
+                                    <CampoTexto
+                                        textBoxProps={{
+                                            name: "Email",
+                                            tooltip: "digite o Email",
+                                            label: "Email*",
+                                            value: email,
+                                            type: 'text',
+                                            readonly: readOnlyItem,
+                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value),
+                                            erroSession:"Email"
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        </Grid>
+                        <div className="separador"></div>
+                        <Grid item md={6} xs={12} className='gridDireito'>
+                            <div className="conteudoDireitoColaborador">
+                                {tipoItem?.toString() !== TipoCliente && (
+                                    <div className="formItens-drop">
+                                        <Dropdown
+                                            dropProps={{
+                                                name: "PermissaoId",
+                                                label: "Permissão*",
+                                                itens: persistirProps.selectItems ?? [],
+                                                selectedId: permissaoId || '',
+                                                onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "permissao"),
+                                                erroSession:"PermissaoId"
+                                            }}
+                                        />
+                                    </div>
+                                )}
+                                <div className="formItens">
+                                    <CampoTexto
+                                        textBoxProps={{
+                                            name: "Instagram",
+                                            tooltip: "digite o Instagram",
+                                            label: "Instagram",
+                                            value: instagran,
+                                            type: 'text',
+                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setInstagran(e.target.value)
+                                        }}
+                                    />
+                                </div>
+                                {tipoItem?.toString() !== TipoCliente && (
+                                    <div className="formItens-drop">
+                                        <SwitchButton switchProps={switchButton} />
+                                    </div>
+                                )}
 
-                        <div className="formItens-drop">
-                            <SwitchButton switchProps={switchButton} />
-                        </div>
-                    </div>
-                </Grid>
-
-                <Grid item xs={12}>
-                    <div className="formItens gridBotoes">
-                        <div className="botao">
-                            <Botao botaoProps={botaoLimparProps} />
-                        </div>
-                        <div className="botao">
-                            <Botao botaoProps={botaoProps} />
-                        </div>
-                    </div>
-                </Grid>
+                                <div className="gridBotoes">
+                                    <div className="botao botao-salvar">
+                                        <BotaoSubmit botaoProps={botaoProps} />
+                                    </div>
+                                </div>
+                            </div>
+                        </Grid>
+                    </fieldset>
+                </div>
             </Grid>
+
             <div className='camposInvisiveis'>
                 <CampoTexto
                     textBoxProps={{
                         name: "id",
                         value: id?.toString(),
                         type: 'hidden',
-                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setId(Number(e.target.value))
+                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setId(e.target.value)
                     }} />
             </div>
             <div className='camposInvisiveis'>

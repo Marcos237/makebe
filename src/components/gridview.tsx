@@ -26,72 +26,71 @@ const GridViewLista: React.FC<{ gridviewProps: GrigViewItens<any> }> = ({ gridvi
 
     return (
         <ThemeProvider theme={darkTheme}>
-            <div className='grid-container'>
-                <div className="grid-header">
-                    {gridviewProps?.paginacao?.objetos?.length ? (
-                        Object.keys(gridviewProps.paginacao.objetos[0])
-                            .sort((a, b) => {
-                                const ordemA = gridviewProps?.propertyLabels?.[a]?.ordem ?? Number.MAX_VALUE;
-                                const ordemB = gridviewProps?.propertyLabels?.[b]?.ordem ?? Number.MAX_VALUE;
-                                return ordemA - ordemB
-                            })
-                            .map((key) => (
-                                gridviewProps?.propertyLabels?.[key] && (
-                                    <div key={key} className="grid-column-header">
-                                        <strong>{gridviewProps.propertyLabels[key].label}</strong>
-                                    </div>
-                                )
-                            ))
-                    ) : null}
-                </div>
 
-                {gridviewProps.paginacao?.objetos?.map((item, index) => (
-                    <div key={index} className="grid-row">
-
-                        {Object.keys(item).sort((a, b) => {
+            <div className="grid-header">
+                {gridviewProps?.paginacao?.objetos?.length ? (
+                    Object.keys(gridviewProps.paginacao.objetos[0])
+                        .sort((a, b) => {
                             const ordemA = gridviewProps?.propertyLabels?.[a]?.ordem ?? Number.MAX_VALUE;
                             const ordemB = gridviewProps?.propertyLabels?.[b]?.ordem ?? Number.MAX_VALUE;
                             return ordemA - ordemB
-                        }).map((key) => (
-                            <div
-                                key={key}
-                                className="grid-column-item"
-                                style={{ display: gridviewProps?.propertyLabels?.[key] ? 'block' : 'none' }}
-                                data-label={gridviewProps?.propertyLabels?.[key]?.label}
-                            >
-                                <div className="grid-text">
-                                    {item[key] ? item[key] : ''}
+                        })
+                        .map((key) => (
+                            gridviewProps?.propertyLabels?.[key] && (
+                                <div key={key} className="grid-column-header">
+                                    <strong>{gridviewProps.propertyLabels[key].label}</strong>
                                 </div>
+                            )
+                        ))
+                ) : null}
+            </div>
+
+            {gridviewProps.paginacao?.objetos?.map((item, index) => (
+                <div key={index} className="grid-row">
+
+                    {Object.keys(item).sort((a, b) => {
+                        const ordemA = gridviewProps?.propertyLabels?.[a]?.ordem ?? Number.MAX_VALUE;
+                        const ordemB = gridviewProps?.propertyLabels?.[b]?.ordem ?? Number.MAX_VALUE;
+                        return ordemA - ordemB
+                    }).map((key) => (
+                        <div
+                            key={key}
+                            className="grid-column-item"
+                            style={{ display: gridviewProps?.propertyLabels?.[key] ? 'block' : 'none' }}
+                            data-label={gridviewProps?.propertyLabels?.[key]?.label}
+                        >
+                            <div className="grid-text">
+                                {item[key] ? item[key] : ''}
+                            </div>
+                        </div>
+                    ))}
+
+                    <div className="icons-buttons">
+                        {gridviewProps.actionButtons?.map((button) => (
+                            <div key={button.id} className="buttons-itens">
+                                <a href={button.href} onClick={(event) => button.onClick?.(event, item)}>
+                                    <IconButton aria-label={button.label}>
+                                        {button.icon}
+                                    </IconButton>
+                                </a>
                             </div>
                         ))}
-
-                        <div className="icons-buttons">
-                            {gridviewProps.actionButtons?.map((button) => (
-                                <div key={button.id} className="buttons-itens">
-                                    <a href={button.href} onClick={(event) => button.onClick?.(event, item)}>
-                                        <IconButton aria-label={button.label}>
-                                            {button.icon}
-                                        </IconButton>
-                                    </a>
-                                </div>
-                            ))}
-                        </div>
                     </div>
-                ))}
+                </div>
+            ))}
 
-                <div className="pagination-container">
-                    <Pagination
-                        count={gridviewProps.paginacao?.totalPaginas}
-                        page={gridviewProps.paginacao?.paginaAtual}
-                        onChange={gridviewProps.onPageChange}
-                        color="primary"
-                        showFirstButton
-                        showLastButton
-                    />
-                </div>
-                <div className='paginacaototal'>
-                    <h4>total: {gridviewProps?.paginacao?.total}</h4>
-                </div>
+            <div className="pagination-container">
+                <Pagination
+                    count={gridviewProps.paginacao?.totalPaginas}
+                    page={gridviewProps.paginacao?.paginaAtual}
+                    onChange={gridviewProps.onPageChange}
+                    color="primary"
+                    showFirstButton
+                    showLastButton
+                />
+            </div>
+            <div className='paginacaototal'>
+                <h4>total: {gridviewProps?.paginacao?.total}</h4>
             </div>
         </ThemeProvider>
     );

@@ -1,12 +1,12 @@
 body {
-    margin: 0;
-    padding: 0;
-    font-family: "Josefin Sans", sans-serif;
-    background: #0B0B0B;
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
-    color: #F5F5F5 !important;
+    color: #f0f0f0;
+    background-color: #000000;
+    background-image: url(http://www.transparenttextures.com/patterns/simple-dashed.png);
+    background-repeat: repeat;
+    background-size: auto;
+    background-position: center;
+    background-attachment: fixed;
+    position: relative;
 }
 
 #root {
@@ -17,20 +17,67 @@ body {
     overflow: auto;
 }
 
-.ContainerGrid {
-    height: 100%;
+
+/* #CONTEUDOS */
+
+
+.icone-box {
+    display: flex;
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    width: 95%;
+    max-width: 100vh;
+    overflow: hidden;
+    margin-inline: auto;
+    transform: translateY(-10px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #4d5656 !important;
+}
+
+.icone-box-form {
+    max-width: 300vh;
+    padding: 40px;
 
 }
 
 .conteudo {
     width: 100%;
     min-height: 20vh;
-    margin-top: 10vh;
+    margin-top: 20vh;
     max-width: 99% !important;
     display: flex;
     justify-content: start;
-    height: 100% !important;
+    height: auto !important;
+    position: relative;
+    padding-left: 10px;
+    top: 0;
+
 }
+
+.grid {
+    margin-top: -18vh !important;
+}
+
+
+.conteudoPesquisa {
+    width: 100% !important;
+    padding: 25px;
+}
+
+.persistir,
+.lista {
+    position: relative;
+    width: 100%;
+}
+
+
+.form-persitir {
+    position: relative;
+    margin-top: -2vh;
+}
+
+
 
 .conteudo-inLine {
     display: flex;
@@ -38,15 +85,6 @@ body {
     align-items: stretch;
 }
 
-.gridEsquerdo,
-.gridDireito {
-    height: 99% !important;
-    border-radius: 20px;
-    min-height: 36vh;
-    width: 100%;
-    margin-top: 20vh;
-
-}
 
 .separador {
     position: absolute;
@@ -62,11 +100,22 @@ body {
 
 .formItensHorizontal {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 16px;
     justify-content: space-between;
 }
 
+.gridEsquerdo,
+.gridDireito {
+    height: 99% !important;
+    border-radius: 20px;
+    min-height: 36vh;
+    width: 100%;
+    padding: 20px;
+
+}
+
+/* #FECHA #CONTEUDOS */
 
 .formItens {
     padding: 10px;
@@ -89,13 +138,6 @@ body {
     justify-content: center;
 }
 
-.messageError .texto {
-    margin-top: 10px;
-    display: flex !important;
-    justify-content: center !important;
-    text-align: center !important;
-}
-
 .formItemMenor {
     width: 80%;
     padding: 2px !important;
@@ -103,16 +145,209 @@ body {
 
 .gridBotoes {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 1vh;
+}
+
+/* #BOTOES */
+.botao {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.botao button {
+    background-color: #5dade2;
+    color: white;
+    border: none;
+    padding: 12px 16px 12px 26px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.botao-salvar button {
+    background-color: #48c9b0 !important;
+}
+
+.botao-limpar button {
+    background-color: #f7dc6f !important;
+}
+
+.botao button:hover {
+    background-color: #566573 !important;
+}
+
+.botao-salvar button:hover {
+    background-color: #1d8348 !important;
+}
+
+.botao-limpar button:hover {
+    background-color: #d4ac0d !important;
+}
+
+.link {
+    color: #1E90FF;
+    ;
+}
+
+.botao-wait {
+    margin-right: 12px;
+}
+
+.botao-link {
+    color: inherit;
+    font-size: 1.2rem;
+    text-decoration: none;
+    margin-right: 10px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+
+
+.botao-link :hover {
+    background-color: #ed145b !important;
+}
+
+.itens-lista {
     position: relative;
-    top: -25vh;
-    padding-left: 10vh;
-    padding-right: 10vh;
+}
+
+
+.link-busca {
+    position: absolute;
+    bottom: 14px;
+    right: 2vh;
+}
+
+
+.links-item {
+    position: absolute;
+    top: 120px;
+    right: 60px;
+    z-index: 100;
+}
+
+/* #FECHA #CONTEUDOS */
+.MuiTooltip-tooltip {
+    position: relative !important;
+    font-size: 14px !important;
+    padding: 10px 16px !important;
+    border-radius: 8px !important;
+    background-color: #ed145b !important;
+    color: white !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+
+:root {
+    --arrow-size: 8px;
+    --tooltip-bg: #ed145b;
+}
+
+
+.MuiTooltip-tooltip::after {
+    content: "";
+    position: absolute;
+    top: calc(-1 * var(--arrow-size) - 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: var(--arrow-size);
+    border-style: solid;
+    border-color: transparent transparent var(--tooltip-bg) transparent;
+}
+
+.MuiTooltip-tooltip[data-popper-placement^="bottom"]::after {
+    top: auto;
+    bottom: calc(-1 * var(--arrow-size) - 6px);
+    border-color: var(--tooltip-bg) transparent transparent transparent;
+}
+
+
+/* #ERROS */
+
+.input-error .MuiOutlinedInput-notchedOutline {
+    border-color: #ea0562 !important;
+}
+
+.input-error {
+    border-color: #ea0562 !important;
+}
+
+.label-error {
+    color: #ea0562 !important;
+}
+
+.error-message {
+    color: #ea0562;
+    font-size: 0.875em;
+    margin-bottom: 0.45rem;
+    transition: opacity 0.5s ease;
+}
+
+.hidden {
+    display: none;
+}
+
+/* #TEXTO */
+.caixaPerfil {
+    border: 1px solid #000;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px;
+    color: #f0f0f0;
+    position: relative;
+}
+
+.caixaPerfil legend {
+    padding: 0 10px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #48c9b0;
+}
+
+.spanErro {
+    margin-top: 20px !important;
+    margin-left: 40px;
+}
+
+
+@media (max-width: 1400px) {
+    .formItens-drop {
+        width: 96% !important;
+    }
+
 }
 
 @media (max-width: 900px) {
     .hiddenTelaPequena {
         display: none;
+    }
+
+    .ContainerGrid {
+        top: 0px;
+        bottom: 0px;
+        padding: 10px;
+    }
+
+
+
+    .icone-box {
+        flex-direction: column;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        padding: 10px;
+        min-height: 600px;
+
     }
 
     .separador {
@@ -126,28 +361,11 @@ body {
 
     .gridEsquerdo,
     .gridDireito {
-        height: auto !important;
-        margin-top: -36px !important;
-    }
-
-
-    .conteudoMenorDireito,
-    .conteudoMenorEsquerdo {
-        height: auto !important;
-    }
-
-    .conteudoMenorDireito {
-        margin-top: -12vh !important;
-
+        padding: 20px;
     }
 
     .formItens-drop {
-        width: 96%;
-    }
-
-    .formItemMenor {
-        width: 100%;
-        padding: 2px !important;
+        width: 92% !important;
     }
 
     .gridBotoes {
@@ -155,7 +373,32 @@ body {
     }
 
     .formItensHorizontal {
-        grid-template-columns: 1fr;  
-        gap: 16px; 
+        grid-template-columns: 1fr;
+        gap: 16px;
     }
+
+    .conteudoMenorDireito,
+    .conteudoMenorEsquerdo {
+        padding: 2px;
+    }
+
+    .conteudoDiretirPerfil {
+        margin-top: -15vh !important;
+    }
+
+    .links-item {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+
+    .form-persitir {
+        margin-top: 5vh !important;
+    }
+
+    .grid {
+        margin-top: -10vh !important;
+    }
+
 }

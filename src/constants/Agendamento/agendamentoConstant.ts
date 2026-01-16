@@ -1,0 +1,11 @@
+export const modalTitulo = "Agendamento";
+export const modalTexto = "Deseja remover o Agendamento?"
+export const UrlAgendamento = "Agendamento";
+export const UrlBuscarPaginado = "Agendamento/BuscarPaginado";
+export const UrlBuscarPorAno = "Agendamento/BuscarAgendamentos";
+export const UrlBuscarPorData = "Agendamento/BuscarAgendamentoPorData";
+export const UrlBuscarPorId = "Agendamento/BuscarAgendamentoPorId";
+export const AgendamentoColaborador = "AgendamentoColaborador";
+export const UrlBuscarPermissao = "Permissao";
+export const TipoCliente = "3";
+export const TipoAgendamento = "2"

@@ -10,9 +10,10 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import 'dayjs/locale/pt-br';
 
 const DateTimerPicker: React.FC<DateTimePickerItens> = ({
+  name,
+  erroSession,
   label,
   value,
-  width = '300px',
   onChange,
   tipo = 'data',
   isLeituraOnly
@@ -23,34 +24,30 @@ const DateTimerPicker: React.FC<DateTimePickerItens> = ({
     },
   });
 
-
   const pickerCommonProps = {
+    name,
     label,
     value,
     onChange,
-     InputProps: {
-        readOnly: isLeituraOnly ?? false, 
-      },
+    InputProps: {
+      readOnly: isLeituraOnly ?? false,
+    },
     slotProps: {
       textField: {
         size: 'medium' as const,
         fullWidth: true,
         sx: {
           width: {
-            xs: '80%',
-            sm: '80%',
-            md: width,
-            lg: width,
+            xs: '100%',
+            sm: '100%',
           },
         },
       },
     },
   };
 
-  
-  const renderPicker = () => {
 
-    
+  const renderPicker = () => {
     switch (tipo) {
       case 'hora':
         return <TimePicker {...pickerCommonProps} />;
@@ -64,7 +61,10 @@ const DateTimerPicker: React.FC<DateTimePickerItens> = ({
   return (
     <ThemeProvider theme={darkTheme}>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
-        <Box>{renderPicker()}</Box>
+        <Box>
+          <div className={`erroSession_${erroSession}`}></div>
+          {renderPicker()}
+        </Box>
       </LocalizationProvider>
     </ThemeProvider>
   );
