@@ -12,20 +12,19 @@ const Upload: React.FC<UploadItens> = ({ uploadProps, onUpload }) => {
     const [tituloImagem, setTituloImagem] = useState<string>('');
     const [id , setId] = useState<string>('');
     const [tituloSessao , setTituloSessao] = useState<string>('');
+    const [name , setName] = useState<string>('');
 
 
-    
     useEffect(() => {
         if (uploadProps) {
-
             setNomeImagem(uploadProps?.nomeImagem ?? '');
             setUrlImagem(uploadProps?.urlImagem ?? '');
             setTituloImagem(uploadProps.tituloImagem ?? '')
             setId(uploadProps.id ?? '')
-            setTituloSessao(uploadProps?.tituloSessao ?? '');   
+            setTituloSessao(uploadProps?.tituloSessao ?? ''); 
+            setName(uploadProps?.name ?? '')  
         }
     }, [uploadProps]);
-
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
@@ -49,6 +48,7 @@ const Upload: React.FC<UploadItens> = ({ uploadProps, onUpload }) => {
     };
 
     return <>
+        <div className={`erroSession_${id}`}></div>
         <Stack direction="row" spacing={2} className='stack'>
             <label htmlFor={id}>
                 <Avatar alt={nomeImagem ?? undefined} src={urlImagem ?? undefined} className='avatar' />
@@ -62,6 +62,7 @@ const Upload: React.FC<UploadItens> = ({ uploadProps, onUpload }) => {
                 accept="image/*"
                 onChange={handleImageChange}
                 style={{ display: 'none' }}
+                name={name}
             />
         </Stack>
         <span className='tituloUpload'>{tituloImagem}</span>

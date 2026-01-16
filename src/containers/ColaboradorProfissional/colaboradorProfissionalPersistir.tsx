@@ -9,11 +9,15 @@ import { RetornarMessageService } from '../../services/shared/retornarMessageSer
 import { API_BASE_AGENDA_URL } from '../../config/apiConfig';
 import { urlPersistir } from '../../constants/ColaboradorProfissional/colaboradorProfissionalConstant';
 import { PostService } from "../../services/shared/postService";
-import RefreshIcon from '@mui/icons-material/Refresh';
+import { Tooltip } from '@mui/material';
+import { FaRegTrashAlt } from "react-icons/fa";
+import { FaSave } from 'react-icons/fa';    
+import { useFormErros } from '../../hooks/useFormErros';
+import { ErroItem } from '../../Interfaces/shared/erroItem';
 import Dropdown from "../../components/dropdown";
 import CampoTexto from '../../components/textbox';
 import Mensagem from '../../components/mensagem';
-import Botao from '../../components/button';
+import BotaoSubmit from '../../components/submitButton';
 import updatePersistirPrev from "../../hooks/useUpdatePersistirPrev";
 
 const ColaboradorProfissionalPersistir: React.FC<{
@@ -31,7 +35,10 @@ const ColaboradorProfissionalPersistir: React.FC<{
     const colaboradorProps = persistirDropProps.find((item) => item.name === "colaborador")?.selectItems ?? [];
     const lojaProps = persistirDropProps.find((item) => item.name === "loja")?.selectItems ?? [];
     const servicoProps = persistirDropProps.find((item) => item.name === "servico")?.selectItems ?? [];
+    const [erros, setErros] = useState<ErroItem[]>([]);
+    const [erroTrigger, setErroTrigger] = useState(0);
 
+    useFormErros(erros, erroTrigger);
 
     const fetchColaboradorProfissionalData = useCallback(async () => {
 
@@ -43,7 +50,7 @@ const ColaboradorProfissionalPersistir: React.FC<{
         setDescricao(persistirProps.item?.descricao ?? '');
 
     }, [persistirProps])
-    updatePersistirPrev(fetchColaboradorProfissionalData,undefined, persistirProps.item);
+    updatePersistirPrev(fetchColaboradorProfissionalData, undefined, persistirProps.item);
 
     const handleCloseMessage = () => {
         setMessage(false);
@@ -78,8 +85,14 @@ const ColaboradorProfissionalPersistir: React.FC<{
             limparItens();
 
         } else {
-            const messageRetorno = await RetornarMessageService(false, false, colaboradorResponse?.notifications ?? [])
-            setMessageItens(messageRetorno)
+
+            const errosConvertidos: ErroItem[] = colaboradorResponse?.notifications?.map((n) => ({
+                Key: n.notificationProps?.Key ?? '',
+                Mensagem: n.notificationProps?.Message ?? '',
+                erroSession: n.notificationProps?.Key ?? ''
+            })) ?? [];
+            setErros(errosConvertidos);
+            setErroTrigger(prev => prev + 1);
         }
         enviarSatusMessage();
         setIsLoading(false);
@@ -112,22 +125,13 @@ const ColaboradorProfissionalPersistir: React.FC<{
         }
     };
 
-
-    const handleButtonClick = () => {
-        const fakeEvent = {
-            preventDefault: () => { }
-        } as React.FormEvent;
-        handleSubmit(fakeEvent);
-    };
-
     const botaoProps: BotaoItens = {
-        name: 'Salvar',
-        tooltip: 'Fazer o cadastro',
-        label: 'Salvar',
-        width: '200px',
-        onIconClick: handleButtonClick,
-        color: 'primary',
+        tooltip: 'Salvar',
         isLoading: isLoading,
+        icon: FaSave,
+        marginLeft: '4px',
+        marginRight: '4px'
+
     };
 
     const enviarSatusMessage = () => {
@@ -140,99 +144,109 @@ const ColaboradorProfissionalPersistir: React.FC<{
     const handleButtonClickLimpar = async () => {
         limparItens();
     }
-    const botaoLimparProps: BotaoItens = {
-        tooltip: 'limpar',
-        width: '20px',
-        onIconClick: handleButtonClickLimpar,
-        color: 'success',
-        icon: RefreshIcon
-    };
 
     return <>
         <div className='messageTextLoja'>
             <Mensagem mensagemProps={messageProps ?? {}} />
         </div>
-        <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} className="conteudo">
-            <Grid container spacing={2}>
-                <Grid item md={6} xs={10} className='gridEsquerdo'>
-                    <div className='conteudoEsquerdoColaboradorProfissional conteudoMenorEsquerdo'>
-                        <div className="formItens-drop">
-                            <Dropdown
-                                dropProps={{
-                                    name: "Colaborador",
-                                    label: "Colaborador*",
-                                    itens: colaboradorProps,
-                                    selectedId: colaboradorId || '0',
-                                    onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "colaborador"),
-                                }}
-                            />
-                        </div>
-                        <div className="formItens-drop">
-                            <Dropdown
-                                dropProps={{
-                                    name: "Loja",
-                                    label: "Loja*",
-                                    itens: lojaProps,
-                                    selectedId: lojaId || '0',
-                                    onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "loja"),
-                                }}
-                            />
+
+        <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} id="frmColaboradorProfissional">
+            <Grid container spacing={2} className="ContainerGrid">
+                <div className='conteudo'>
+                    <fieldset className='icone-box icone-box-form'>
+                        <legend>Colaborador</legend>
+
+                        <div className="links-login">
+                            <button onClick={handleButtonClickLimpar} className="botao-link">
+                                <Tooltip title="limpar">
+                                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                        <FaRegTrashAlt />
+                                    </span>
+                                </Tooltip>
+                            </button>
                         </div>
 
-                        <div className="formItens-drop">
-                            <Dropdown
-                                dropProps={{
-                                    name: "Servico",
-                                    label: "Serviço*",
-                                    itens: servicoProps,
-                                    selectedId: servicoId || '0',
-                                    onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "servico"),
-                                }}
-                            />
-                        </div>
-                    </div>
-                </Grid>
+                        <Grid item md={6} xs={12} className='gridEsquerdo'>
+                            <div className="conteudoEsquerdo conteudoMenorEsquerdo">
 
-                <div className="separador"></div>
-                <Grid item md={6} xs={10} className='gridDireito'>
-                    <div className="conteudoDireitoColaboradorProfissional conteudoMenorDireito">
+                                <div className="formItens-drop">
+                                    <Dropdown
+                                        dropProps={{
+                                            name: "ColaboradorId",
+                                            label: "Colaborador*",
+                                            itens: colaboradorProps,
+                                            selectedId: colaboradorId || '0',
+                                            onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "colaborador"),
+                                            erroSession:"ColaboradorId"
+                                        }}
+                                    />
+                                </div>
+                                <div className="formItens-drop">
+                                    <Dropdown
+                                        dropProps={{
+                                            name: "LojaId",
+                                            label: "Loja*",
+                                            itens: lojaProps,
+                                            selectedId: lojaId || '0',
+                                            onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "loja"),
+                                            erroSession:"LojaId"
+                                        }}
+                                    />
+                                </div>
 
-                        <div className='formItens'>
-                            <CampoTexto
-                                textBoxProps={{
-                                    name: "Descricao",
-                                    tooltip: "Descrição",
-                                    label: "Descrição",
-                                    value: descricao,
-                                    type: 'text',
-                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setDescricao(e.target.value)
+                                <div className="formItens-drop">
+                                    <Dropdown
+                                        dropProps={{
+                                            name: "ServicoId",
+                                            label: "Serviço*",
+                                            itens: servicoProps,
+                                            selectedId: servicoId || '0',
+                                            onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "servico"),
+                                            erroSession:"ServicoId"
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        </Grid>
+                        <div className="separador"></div>
+                        <Grid item md={6} xs={12} className='gridDireito'>
+                            <div className="conteudoDireito">
+                                <div className='formItens'>
+                                    <CampoTexto
+                                        textBoxProps={{
+                                            name: "Descricao",
+                                            tooltip: "Descrição",
+                                            label: "Descrição",
+                                            value: descricao,
+                                            type: 'text',
+                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setDescricao(e.target.value),
+                                            erroSession:"Descricao"
 
-                                }}
-                            />
-                        </div>
-                    </div>
-                    <div className='camposInvisiveis'>
-                        <CampoTexto
-                            textBoxProps={{
-                                name: "id",
-                                value: id?.toString(),
-                                type: 'hidden',
-                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setId(Number(e.target.value))
-                            }} />
-                    </div>
-                </Grid>
-                <Grid item xs={12}>
-                    <div className="formItens gridBotoes">
-                        <div className="botao">
-                            <Botao botaoProps={botaoLimparProps} />
-                        </div>
-                        <div className="botao">
-                            <Botao botaoProps={botaoProps} />
-                        </div>
-                    </div>
-                </Grid>
+                                        }}
+                                    />
+                                </div>
+                                <div className="gridBotoes">
+                                    <div className="botao botao-salvar">
+                                        <BotaoSubmit botaoProps={botaoProps} />
+                                    </div>
+                                </div>
+
+                            </div>
+                        </Grid>
+                    </fieldset>
+                </div>
             </Grid>
-        </form>
+
+            <div className='camposInvisiveis'>
+                <CampoTexto
+                    textBoxProps={{
+                        name: "id",
+                        value: id?.toString(),
+                        type: 'hidden',
+                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setId(Number(e.target.value))
+                    }} />
+            </div>
+        </form >
     </>
 }
 

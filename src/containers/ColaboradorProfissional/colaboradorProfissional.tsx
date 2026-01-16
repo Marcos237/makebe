@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo} from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { UsuarioLoginItens } from '../../Interfaces/Usuario/UsuarioLoginItens';
 import { GetAllService } from '../../services/shared/getAllService';
 import { PersistirItens } from "../../Interfaces/shared/persistirItens";
@@ -22,6 +22,10 @@ import { ServicosItens } from "../../Interfaces/Produto/servicosItens";
 import { ModalItem } from "../../Interfaces/shared/modalItem";
 import { DeleteService } from "../../services/shared/deleteService";
 import { paginar } from "../../functions/paginacao";
+import { useHiddenItem } from '../../hooks/useHiddenItem';
+import { FaUserTie } from "react-icons/fa";
+import { Tooltip } from '@mui/material';
+import { FaUsers } from "react-icons/fa";
 import ColaboradorProfissionalBusca from '../ColaboradorProfissional/colaboradorProfissionalBusca';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import GridViewLista from '../../components/gridview';
@@ -44,12 +48,15 @@ const ColaboradorProfissional: React.FC = () => {
     const [gridViewItens, setGridView] = useState<GrigViewItens<ColaboradorProfissionalItem>>();
     const [persistirItensList, setPersistirItensList] = useState<Array<PersistirItens<any>>>([]);
     const [modalOpen, setModalOpen] = useState<ModalItem>();
+    const [isHiddenItem, setIsHiddenItem] = useState(false);
 
+    useHiddenItem("persistir", "lista", isHiddenItem);
     const fetchColaboradorProfissionalData = useCallback(async (page: number = 1) => {
         const paginacao = paginar(resultadosBusca, page)
         if (!resultadosBusca || page !== undefined) {
             paginacao.objetos = []
             const colaboradorReponse = await GetPaginadoService(paginacao, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`);
+            
             if (colaboradorReponse) {
                 setResultadosBusca(colaboradorReponse);
             }
@@ -106,6 +113,7 @@ const ColaboradorProfissional: React.FC = () => {
         const colaboradorProfissonalId = colaborador.id ?? 0;
         const retorno = await GetByIdService(colaboradorProfissonalId, `${API_BASE_AGENDA_URL}${UrlColaboradorProfissional}`) as ResponseItem<ColaboradorProfissionalItem>
         setColaboradorProfissional(retorno?.data ?? undefined);
+        handleButtonClickSalvar();
         handleScrollToTop();
     }, []);
 
@@ -199,38 +207,67 @@ const ColaboradorProfissional: React.FC = () => {
             behavior: 'smooth'
         });
     };
+    const handleButtonClickSalvar = () => {
+        setIsHiddenItem(true);
+    }
+
+    const handleButtonClickListar = () => {
+        setIsHiddenItem(false);
+    }
 
     return <>
         <div className='banner'>
             <Banner usuarioLogado={useUsuarioLogado} />
         </div>
-        <Grid container className="ContainerGrid" direction="column">
-            <div className="conteudo-inLine">
-                <div className="persistir-colaboradorProfissional">
+
+            <div className="persistir">
+                <div className="links-item">
+                    <button onClick={handleButtonClickListar} className="botao-link">
+                        <Tooltip title="listar">
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                <FaUsers />
+                            </span>
+                        </Tooltip>
+                    </button>
+                </div>
                     <ColaboradorPersistir
                         persistirProps={{
                             item: colaboradorProfissionalItem,
                         }}
                         persistirDropProps={persistirItensList ?? []}
                     />
-                </div>
+            </div>
 
-                <div className="busca-colaboradorProfissional">
+            <div className="lista">
+                <div className="links-item">
+                    <button onClick={handleButtonClickSalvar} className="botao-link">
+                        <Tooltip title="novo">
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                <FaUserTie />
+                            </span>
+                        </Tooltip>
+                    </button>
+                </div>
+                <div className="form-persitir">
                     <ColaboradorProfissionalBusca
                         selectItens={persistirItensList ?? []}
                         onResultadosBusca={handleResultadosBusca}
                     />
                 </div>
+                <div className="grid">
+                    <div className="conteudo">
+                        <Grid container spacing={2} className="ContainerGrid">
 
-                <Grid container className="ContainerGrid" direction="column">
-                    <div className="conteudo-inLine">
-                        <div className="lista-colaboradorProfissional">
-                            <GridViewLista gridviewProps={gridViewItens ?? {}} />
-                        </div>
+                            <fieldset className='icone-box icone-box-form'>
+                                <legend>Lista</legend>
+                                <Grid item xs={12} md={12}>
+                                    <GridViewLista gridviewProps={gridViewItens ?? {}} />
+                                </Grid>
+                            </fieldset>
+                        </Grid>
                     </div>
-                </Grid>
+                </div>
             </div>
-        </Grid>
 
         <div className="modal">
             {modalOpen && <ModalGeneric modalProps={modalOpen} />}

@@ -1,21 +1,27 @@
 
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { UsuarioLoginItens } from '../../Interfaces/Usuario/UsuarioLoginItens';
 import { GetAllService } from '../../services/shared/getAllService';
 import { PersistirItens } from "../../Interfaces/shared/persistirItens";
 import { PaginacaoItens } from '../../Interfaces/shared/PaginacaoItens';
 import { mapToSelectItens } from '../../functions/mapToSelectItens';
 import { Grid } from '@mui/material';
+import { useParams } from "react-router-dom";
 import { ColaboradorItens } from "../../Interfaces/Colaborador/colaboradorItem";
 import { API_BASE_URL, API_BASE_AGENDA_URL } from '../../config/apiConfig';
 import { UrlUsuarioLogado } from "../../constants/Usuario/usuarioConstant";
 import { GrigViewItens } from "../../Interfaces/shared/gridviewItens";
-import { propertyLabels, UrlBuscarPaginado, UrlBuscarPermissao, UrlColaborador } from "../../constants/Colaborador/colaboradorConstant";
+import { propertyLabels, TipoCliente, UrlBuscarPaginado, UrlBuscarPermissao, UrlColaborador, TipoColaborador }
+    from "../../constants/Colaborador/colaboradorConstant";
 import { GetPaginadoService } from '../../services/shared/getPaginadoService';
 import { GetByIdService } from "../../services/shared/getByIdService";
 import { ResponseItem } from '../../Interfaces/shared/ResponseItem';
 import { PermissaoItens } from "../../Interfaces/Colaborador/permissaoItens";
 import { paginar } from "../../functions/paginacao";
+import { useHiddenItem } from '../../hooks/useHiddenItem';
+import { Tooltip } from '@mui/material';
+import { FaUserPlus } from "react-icons/fa";
+import { FaUsers } from "react-icons/fa";
 import ColaboradorBusca from "./colaboradorBusca";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import GridViewLista from '../../components/gridview';
@@ -24,8 +30,8 @@ import Banner from "../../components/banner";
 import Footer from "../../components/footer";
 import useUpdateGrid from "../../hooks/useUpdateGrid";
 import useUpdateFetch from '../../hooks/useUpdateFetch';
+import useFetchTipo from "../../hooks/useFetchTipo";
 
-import "../../assets/styles/Colaborador/colaborador.css";
 
 const Colaborador: React.FC = () => {
     const [colaboradorItem, setColaborador] = useState<ColaboradorItens>();
@@ -33,13 +39,45 @@ const Colaborador: React.FC = () => {
     const [persistirItens, stePersistirItens] = useState<PersistirItens<ColaboradorItens>>();
     const [resultadosBusca, setResultadosBusca] = useState<PaginacaoItens<ColaboradorItens>>();
     const [gridViewItens, setGridView] = useState<GrigViewItens<ColaboradorItens>>();
-    const [readOnly,  setReadOnly] = useState<boolean>(false);
+    const [readOnly, setReadOnly] = useState<boolean>(false);
+    const { urlParametro } = useParams();
+    const [isHiddenItem, setIsHiddenItem] = useState(false);
 
-    const fetchColaboradorData = useCallback(async (page: number = 1) => {
+
+    const tipoItem = urlParametro === "CadastroCliente" ? TipoCliente : urlParametro === "CadastroColaborador" ? TipoColaborador : 0;
+
+    useEffect(() => {
+        if (tipoItem === "3") {
+            setIsHiddenItem(true);
+        } 
+    }, [tipoItem]);
+
+    useHiddenItem("persistir", "lista", isHiddenItem);
+
+    const fetchColaboradorData = useCallback(async (tipoUsuario?: string, page: number = 1) => {
+        const colaboradorDefault: ColaboradorItens = {
+            id: '',
+            usuarioId: '',
+            nome: '',
+            cpf: '',
+            email: '',
+            telefone: '',
+            permissaoId: '',
+            descricaoPermissao: '',
+            nomeImagem: '',
+            urlImagem: '',
+            status: true,
+            instagram: '',
+            descricaoStatus: '',
+            tipo: Number(tipoUsuario)
+        }
         const paginacao = paginar(resultadosBusca, page)
         if (!resultadosBusca || page !== undefined) {
+
+            paginacao.objetoPesquisa = resultadosBusca?.objetoPesquisa ?? colaboradorDefault;
             paginacao.objetos = []
-            const colaboradorReponse = await GetPaginadoService(paginacao, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}` );
+            paginacao.objetoPesquisa.tipo = Number(tipoUsuario);
+            const colaboradorReponse = await GetPaginadoService(paginacao, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`);
             if (colaboradorReponse) {
                 setResultadosBusca(colaboradorReponse);
             }
@@ -60,8 +98,10 @@ const Colaborador: React.FC = () => {
 
         const persistirProps: PersistirItens<ColaboradorItens> = {
             selectItems: itensSelect,
-            onSave: fetchColaboradorData,
-        };
+            onSave: async (tipoItem?: string) => {
+                await fetchColaboradorData(tipoItem?.toString());
+            },
+        }
 
         stePersistirItens(persistirProps);
     }, [fetchColaboradorData]);
@@ -72,6 +112,7 @@ const Colaborador: React.FC = () => {
         const retorno = await GetByIdService(colaboradorId, `${API_BASE_AGENDA_URL}${UrlColaborador}`) as ResponseItem<ColaboradorItens>;
         setColaborador(retorno?.data ?? undefined);
         handleScrollToTop();
+        handleButtonClickSalvar();
         setReadOnly(true);
     }, []);
 
@@ -86,8 +127,8 @@ const Colaborador: React.FC = () => {
     ]), [handleUpdateClick]);
 
     const handlePageChange = useCallback((event: React.ChangeEvent<unknown>, page: number) => {
-        fetchColaboradorData(page);
-    }, [fetchColaboradorData])
+        fetchColaboradorData(tipoItem.toString(), page);
+    }, [fetchColaboradorData, tipoItem])
 
     const gridViewItensMemo = useMemo(() => {
         if (resultadosBusca) {
@@ -100,10 +141,12 @@ const Colaborador: React.FC = () => {
         }
         return undefined;
     }, [resultadosBusca, actionButtons, handlePageChange]);
-    
-    useUpdateFetch([usuarioData, fetchPermissaoData, fetchColaboradorData],
-        [fetchColaboradorData, fetchPermissaoData, usuarioData]
+
+    useUpdateFetch([() => usuarioData(), () => fetchPermissaoData(), () => fetchColaboradorData(tipoItem.toString())],
+        [tipoItem]
     );
+
+    useFetchTipo(urlParametro ?? "", [() => fetchColaboradorData(tipoItem.toString())], TipoCliente, TipoColaborador);
 
     useUpdateGrid(gridViewItensMemo, setGridView, [persistirItens], () => {
         if (persistirItens?.isSave) {
@@ -111,7 +154,7 @@ const Colaborador: React.FC = () => {
                 ...prev,
                 isSave: false,
             }));
-            fetchColaboradorData();
+            fetchColaboradorData(tipoItem.toString())
         }
     });
 
@@ -130,33 +173,75 @@ const Colaborador: React.FC = () => {
         });
     };
 
+    const handleButtonClickSalvar = () => {
+        setIsHiddenItem(true);
+    }
+
+    const handleButtonClickListar = () => {
+        setIsHiddenItem(false);
+    }
     return <>
         <div className='banner'>
             <Banner usuarioLogado={useUsuarioLogado} />
         </div>
 
-        <Grid container className="ContainerGrid" direction="column">
-            <div className="conteudo-inLine">
-                <div className="persistir-colaborador">
-                    <ColaboradorPersistir
-                        persistirProps={{...persistirItens,
-                            item: colaboradorItem,
-                        }}
-                        readOnly={readOnly}
-                    />
-                </div>
-                <div className="busca-colaborador">
-                    <ColaboradorBusca
-                        selectItens={persistirItens?.selectItems || []}
-                        onResultadosBusca={handleResultadosBusca}
-                    />
-                </div>
-                <div className="lista-colaborador">
-                    <GridViewLista gridviewProps={gridViewItens ?? {}} />
-                </div>
-            </div>
-        </Grid>
 
+        <div className="persistir">
+            {tipoItem !== "3" && (
+                <div className="links-item">
+                    <button onClick={handleButtonClickListar} className="botao-link">
+                        <Tooltip title="listar">
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                <FaUsers />
+                            </span>
+                        </Tooltip>
+                    </button>
+                </div>
+            )}
+            <div className="form-persitir">
+                <ColaboradorPersistir
+                    persistirProps={{
+                        ...persistirItens,
+                        item: colaboradorItem,
+                    }}
+                    readOnly={readOnly}
+                    tipoItem={Number(tipoItem)}
+                />
+            </div>
+        </div>
+
+
+        <div className="lista">
+            <div className="links-item">
+                <button onClick={handleButtonClickSalvar} className="botao-link">
+                    <Tooltip title="novo">
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                            <FaUserPlus />
+                        </span>
+                    </Tooltip>
+                </button>
+            </div>
+            <div className="form-persitir">
+                <ColaboradorBusca
+                    selectItens={persistirItens?.selectItems || []}
+                    onResultadosBusca={handleResultadosBusca}
+                />
+
+            </div>
+
+            <div className="grid">
+                <Grid container spacing={2} className="ContainerGrid">
+                    <div className="conteudo">
+                        <fieldset className='icone-box icone-box-form'>
+                            <legend>Lista</legend>
+                            <Grid item xs={12} md={12}>
+                                <GridViewLista gridviewProps={gridViewItens ?? {}} />
+                            </Grid>
+                        </fieldset>
+                    </div>
+                </Grid>
+            </div>
+        </div>
         <div>
             <Footer />
         </div >

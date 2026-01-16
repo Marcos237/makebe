@@ -12,11 +12,13 @@ const PerfilValidar: React.FC = () => {
         </div>
         <Grid container className="ContainerGrid">
             <div className='conteudo'>
-                <div className='itemValidar'>
-                    <div className='textoValidar'>
-                        <h2>Obrigado por cadastrar!</h2>
-                        <p>{MensagemCadastro}</p>
-                        <a href='/login'> clique aqui para fazer o login</a>
+                <div className='icone-box'>
+                    <div className='itemValidar'>
+                        <div className='textoValidar'>
+                            <h2>Obrigado por cadastrar!</h2>
+                            <p>{MensagemCadastro}</p>
+                            <a className='link' href='/login'> clique aqui para fazer o login</a>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 export const urlPersistir = 'ColaboradorProfissional';
 export const UrlColaboradorProfissional = "ColaboradorProfissional";
 export const UrlBuscarPaginado = "ColaboradorProfissional/BuscarPaginado";
+export const UrlBuscarPorIdConta = "ColaboradorProfissional/BuscarPorIdConta";
 export const UrlServico = "Servico";
 export const ModalTexto = "Deseja remover o item?"
 

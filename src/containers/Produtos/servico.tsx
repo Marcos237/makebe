@@ -15,6 +15,9 @@ import { GetByIdService } from "../../services/shared/getByIdService";
 import { GrigViewItens } from "../../Interfaces/shared/gridviewItens";
 import { ModalItem } from "../../Interfaces/shared/modalItem";
 import { DeleteService } from "../../services/shared/deleteService";
+import { useHiddenItem } from '../../hooks/useHiddenItem';
+import { FaCog, FaCogs } from "react-icons/fa";
+import { Tooltip } from '@mui/material';
 import ModalGeneric from "../../componentsGenerics/modalGeneric";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
@@ -26,7 +29,7 @@ import ServicoPersistir from "./servicoPersistir";
 import ServicoBusca from "./servicoBusca";
 import GridViewLista from '../../components/gridview';
 
-import '../../assets/styles/Produtos/servico.css'
+import '../../assets/styles/formularios/servico.css'
 
 const Servico: React.FC = () => {
     const [servicoItem, setServicoItem] = useState<ServicosItens>();
@@ -35,6 +38,9 @@ const Servico: React.FC = () => {
     const [persistirItens, stePersistirItens] = useState<PersistirItens<ServicosItens>>();
     const [gridViewItens, setGridView] = useState<GrigViewItens<ServicosItens>>();
     const [modalOpen, setModalOpen] = useState<ModalItem>();
+    const [isHiddenItem, setIsHiddenItem] = useState(false);
+
+    useHiddenItem("persistir", "lista", isHiddenItem);
 
     const fetchServicoData = useCallback(async (page: number = 1) => {
         const paginacao = paginar(resultadosBusca, page)
@@ -67,18 +73,19 @@ const Servico: React.FC = () => {
         const servicoId = servico.id ?? '';
         const retorno = await GetByIdService(servicoId, `${API_BASE_AGENDA_URL}${UrlServico}`) as ResponseItem<ServicosItens>;
         setServicoItem(retorno?.data ?? undefined);
+        handleButtonClickSalvar();
         handleScrollToTop();
 
     }, []);
 
-     const handleModalDesativar = useCallback(async (id: number) => {
+    const handleModalDesativar = useCallback(async (id: number) => {
 
-            const responseColaborador = await DeleteService(id, `${API_BASE_AGENDA_URL}${UrlServico}`);
-            if (responseColaborador) {
-                fetchServicoData();
-                setModalOpen(undefined);
-            }
-        }, [fetchServicoData]);
+        const responseColaborador = await DeleteService(id, `${API_BASE_AGENDA_URL}${UrlServico}`);
+        if (responseColaborador) {
+            fetchServicoData();
+            setModalOpen(undefined);
+        }
+    }, [fetchServicoData]);
 
     const handleDeleteClick = useCallback(async (event: React.MouseEvent, servico?: any) => {
         event.preventDefault();
@@ -108,9 +115,9 @@ const Servico: React.FC = () => {
         }
     ]), [handleUpdateClick, handleDeleteClick]);
 
-        useCallback(() => {
-            setModalOpen(undefined);
-        }, []);
+    useCallback(() => {
+        setModalOpen(undefined);
+    }, []);
 
     const handlePageChange = useCallback((event: React.ChangeEvent<unknown>, page: number) => {
         fetchServicoData(page);
@@ -153,34 +160,71 @@ const Servico: React.FC = () => {
         });
     };
 
+    const handleButtonClickSalvar = () => {
+        setIsHiddenItem(true);
+    }
+
+    const handleButtonClickListar = () => {
+        setIsHiddenItem(false);
+    }
+
+
     return <>
         <div className='banner'>
             <Banner usuarioLogado={useUsuarioLogado} />
         </div>
 
-        <Grid container className="ContainerGrid" direction="column">
-            <div className="conteudo-inLine">
-                <ServicoPersistir
-                    persistirProps={{
-                        ...persistirItens,
-                        item: servicoItem,
-                    }}
-                />
+        <div className="persistir">
+            <div className="links-item">
+                <button onClick={handleButtonClickListar} className="botao-link">
+                    <Tooltip title="listar">
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                            <FaCogs />
+                        </span>
+                    </Tooltip>
+                </button>
             </div>
-            <div className="busca-servico">
+            <ServicoPersistir
+                persistirProps={{
+                    ...persistirItens,
+                    item: servicoItem,
+                }}
+            />
+        </div>
+
+
+        <div className="lista">
+            <div className="links-item">
+                <button onClick={handleButtonClickSalvar} className="botao-link">
+                    <Tooltip title="novo">
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                            <FaCog />
+                        </span>
+                    </Tooltip>
+                </button>
+            </div>
+            <div className="form-persitir">
                 <ServicoBusca
                     onResultadosBusca={handleResultadosBusca}
                 />
             </div>
+            <div className="grid">
+                <div className="conteudo">
+                    <Grid container spacing={2} className="ContainerGrid">
 
-            <div className="lista-servico">
-                <GridViewLista gridviewProps={gridViewItens ?? {}} />
-            </div>
-        </Grid>
-
-                <div className="modal">
-                    {modalOpen && <ModalGeneric modalProps={modalOpen} />}
+                        <fieldset className='icone-box icone-box-form'>
+                            <legend>Lista</legend>
+                            <Grid item xs={12} md={12}>
+                                <GridViewLista gridviewProps={gridViewItens ?? {}} />
+                            </Grid>
+                        </fieldset>
+                    </Grid>
                 </div>
+            </div>
+        </div>
+        <div className="modal">
+            {modalOpen && <ModalGeneric modalProps={modalOpen} />}
+        </div>
 
         <div>
             <Footer />

@@ -4,4 +4,5 @@ export interface PortifolioImagemItem {
     urlImagem?: string;
     nomeImagem?: string;
     tituloImagem?: string;
+    id?: string;
 }

@@ -13,8 +13,7 @@ export const GetByIdService = async<T>(id : string | number, url : string, tipo?
                 'Authorization': `Bearer ${token}`
             }
         };
-
-        const response = await axios.get(`${url}/${id}${tipo ? `/${tipo}` : ''}`, config);
+        const response = await axios.get(`${url}/${id}${tipo != null ? `/${tipo}` : ''}`, config);
         return response.data; 
     } catch (error) {
         const responseErro = returnErroService(error);

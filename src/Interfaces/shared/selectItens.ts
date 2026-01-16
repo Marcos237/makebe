@@ -1,4 +1,6 @@
 export interface SelectItens {
     key: string | number;
-    value?: string
+    value?: string;
+    isAvatar?: boolean; 
+    urlImagem?: string 
 }

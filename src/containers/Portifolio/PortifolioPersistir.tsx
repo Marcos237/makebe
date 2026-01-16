@@ -1,15 +1,12 @@
-import React, {  useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { PersistirItens } from "../../Interfaces/shared/persistirItens";
 import { Grid } from '@mui/material';
 import { PortifolioItem } from "../../Interfaces/Portifolio/portifolioItem";
 import { UploadItens } from "../../Interfaces/TextBox/UploadItens";
 import { EditorTextoItem } from '../../Interfaces/shared/editorTextoItem';
-import {
-    imagensSessaoBanner, imagensSessaoVitrine, Editor, EditorPlaceHolder, SessaoImagens, SessaoTitulos, SessaoTexto, UrlPortifolio,
-    UrlTipoPortifolioImagem
-} from '../../constants/Portifolio/PortifolioConstant';
+import { Editor, EditorPlaceHolder, UrlPortifolio, UrlTipoPortifolioImagem } from '../../constants/Portifolio/PortifolioConstant';
+import { FaSave } from 'react-icons/fa';
 import { TipoUsuarioLojaId, TipoUsuarioColaboradorId } from '../../constants/Usuario/usuarioConstant';
-import { SessaoItens } from '../../Interfaces/shared/sessaoItens';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { MensagemItens } from "../../Interfaces/Mensagens/MensagemItens";
 import { BotaoItens } from '../../Interfaces/Botao/botao';
@@ -20,14 +17,16 @@ import { API_BASE_AGENDA_URL } from "../../config/apiConfig";
 import { TipoPortifolioImagemItem } from "../../Interfaces/Portifolio/tipoPortifolioImagemItem";
 import { ResponseItem } from "../../Interfaces/shared/ResponseItem";
 import { GetByIdService } from "../../services/shared/getByIdService";
-import Botao from '../../components/button';
+import { FaRegTrashAlt } from "react-icons/fa";
+import { Tooltip } from '@mui/material';
+import { ErroItem } from '../../Interfaces/shared/erroItem';
+import { useFormErros } from '../../hooks/useFormErros';
+import BotaoSubmit from '../../components/submitButton';
 import CampoTexto from '../../components/textbox';
 import Upload from "../../components/upload";
 import EditorTexto from "../../components/ckEditor";
-import Sessao from "../../components/sessao";
 import Dropdown from "../../components/dropdown";
 import Mensagem from '../../components/mensagem';
-import RefreshIcon from '@mui/icons-material/Refresh';
 import updatePersistirPrev from "../../hooks/useUpdatePersistirPrev";
 
 
@@ -45,9 +44,7 @@ const PortifolioPersistir: React.FC<{
     const [texto, setTexto] = useState<string>('');
     const [lojaId, setLojaId] = useState<number>();
     const [imagens, setImagens] = useState<PortifolioImagemItem[]>([]);
-    const sessoesItens: Array<SessaoItens> = [];
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isOpen, setIsOpen] = useState<number>();
     const [uploadItems, setUploadItems] = useState<Array<UploadItens>>([]);
     const [colaboradorId, setColaboradorId] = useState<number>();
     const [colaboradorPortifolioId, setColaboradorPortifolioId] = useState<number>();
@@ -58,16 +55,19 @@ const PortifolioPersistir: React.FC<{
     const portifolioImagemItem: PortifolioImagemItem[] = useMemo(() => {
         return persistirProps?.item?.portifolioImagens ?? [];
     }, [persistirProps]);
+    const [erros, setErros] = useState<ErroItem[]>([]);
+    const [erroTrigger, setErroTrigger] = useState(0);
+
+    useFormErros(erros, erroTrigger);
 
 
-    const fetchPortifolioData = useCallback(async () => {  
+    const fetchPortifolioData = useCallback(async () => {
         setId(persistirProps?.item?.id ?? 0);
         setLojaId(persistirProps?.item?.lojaId ?? 0);
         setTitulo(persistirProps?.item?.titulo ?? '');
         setSubTitulo(persistirProps?.item?.subTitulo ?? '');
         setTexto(persistirProps?.item?.texto ?? '');
         setImagens(portifolioImagemItem);
-        setIsOpen(idPersitir);
         setColaboradorId(persistirProps?.item?.colaboradorId);
         setColaboradorPortifolioId(persistirProps?.item?.colaboradorPortifolioId);
         setLojaPortifolioId(persistirProps?.item?.lojaPortifolioId);
@@ -78,28 +78,29 @@ const PortifolioPersistir: React.FC<{
             const imagemEncontrada = portifolioImagemItem.find((imagem) => imagem.tituloImagem === tipos.descricao);
             const uploadImagem: UploadItens = imagemEncontrada
                 ? {
-                      uploadProps: {
-                          nomeImagem: imagemEncontrada.nomeImagem,
-                          urlImagem: imagemEncontrada.urlImagem,
-                          tituloImagem: imagemEncontrada.tituloImagem,
-                          tituloSessao: tipos?.titulo,
-                          id: (index + 1).toString(),
-                      },
-                  }
+                    uploadProps: {
+                        nomeImagem: imagemEncontrada.nomeImagem,
+                        urlImagem: imagemEncontrada.urlImagem,
+                        tituloImagem: imagemEncontrada.tituloImagem,
+                        tituloSessao: tipos?.titulo,
+                        id: `Imagem_${(index + 1).toString()}`,
+                        name: `Imagem_${(index + 1).toString()}`
+                    },
+                }
                 : {
-                      uploadProps: {
-                          nomeImagem: "",
-                          urlImagem: "",
-                          tituloImagem: tipos.descricao,
-                          tituloSessao: tipos?.titulo,
-                          id: `${(index + 1).toString()}`,
-                      },
-                  };
-            
+                    uploadProps: {
+                        nomeImagem: "",
+                        urlImagem: "",
+                        tituloImagem: tipos.descricao,
+                        tituloSessao: tipos?.titulo,
+                        id: `Imagem_${(index + 1).toString()}`,
+                        name: `Imagem_${(index + 1).toString()}`
+                    },
+                };
             uploadItemsRetorno.push(uploadImagem);
             setUploadItems(uploadItemsRetorno);
         });
-    }, [persistirProps, tipoUsuario, idPersitir, tiposPortifolioImagem, portifolioImagemItem]);
+    }, [persistirProps, tipoUsuario, tiposPortifolioImagem, portifolioImagemItem]);
 
 
     const limparUpload = async () => {
@@ -114,14 +115,16 @@ const PortifolioPersistir: React.FC<{
                     urlImagem: "",
                     tituloImagem: tipos.descricao,
                     tituloSessao: tipos?.titulo,
-                    id: `${(index + 1).toString()}`
+                    id: `Imagem_${(index + 1).toString()}`,
+                    errorSession: `Imagem_${(index + 1).toString()}`,
+                    name: `Imagem_${(index + 1).toString()}`
                 }
             };
             uploadItemsRetorno.push(uploadImagem);
         });
         setUploadItems(uploadItemsRetorno);
     }
-    const limparCampos = async  () => {
+    const limparCampos = async () => {
         await limparUpload();
         setId(0);
         setTitulo('');
@@ -132,10 +135,10 @@ const PortifolioPersistir: React.FC<{
         if (tipoUsuario === TipoUsuarioColaboradorId) {
             setColaboradorId(0);
         }
-        setTexto('');     
+        setTexto('');
     };
 
-    updatePersistirPrev(fetchPortifolioData,  limparCampos,  persistirProps.item);
+    updatePersistirPrev(fetchPortifolioData, limparCampos, persistirProps.item);
     const addImagemItem = useCallback(
         (uploadsItemAtualizado: UploadItens[]): PortifolioImagemItem[] => {
             const imagensFiltradas: PortifolioImagemItem[] = uploadsItemAtualizado
@@ -146,6 +149,7 @@ const PortifolioPersistir: React.FC<{
                 .map((upload) => ({
                     lojaPortifolioImagemId: 0,
                     lojaPortifolioId: 0,
+                    id: upload.uploadProps.id,
                     nomeImagem: upload.uploadProps.nomeImagem,
                     urlImagem: upload.uploadProps.urlImagem || '',
                     tituloImagem: upload.uploadProps.tituloImagem || '',
@@ -159,7 +163,7 @@ const PortifolioPersistir: React.FC<{
         if (!index) return;
         setUploadItems((prevState) => {
             const updatedItems = [...prevState];
-            const position = Number(index) - 1;
+            const position = Number(index.split('_')[1]) - 1;
 
             if (position >= 0) {
                 updatedItems[position] = {
@@ -169,6 +173,8 @@ const PortifolioPersistir: React.FC<{
                         tituloImagem: tituloImagem ?? '',
                         tituloSessao: tituloSessao ?? "",
                         id: index,
+                        name: index,
+                        errorSession: index,
                     },
                 };
             }
@@ -178,12 +184,6 @@ const PortifolioPersistir: React.FC<{
         []
     );
 
-    const handleButtonClick = () => {
-        const fakeEvent = {
-            preventDefault: () => { }
-        } as React.FormEvent;
-        handleSubmit(fakeEvent);
-    };
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -200,14 +200,16 @@ const PortifolioPersistir: React.FC<{
             colaboradorPortifolioId: colaboradorPortifolioId || 0,
             lojaPortifolioId: lojaPortifolioId || 0,
             portifolioImagens: imagensAtualizadas || [],
-            tipoUsuarioId: TipoUsuarioId
+            tipoUsuarioId: TipoUsuarioId ?? Number(tipoUsuario)
 
         }
         const retorno = await PostService(portifolio, `${API_BASE_AGENDA_URL}${UrlPortifolio}`);
         retornoPost(retorno);
         enviarSatusMessage();
         setIsLoading(false);
-        limparCampos();
+        if (!retorno?.notifications || retorno?.notifications?.length === 0) {
+            limparCampos();
+        }
     }
     const retornoPost = async (retorno: ResponseItem<PortifolioItem>) => {
         if (!retorno?.notifications || retorno?.notifications?.length === 0) {
@@ -221,13 +223,25 @@ const PortifolioPersistir: React.FC<{
 
             setIsLoading(false);
         } else {
+            const errosConvertidos: ErroItem[] = retorno?.notifications?.map((n) => ({
+                Key: n.notificationProps?.Key ?? '',
+                Mensagem: n.notificationProps?.Message ?? '',
+                erroSession: n.notificationProps?.Key ?? ''
+            })) ?? [];
 
-            const messageRetorno = await RetornarMessageService(false, false, retorno?.notifications ?? [])
-            setMessageItens(messageRetorno)
+            setErros(errosConvertidos);
+            setErroTrigger(prev => prev + 1);
         }
     }
     const handleCloseMessage = () => {
         setMessage(false);
+    };
+
+    const handleFormKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
+
+        if (event.key === 'Enter') {
+            handleSubmit(event);
+        }
     };
 
     const messageProps: MensagemItens = {
@@ -240,13 +254,6 @@ const PortifolioPersistir: React.FC<{
         limparCampos();
     }
 
-    const botaoLimparProps: BotaoItens = {
-        tooltip: 'limpar',
-        width: '20px',
-        onIconClick: handleButtonClickLimpar,
-        color: 'success',
-        icon: RefreshIcon
-    };
 
     const handleDropdownChange = (e: SelectChangeEvent<string>, tipo: string) => {
         if (tipo === "colaborador") {
@@ -268,15 +275,6 @@ const PortifolioPersistir: React.FC<{
         onChange: (value: string) => setTexto(value)
     }
 
-    const botaoProps: BotaoItens = {
-        name: 'Salvar',
-        tooltip: 'Fazer o cadastro',
-        label: 'Salvar',
-        width: '200px',
-        color: 'primary',
-        onIconClick: handleButtonClick,
-        isLoading: isLoading
-    };
 
     const enviarSatusMessage = () => {
         setMessage(true)
@@ -284,226 +282,175 @@ const PortifolioPersistir: React.FC<{
             setMessage(false);
         }, 6000);
     }
-    const sessaoItemImagem: SessaoItens = {
-        nome: SessaoImagens,
-        conteudo: (
-            <>
-                <Grid container className="ContainerGrid">
-                    <div className="conteudo">
-                        <Grid item md={6} xs={12} className="gridEsquerdo">
-                            <div className="conteudoLojaPortifolioPersistirEsquerdo">
-                                <div className="sessaoImagensBanner">
-                                    <h5>{imagensSessaoBanner}</h5>
-                                </div>
-                                <div className="formItensHorizontal">
-                                    {uploadItems
-                                        .filter((item) => item.uploadProps.tituloSessao === imagensSessaoBanner)
-                                        .map((item, index) => (
-                                            <div key={index} className="formItens">
-                                                <Upload
-                                                    uploadProps={item ? item.uploadProps : {}}
-                                                    onUpload={handleImageUpload}
-                                                />
-                                            </div>
-                                        ))}
-                                </div>
-                            </div>
-                        </Grid>
 
-                        <div className="separador"></div>
-                        <Grid item md={6} xs={12} className="gridDireito">
-                            <div className="conteudoLojaPortifolioPersistirDireito">
-                                <div className="sessaoImagensBanner">
-                                    <h5>{imagensSessaoVitrine}</h5>
-                                </div>
-                                <div className="formItensHorizontal">
-                                    {uploadItems
-                                        .filter((item) => item.uploadProps?.tituloSessao === imagensSessaoVitrine)
-                                        .map((item, index) => (
-                                            <div key={index} className="formItens">
-                                                <Upload
-                                                    uploadProps={item ? item.uploadProps : {}}
-                                                    onUpload={handleImageUpload}
-                                                />
-                                            </div>
-                                        ))}
-                                    <div className="itemVazio"></div>
-                                </div>
-                            </div>
-                        </Grid>
-                    </div>
-                </Grid>
-            </>
-        )
+    const botaoProps: BotaoItens = {
+        tooltip: 'Salvar',
+        isLoading: isLoading,
+        icon: FaSave,
+        marginLeft: '4px',
+        marginRight: '4px'
+
     };
-
-    const sessaoItemTitulos: SessaoItens = {
-        nome: SessaoTitulos,
-        conteudo: (
-            <>
-                <Grid container className="ContainerGrid">
-                    <div className="conteudo">
-                        <Grid item md={6} xs={12} className="gridEsquerdo">
-                            <div className="conteudoLojaPortifolioPersistirEsquerdo conteudoMenorEsquerdo">
-                                {TipoUsuarioId?.toString() === TipoUsuarioLojaId && (
-                                    <div className="formItens-drop">
-                                        <Dropdown
-                                            dropProps={{
-                                                name: "Loja",
-                                                label: "Loja*",
-                                                itens: lojaProps ?? [],
-                                                selectedId: lojaId?.toString() || '',
-                                                onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "loja")
-                                            }}
-                                        />
-                                    </div>
-                                )}
-                                {TipoUsuarioId?.toString() === TipoUsuarioColaboradorId && (
-                                    <div className="formItens-drop">
-                                        <Dropdown
-                                            dropProps={{
-                                                name: "Colaborador",
-                                                label: "Colaborador*",
-                                                itens: colaboradorProps,
-                                                selectedId: colaboradorId || '0',
-                                                onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "colaborador"),
-                                            }}
-                                        />
-                                    </div>
-                                )}
-
-                                <div className="formItens">
-                                    <CampoTexto
-                                        textBoxProps={{
-                                            name: "Título",
-                                            value: titulo,
-                                            tooltip: "digite seu título",
-                                            label: "título",
-                                            type: 'text',
-                                            readonly: false,
-                                            maxLength: 100,
-                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setTitulo(e.target.value)
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                        </Grid>
-                        <Grid item md={6} xs={12} className="gridDireito">
-                            <div className="conteudoLojaPortifolioPersistirDireito conteudoMenorDireitoLojaPortifolio">
-                                <div className="formItens">
-                                    <CampoTexto
-                                        textBoxProps={{
-                                            name: "Subtitulo",
-                                            value: subTitulo,
-                                            tooltip: "digite seu subtitulo",
-                                            label: "subtitulo",
-                                            type: 'text',
-                                            maxLength: 100,
-                                            readonly: false,
-                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setSubTitulo(e.target.value)
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                        </Grid>
-                    </div>
-                </Grid>
-            </>
-        )
-    }
-
-    const sessaoItemTexto: SessaoItens = {
-        nome: SessaoTexto,
-        conteudo: (
-            <>
-                <Grid container className="ContainerGrid">
-                    <div className="conteudo">
-                        <Grid item md={12} xs={12}>
-                            <div className="conteudoLojaPortifolioPersistir">
-                                <EditorTexto editorItem={editorProps} />
-                            </div>
-                        </Grid>
-                    </div>
-                </Grid>
-            </>
-        )
-    }
-
-    sessoesItens.push(sessaoItemTitulos);
-    sessoesItens.push(sessaoItemImagem);
-    sessoesItens.push(sessaoItemTexto);
-
 
     return (
         <>
             <div className='messageTextLojaPortifolio'>
                 <Mensagem mensagemProps={messageProps ?? {}} />
             </div>
-            <div className="sessaoLojaPortifolio">
-                <form>
-                    <Sessao sessaoProps={sessoesItens} isOpen={isOpen || 0} ></Sessao>
 
-                    <Grid container spacing={2}>
-                        <Grid item md={3} xs={7}>
-                            <div className='formItens botaoItem'>
-                                <div className='botao'>
-                                    <Botao botaoProps={botaoLimparProps} />
-                                </div>
+            <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} id="frmProtifolio">
+                <Grid container spacing={2} className="ContainerGrid">
+                    <div className='conteudo'>
+                        <fieldset className='icone-box icone-box-form'>
+                            <legend>Portifólio</legend>
+
+                            <div className="links-login">
+                                <button onClick={handleButtonClickLimpar} className="botao-link">
+                                    <Tooltip title="limpar">
+                                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                            <FaRegTrashAlt />
+                                        </span>
+                                    </Tooltip>
+                                </button>
                             </div>
-                        </Grid>
-                        <Grid item md={7} xs={3}>
-                            <div className='formItens botaoItemSalvar'>
-                                <div className='botao'>
-                                    <Botao botaoProps={botaoProps} />
+
+                            <Grid item md={6} xs={12} className='gridEsquerdo'>
+                                <div className="conteudoPortifolioEsquerdo conteudoMenorEsquerdo">
+                                    {tipoUsuario?.toString() === TipoUsuarioLojaId && (
+                                        <div className="formItens-drop">
+                                            <Dropdown
+                                                dropProps={{
+                                                    name: "LojaColaborador",
+                                                    label: "Loja*",
+                                                    itens: lojaProps ?? [],
+                                                    selectedId: lojaId?.toString() || '',
+                                                    onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "loja"),
+                                                    erroSession: "LojaColaborador"
+                                                }}
+                                            />
+                                        </div>
+                                    )}
+                                    {tipoUsuario?.toString() === TipoUsuarioColaboradorId && (
+                                        <div className="formItens-drop">
+                                            <Dropdown
+                                                dropProps={{
+                                                    name: "LojaColaborador",
+                                                    label: "Colaborador*",
+                                                    itens: colaboradorProps,
+                                                    selectedId: colaboradorId || '0',
+                                                    onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "colaborador"),
+                                                    erroSession: "LojaColaborador"
+                                                }}
+                                            />
+                                        </div>
+                                    )}
+                                    <div className="formItens">
+                                        <CampoTexto
+                                            textBoxProps={{
+                                                name: "Titulo",
+                                                value: titulo,
+                                                tooltip: "digite seu título",
+                                                label: "título",
+                                                type: 'text',
+                                                readonly: false,
+                                                maxLength: 100,
+                                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setTitulo(e.target.value),
+                                                erroSession: "Titulo"
+                                            }}
+                                        />
+                                    </div>
+                                    <div className="formItens">
+                                        <CampoTexto
+                                            textBoxProps={{
+                                                name: "Subtitulo",
+                                                value: subTitulo,
+                                                tooltip: "digite seu subtitulo",
+                                                label: "subtitulo",
+                                                type: 'text',
+                                                maxLength: 100,
+                                                readonly: false,
+                                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setSubTitulo(e.target.value)
+                                            }}
+                                        />
+                                    </div>
+                                    <div className="formItens">
+                                        <div className="editor-protifolio">
+                                            <EditorTexto editorItem={editorProps} />
+                                        </div>
+                                    </div>
                                 </div>
+                            </Grid>
+                            <Grid item md={6} xs={12} className='gridDireito'>
+
+                                <div className="conteudoPortifolioDireito conteudoMenorDireito">
+                                    <div className="formItensHorizontal">
+                                        {uploadItems
+                                            .map((item, index) => (
+                                                <div key={index} className="formItens">
+                                                    <Upload
+                                                        uploadProps={item ? item.uploadProps : {}}
+                                                        onUpload={handleImageUpload}
+
+                                                    />
+                                                </div>
+                                            ))}
+                                        <div className="itemVazio"></div>
+                                    </div>
+                                </div>
+
+                                <div className="gridBotoes">
+                                    <div className="botao botao-salvar">
+                                        <BotaoSubmit botaoProps={botaoProps} />
+                                    </div>
+                                </div>
+                            </Grid>
+
+
+                            <div className='camposInvisiveis'>
+                                <CampoTexto
+                                    textBoxProps={{
+                                        name: "colaboradorId",
+                                        value: colaboradorId?.toString(),
+                                        type: 'hidden',
+                                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setColaboradorId(Number(e.target.value))
+                                    }} />
+
+                                <CampoTexto
+                                    textBoxProps={{
+                                        name: "lojaPortifolioId",
+                                        value: lojaPortifolioId?.toString(),
+                                        type: 'hidden',
+                                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setLojaPortifolioId(Number(e.target.value))
+                                    }} />
+
+                                <CampoTexto
+                                    textBoxProps={{
+                                        name: "colaboradorPortifolioId",
+                                        value: colaboradorPortifolioId?.toString(),
+                                        type: 'hidden',
+                                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setColaboradorPortifolioId(Number(e.target.value))
+                                    }} />
+
+                                <CampoTexto
+                                    textBoxProps={{
+                                        name: "TipoUsuarioId",
+                                        value: TipoUsuarioId?.toString(),
+                                        type: 'hidden',
+                                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setTipoUsuarioId(Number(e.target.value))
+                                    }} />
+
+                                <CampoTexto
+                                    textBoxProps={{
+                                        name: "Id",
+                                        value: idPersitir?.toString(),
+                                        type: 'hidden',
+                                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setTipoUsuarioId(Number(e.target.value))
+                                    }} />
                             </div>
-                        </Grid>
-                    </Grid>
-
-                </form>
-            </div>
-
-            <div className='camposInvisiveis'>
-                <CampoTexto
-                    textBoxProps={{
-                        name: "colaboradorId",
-                        value: colaboradorId?.toString(),
-                        type: 'hidden',
-                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setColaboradorId(Number(e.target.value))
-                    }} />
-
-                <CampoTexto
-                    textBoxProps={{
-                        name: "lojaPortifolioId",
-                        value: lojaPortifolioId?.toString(),
-                        type: 'hidden',
-                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setLojaPortifolioId(Number(e.target.value))
-                    }} />
-
-                <CampoTexto
-                    textBoxProps={{
-                        name: "colaboradorPortifolioId",
-                        value: colaboradorPortifolioId?.toString(),
-                        type: 'hidden',
-                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setColaboradorPortifolioId(Number(e.target.value))
-                    }} />
-
-                <CampoTexto
-                    textBoxProps={{
-                        name: "TipoUsuarioId",
-                        value: TipoUsuarioId?.toString(),
-                        type: 'hidden',
-                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setTipoUsuarioId(Number(e.target.value))
-                    }} />
-
-                <CampoTexto
-                    textBoxProps={{
-                        name: "Id",
-                        value: idPersitir?.toString(),
-                        type: 'hidden',
-                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setTipoUsuarioId(Number(e.target.value))
-                    }} />
-            </div>
+                        </fieldset>
+                    </div>
+                </Grid>
+            </form>
         </>
     );
 };

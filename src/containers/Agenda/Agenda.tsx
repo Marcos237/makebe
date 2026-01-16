@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { UsuarioLoginItens } from '../../Interfaces/Usuario/UsuarioLoginItens';
 import {
@@ -25,6 +25,10 @@ import { ModalItem } from "../../Interfaces/shared/modalItem";
 import { handleModalDesativar, handleUpdateClick } from "../../functions/modalFunctions";
 import { ColaboradorItens } from "../../Interfaces/Colaborador/colaboradorItem";
 import { UrlColaborador } from "../../constants/Colaborador/colaboradorConstant";
+import { useHiddenItem } from '../../hooks/useHiddenItem';
+import { Tooltip } from '@mui/material';
+import { TfiAgenda } from "react-icons/tfi";
+import { TfiLayersAlt } from "react-icons/tfi";
 import ModalGeneric from "../../componentsGenerics/modalGeneric";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import useUpdateFetch from '../../hooks/useUpdateFetch';
@@ -35,7 +39,6 @@ import Footer from "../../components/footer";
 import useFetchTipo from "../../hooks/useFetchTipo";
 import DeleteIcon from '@mui/icons-material/Delete';
 import useUpdateGrid from "../../hooks/useUpdateGrid";
-import "../../assets/styles/Agenda/agenda.css";
 import AgendaBusca from "./AgendaBusca";
 
 
@@ -47,11 +50,15 @@ const AgendaLoja: React.FC = () => {
     const [persistirItensList, setPersistirItensList] = useState<Array<PersistirItens<any>>>([]);
     const [modalOpen, setModalOpen] = useState<ModalItem>();
     const { urlParametro } = useParams();
+    const [isHiddenItem, setIsHiddenItem] = useState(false);
+    const submittingRef = useRef(false);
 
+    useHiddenItem("persistir", "lista", isHiddenItem);
 
     const tipoItem = urlParametro === "Loja" ? TipoLoja : urlParametro === "Colaborador" ? TipoColaborador : 0;
 
     const fetchAgendaData = useCallback(async (tipoAgenda?: string, page: number = 1) => {
+
         const agendaDefalt: AgendaItens = {
             id: 0, isTodoDia: false, bloqueado: false, agendaAbertaInicio: '',
             agendaAbertaFim: '', idAgendaSemanaInicio: 0, idAgendaSemanaFim: 0, idLoja: 0, tipo: Number(tipoItem)
@@ -67,7 +74,7 @@ const AgendaLoja: React.FC = () => {
                 setResultadosBusca(agendaResponse);
             }
         }
-
+        submittingRef.current = false;
     }, [resultadosBusca, tipoItem]);
 
     const usuarioData = useCallback(async () => {
@@ -128,14 +135,18 @@ const AgendaLoja: React.FC = () => {
     };
 
     const handleModalDesativarItem = useCallback(async (id: number) => {
+        if (submittingRef.current) return;
+        submittingRef.current = true;    
         handleModalDesativar(id, `${API_BASE_AGENDA_URL}${UrlAgenda}`);
+        fetchAgendaData(tipoItem.toString());
         setModalOpen(undefined);
-    }, []);
+    }, [fetchAgendaData, tipoItem]);
 
     const handleUpdateClickItem = useCallback(async (event: React.MouseEvent, agenda?: any) => {
         event.preventDefault();
         const resultado = await handleUpdateClick(agenda, `${API_BASE_AGENDA_URL}${UrlAgenda}`, Number(tipoItem));
         setAgendaItem(resultado.data);
+        setIsHiddenItem(true);
         handleScrollToTop();
     }, [tipoItem]);
 
@@ -206,40 +217,73 @@ const AgendaLoja: React.FC = () => {
 
     useFetchTipo(urlParametro ?? "", [() => fetchAgendaData(tipoItem.toString())], TipoLoja, TipoColaborador);
 
+    const handleButtonClickSalvar = () => {
+        setIsHiddenItem(true);
+    }
+
+    const handleButtonClickListar = () => {
+        setIsHiddenItem(false);
+    }
+
     return (<>
 
         <div className='banner'>
             <Banner usuarioLogado={useUsuarioLogado} />
         </div>
 
-        <Grid container className="ContainerGrid" direction="column">
-            <div className="conteudo-inLine">
-                <div className="persistir-agenda">
-                    <AgendaPersistir
-                        persistirProps={{
-                            item: agendaItem,
-                        }}
-                        persistirDropProps={persistirItensList ?? []}
-                        tipoItem={Number(tipoItem)}
-                    />
-
-                </div>
-                <div className="busca-agenda">
-
-                    <AgendaBusca
-                        selectItens={persistirItensList ?? []}
-                        tipoItem={Number(tipoItem)}
-                        onResultadosBusca={handleResultadosBusca}
-                        page={resultadosBusca?.paginaAtual ?? 1}
-                    />
-
-                </div>
-                <div className="lista-agenda">
-                    <GridViewLista gridviewProps={gridViewItens ?? {}} />
-                </div>
+        <div className="persistir">
+            <div className="links-item">
+                <button type="button" onClick={handleButtonClickListar} className="botao-link">
+                    <Tooltip title="listar Agendas">
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                            <TfiLayersAlt />
+                        </span>
+                    </Tooltip>
+                </button>
             </div>
-        </Grid>
+            <div className="form-persitir">
+                <AgendaPersistir
+                    persistirProps={{
+                        item: agendaItem,
+                    }}
+                    persistirDropProps={persistirItensList ?? []}
+                    tipoItem={Number(tipoItem)}
+                />
+            </div>
+        </div>
 
+        <div className="lista">
+            <div className="links-item">
+                <button onClick={handleButtonClickSalvar} className="botao-link">
+                    <Tooltip title="salvar agenda">
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                            <TfiAgenda />
+                        </span>
+                    </Tooltip>
+                </button>
+            </div>
+            <div className="form-persitir">
+                <AgendaBusca
+                    selectItens={persistirItensList ?? []}
+                    tipoItem={Number(tipoItem)}
+                    onResultadosBusca={handleResultadosBusca}
+                    page={resultadosBusca?.paginaAtual ?? 1}
+                />
+
+            </div>
+            <div className="grid">
+                <Grid container spacing={2} className="ContainerGrid">
+                    <div className="conteudo">
+                        <fieldset className='icone-box icone-box-form'>
+                            <legend>Lista</legend>
+                            <Grid item xs={12} md={12}>
+                                <GridViewLista gridviewProps={gridViewItens ?? {}} />
+                            </Grid>
+                        </fieldset>
+                    </div>
+                </Grid>
+            </div>
+        </div>
         <div className="modal">
             {modalOpen && <ModalGeneric modalProps={modalOpen} />}
         </div>
