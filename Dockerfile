@@ -1,17 +1,12 @@
-FROM node:20.9.0 as build
-
-WORKDIR /app
-
-COPY . /app
-
-RUN npm install
-
-RUN npm run build
+# Dockerfile (para homolog e produção)
 
 FROM node:20.9.0
 
 WORKDIR /app
 
-COPY --from=build /app /app
+COPY build ./build
 
-CMD ["tail", "-f", "/dev/null"]
+RUN npm install -g serve
+
+CMD ["serve", "-s", "build", "-l", "80"]
+
