@@ -22,7 +22,7 @@ import RecaptchaComponent from '../../components/recaptcha';
 import Upload from '../../components/upload';
 import BotaoSubmit from '../../components/submitButton';
 import CampoTexto from '../../components/textbox';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 
 import '../../assets/styles/Perfil/perfil.css';
@@ -51,31 +51,38 @@ const Perfil: React.FC = () => {
         setRecaptchaValue(value);
     };
 
-    const fetchPerfilData = async () => {
-        const response = await GetAllService(`${API_BASE_URL}${UrlUsuarioPerfil}`) as ResponseItem<UsuarioPerilItens>;
-        setId(response?.data?.id ?? '')
+    const fetchPerfilData = useCallback(async () => {
+        const response = await GetAllService(
+            `${API_BASE_URL}${UrlUsuarioPerfil}`
+        ) as ResponseItem<UsuarioPerilItens>;
+
+        setId(response?.data?.id ?? '');
         setNome(response?.data?.nome ?? '');
         setCpf(response?.data?.cpf ?? '');
-        setEmail(response?.data?.email ?? '')
-        setTelefone(response?.data?.telefone ?? '')
-        setInstagram(response?.data?.instagram ?? '')
+        setEmail(response?.data?.email ?? '');
+        setTelefone(response?.data?.telefone ?? '');
+        setInstagram(response?.data?.instagram ?? '');
+
         setUploadItem({
             uploadProps: {
                 nomeImagem: response?.data?.nomeImagem,
                 urlImagem: response?.data?.urlImagem,
-                id: "1"
+                id: "1",
             },
         });
-        if (response.data?.id !== undefined && response.data?.id !== '') {
+
+        if (response?.data?.id) {
             const sessao = await fetchUsuarioLogado();
             setUsuarioLogado(sessao);
             setLogado(true);
-        }
-        else {
+        } else {
             setLogado(false);
         }
+    }, [fetchUsuarioLogado]);
+
+    useEffect(() => {
         fetchPerfilData();
-    };
+    }, [fetchPerfilData]);
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -276,7 +283,7 @@ const Perfil: React.FC = () => {
 
                                     <div className='formItens'>
                                         <div className='botao botao-salvar'>
-                                            <BotaoSubmit     botaoProps={botaoProps} />
+                                            <BotaoSubmit botaoProps={botaoProps} />
                                         </div>
                                     </div>
 
