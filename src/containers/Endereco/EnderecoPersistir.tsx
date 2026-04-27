@@ -194,7 +194,6 @@ const EnderecoPersistir: React.FC<{
 
     };
 
-
     return <>
 
         <div className='messageTextLoja'>
@@ -207,8 +206,8 @@ const EnderecoPersistir: React.FC<{
                     <fieldset className='icone-box icone-box-form'>
                         <legend>Endereço</legend>
 
-                        <div className="links-login">
-                            <button onClick={handleButtonClickLimpar} className="botao-link">
+                        <div className="remove-item">
+                            <button onClick={handleButtonClickLimpar} className="btn-danger" type="button">
                                 <Tooltip title="limpar">
                                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                                         <FaRegTrashAlt />

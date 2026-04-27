@@ -12,6 +12,7 @@ import { getSelectedItemByTipo } from '../../functions/tipoSelectedFunction';
 import React, { useState } from "react";
 import { Tooltip } from '@mui/material';
 import { FaSearch } from "react-icons/fa";
+import { FaFilter } from "react-icons/fa";
 import Dropdown from "../../components/dropdown";
 import CampoTexto from "../../components/textbox";
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -31,10 +32,12 @@ const EnderecoBuscar: React.FC<{
         const [loja, setLoja] = useState<string>('');
         const colaboradorProps = selectItens.find((item) => item.name === "colaborador")?.selectItems ?? [];
         const lojaProps = selectItens.find((item) => item.name === "loja")?.selectItems ?? [];
+        const [mostrarFiltros, setMostrarFiltros] = useState(false);
 
         const handleButtonClick = () => {
             const fakeEvent = { preventDefault: () => { } } as React.FormEvent;
             handleSearch(fakeEvent);
+            setMostrarFiltros(false);
         };
         const handleSearch = async (event: React.FormEvent) => {
             event.preventDefault();
@@ -97,66 +100,94 @@ const EnderecoBuscar: React.FC<{
         return (
             <Grid container spacing={2} className="ContainerGrid">
                 <div className="conteudo">
-                    <fieldset className='icone-box icone-box-form'>
+                    <fieldset
+                        className={`icone-box icone-box-form ${mostrarFiltros ? 'expandido' : 'fechado'
+                            }`}
+                    >
                         <legend>Pesquisar</legend>
-                        <div className="conteudoPesquisa">
-                            <Grid container spacing={2}>
-                                <Grid item xs={10} md={4}>
 
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} className="filtro-toggle">
+
+
+                                <button
+                                    type="button"
+                                    className="btn-filtros"
+                                    onClick={() => setMostrarFiltros(prev => !prev)}
+                                >
+                                    <Tooltip title="Filtros">
+                                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                            Filtros
+                                            <FaFilter />
+                                        </span>
+                                    </Tooltip>
+                                </button>
+                            </Grid>
+
+                            {mostrarFiltros && (
+                                <>
                                     {tipoUsuarioId?.toString() === TipoUsuarioLojaId && (
-                                        <div className="formItens-drop">
-                                            <Dropdown
-                                                dropProps={{
-                                                    name: "Loja",
-                                                    label: "Loja*",
-                                                    itens: lojaProps ?? [],
-                                                    selectedId: LojaIdBusca?.toString() || '',
-                                                    onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "loja")
-                                                }}
-                                            />
-                                        </div>
+                                        <Grid item xs={12} md={4}>
+                                            <div className="formItens-drop">
+                                                <Dropdown
+                                                    dropProps={{
+                                                        name: "Loja",
+                                                        label: "Loja*",
+                                                        itens: lojaProps ?? [],
+                                                        selectedId: LojaIdBusca?.toString() || '',
+                                                        onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "loja")
+                                                    }}
+                                                />
+                                            </div>
+                                        </Grid>
                                     )}
                                     {tipoUsuarioId?.toString() === TipoUsuarioColaboradorId && (
-                                        <div className="formItens-drop">
-                                            <Dropdown
-                                                dropProps={{
-                                                    name: "Colaborador",
-                                                    label: "Colaborador*",
-                                                    itens: colaboradorProps,
-                                                    selectedId: colaboradorId || '0',
-                                                    onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "colaborador"),
+                                        <Grid item xs={12} md={4}>
+                                            <div className="formItens">
+                                                <div className="formItens-drop">
+                                                    <Dropdown
+                                                        dropProps={{
+                                                            name: "Colaborador",
+                                                            label: "Colaborador*",
+                                                            itens: colaboradorProps,
+                                                            selectedId: colaboradorId || '0',
+                                                            onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "colaborador"),
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </Grid>
+                                    )}
+
+                                    <Grid item xs={12} md={4}>
+                                        <div className="formItens">
+                                            <CampoTexto
+                                                textBoxProps={{
+                                                    name: "Logradouro",
+                                                    tooltip: "Digite seu logradouro",
+                                                    label: "Logradouro*",
+                                                    type: 'text',
+                                                    value: logradouro,
+                                                    readonly: false,
+                                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setLogradouro(e.target.value)
                                                 }}
                                             />
                                         </div>
-                                    )}
-                                </Grid>
-                                <Grid item xs={10} md={4}>
-                                    <div className="formItens">
-                                        <CampoTexto
-                                            textBoxProps={{
-                                                name: "Logradouro",
-                                                tooltip: "Digite seu logradouro",
-                                                label: "Logradouro*",
-                                                type: 'text',
-                                                value: logradouro,
-                                                readonly: false,
-                                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setLogradouro(e.target.value)
-                                            }}
-                                        />
-                                    </div>
-                                </Grid>
-                                <Grid container item xs={11} justifyContent="flex-end" spacing={2}>
-                                    <Grid item>
+                                    </Grid>
+
+
+
+                                    <Grid item xs={12}>
                                         <div className='botaoBuscar'>
                                             <div className="link-busca">
-                                                <button onClick={handleButtonClick} className="botao-link">
+                                                <button onClick={handleButtonClick} className="btn-busca">
                                                     <Tooltip title="buscar">
                                                         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                                                             <FaSearch />
                                                         </span>
                                                     </Tooltip>
                                                 </button>
-                                                <button onClick={handleButtonClickLimpar} className="botao-link">
+                                                <button onClick={handleButtonClickLimpar} className="btn-limpar">
                                                     <Tooltip title="limpar">
                                                         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                                                             <RefreshIcon />
@@ -166,12 +197,15 @@ const EnderecoBuscar: React.FC<{
                                             </div>
                                         </div>
                                     </Grid>
-                                </Grid>
-                            </Grid>
-                        </div>
+
+                                </>
+
+                            )}
+
+                        </Grid>
                     </fieldset>
                 </div>
-            </Grid>
+            </Grid >
         );
     };
 

@@ -4,12 +4,12 @@ import '../assets/styles/shared/icone.css';
 import { IconeItens } from '../Interfaces/Icone/icone';
 
 const Icone: React.FC<{ iconeProps: IconeItens }> = ({ iconeProps }) => {
-  const { icone, dialogo, cor } = iconeProps;
+  const { icone, dialogo, cor, classItem } = iconeProps;
 
   return (
     <div className="placeholder">
       {icone && (
-        <span className="icone" style={{ color: cor }}>
+        <span className={`${classItem ?? ''}`} style={{ color: cor }}>
           {icone}
         </span>
       )}

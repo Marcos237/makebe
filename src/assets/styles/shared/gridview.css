@@ -122,7 +122,6 @@
     color: #bbb;
 }
 
-
 @media (max-width: 900px) {
     .grid-header {
         display: none;

@@ -37,19 +37,19 @@ const PortifolioPersistir: React.FC<{
     tipoUsuario?: string;
 }> = ({ persistirProps, tiposPortifolioImagem, persistirDropProps, tipoUsuario }) => {
     const [isMessage, setMessage] = useState<boolean>(false);
-    const [messageItens, setMessageItens] = useState<MensagemItens>();
-    const [idPersitir, setId] = useState<number>();
+    const [idPersitir, setId] = useState<number>(0);
+    const [messageItens, setMessageItens] = useState<MensagemItens>({} as MensagemItens);
     const [titulo, setTitulo] = useState<string>('');
     const [subTitulo, setSubTitulo] = useState<string>('');
     const [texto, setTexto] = useState<string>('');
-    const [lojaId, setLojaId] = useState<number>();
+    const [lojaId, setLojaId] = useState<number>(0);
     const [imagens, setImagens] = useState<PortifolioImagemItem[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [uploadItems, setUploadItems] = useState<Array<UploadItens>>([]);
-    const [colaboradorId, setColaboradorId] = useState<number>();
-    const [colaboradorPortifolioId, setColaboradorPortifolioId] = useState<number>();
-    const [lojaPortifolioId, setLojaPortifolioId] = useState<number>();
-    const [TipoUsuarioId, setTipoUsuarioId] = useState<number>();
+    const [colaboradorId, setColaboradorId] = useState<number>(0);
+    const [colaboradorPortifolioId, setColaboradorPortifolioId] = useState<number>(0);
+    const [lojaPortifolioId, setLojaPortifolioId] = useState<number>(0);
+    const [TipoUsuarioId, setTipoUsuarioId] = useState<number>(0);
     const colaboradorProps = persistirDropProps.find((item) => item.name === "colaborador")?.selectItems ?? [];
     const lojaProps = persistirDropProps.find((item) => item.name === "loja")?.selectItems ?? [];
     const portifolioImagemItem: PortifolioImagemItem[] = useMemo(() => {
@@ -57,6 +57,7 @@ const PortifolioPersistir: React.FC<{
     }, [persistirProps]);
     const [erros, setErros] = useState<ErroItem[]>([]);
     const [erroTrigger, setErroTrigger] = useState(0);
+
 
     useFormErros(erros, erroTrigger);
 
@@ -68,10 +69,10 @@ const PortifolioPersistir: React.FC<{
         setSubTitulo(persistirProps?.item?.subTitulo ?? '');
         setTexto(persistirProps?.item?.texto ?? '');
         setImagens(portifolioImagemItem);
-        setColaboradorId(persistirProps?.item?.colaboradorId);
-        setColaboradorPortifolioId(persistirProps?.item?.colaboradorPortifolioId);
-        setLojaPortifolioId(persistirProps?.item?.lojaPortifolioId);
-        setTipoUsuarioId(Number(tipoUsuario));
+        setColaboradorId(persistirProps?.item?.colaboradorId ?? 0);
+        setColaboradorPortifolioId(persistirProps?.item?.colaboradorPortifolioId ?? 0);
+        setLojaPortifolioId(persistirProps?.item?.lojaPortifolioId ?? 0);
+        setTipoUsuarioId(Number(tipoUsuario ?? ""));
 
         const uploadItemsRetorno: UploadItens[] = [];
         tiposPortifolioImagem.forEach((tipos, index) => {
@@ -304,8 +305,9 @@ const PortifolioPersistir: React.FC<{
                         <fieldset className='icone-box icone-box-form'>
                             <legend>Portifólio</legend>
 
-                            <div className="links-login">
-                                <button onClick={handleButtonClickLimpar} className="botao-link">
+
+                            <div className="remove-item">
+                                <button onClick={handleButtonClickLimpar} className="btn-danger" type="button">
                                     <Tooltip title="limpar">
                                         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                                             <FaRegTrashAlt />
@@ -380,7 +382,7 @@ const PortifolioPersistir: React.FC<{
                                     </div>
                                 </div>
                             </Grid>
-                            <Grid item md={6} xs={12} className='gridDireito'>
+                            <Grid item md={6} xs={12} className='gridDireito grid-direito-custom'>
 
                                 <div className="conteudoPortifolioDireito conteudoMenorDireito">
                                     <div className="formItensHorizontal">

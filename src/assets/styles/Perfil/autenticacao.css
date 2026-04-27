@@ -1,8 +1,3 @@
-.conteudoAutenticacao {
-    height: 100%; 
-    width: 100%;
-}
-
 .itemAutenticacao {
     display: flex;
     justify-content: center;
@@ -19,6 +14,15 @@
     margin: 10px;
     box-sizing: border-box;
     text-align: start;
+
+}
+
+a {
+    color: #4DA3FF;
+}
+
+a:hover {
+    color: #78B9FF;
 }
 
 .textoAutenticacao p {
@@ -28,8 +32,16 @@
 
 }
 
-.botaoAutenticacao, .recaptcha {
-        display: flex;
-        justify-content: center;
-        padding: 24px;
+.botaoAutenticacao {
+    display: flex;
+    justify-content: center;
+    padding: 24px;
+}
+
+@media (max-width: 900px) {
+
+    .textoAutenticacao {
+        max-width: 285px;
+    }
+
 }

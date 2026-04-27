@@ -2,25 +2,24 @@ import React, { useState } from 'react';
 import { useParams } from "react-router-dom";
 import { AutenticacaoItens } from "../../Interfaces/Usuario/AutenticacaoItens";
 import { AtivarUsuario, ReenviatEmail, UrlAutenticacaoDoisFatores } from '../../constants/Usuario/autenticacaoConstant';
-import { BotaoItens } from '../../Interfaces/Botao/botao';
+import { Tooltip } from '@mui/material';
 import { PutService } from '../../services/shared/putService';
 import { RECAPTCHA_SITE_KEY } from '../../config/apiConfig';
 import { Grid } from '@mui/material';
 import { API_BASE_URL } from '../../config/apiConfig';
 import { FaPlay } from 'react-icons/fa';
 import RecaptchaComponent from '../../components/recaptcha';
-import Botao from '../../components/button';
 import Banner from '../../components/banner';
 import Footer from '../../components/footer';
 import '../../assets/styles/Perfil/autenticacao.css'
 
 
 const Autenticacao: React.FC = () => {
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
     const [isVisibleReevia, setIsVisibleReevia] = useState(false);
     const [isVisibleLogin, setIsVisibleLogin] = useState(false);
+    const [ativaDesativa, setAtivaDesativa] = useState<string>("ativar");
+    const [classeDesativa, setClasseDesativa] = useState<string>("");
 
 
     const handleRecaptchaChange = (value: string | null) => {
@@ -33,28 +32,25 @@ const Autenticacao: React.FC = () => {
         recaptcha: recaptchaValue ?? ''
     };
 
-    const handleButtonClick = async () => {
-        setIsLoading(true);
-        setIsDisabled(false);
+    const handleButtonClick = async (value : string) => {
+
+        if (value === "readonly") return;
+
 
         const retorno = await PutService(autenticacaoItens ?? {}, `${API_BASE_URL}${UrlAutenticacaoDoisFatores}`);
         if (!retorno?.notifications || retorno?.notifications?.length === 0) {
-            setIsDisabled(true);
-            setIsLoading(true);
+
             setIsVisibleLogin(true)
+            setIsVisibleReevia(false)
+            setAtivaDesativa("Ativado")
+            setClasseDesativa("readonly")
         } else {
-            setIsLoading(false);
+
             setIsVisibleReevia(true)
+            setIsVisibleLogin(false)
+            setClasseDesativa("readonly")
         }
     }
-
-    const botaoProps: BotaoItens = {
-        tooltip: 'Ativar',
-        onIconClick: handleButtonClick,
-        icon: FaPlay,
-        isLoading: isLoading,
-        isDisable: isDisabled
-    };
 
 
     return (
@@ -64,30 +60,48 @@ const Autenticacao: React.FC = () => {
             </div>
 
 
-            <Grid container className="ContainerGrid">
-                <div className='conteudo'>
-                    <div className='icone-box'>
-                        <div className='itemAutenticacao'>
-                            <div className='textoAutenticacao'>
+            <div className="form-persitir form-custom">
+                <Grid container spacing={2} className="ContainerGrid grid-custom">
+                    <div className="conteudo">
+                        <fieldset
+                            className={'icone-box icone-box-form expandido'}>
+                            <legend>{AtivarUsuario}</legend>
+                            <div className='itemAutenticacao'>
+                                <div className='textoAutenticacao'>
 
-                                {isVisibleLogin && (
-                                    <p>{AtivarUsuario} <a href='/login'>Clique aqui para fazer o login</a></p>
-                                )}
-                                {isVisibleReevia && (
-                                    <p>{ReenviatEmail} <a href='/ReenviaAutenticacao'>Clique aqui</a></p>
-                                )}
+                                    {isVisibleLogin && (
+                                        <p><a href='/login'>Clique aqui para fazer o login</a></p>
+                                    )}
+                                    {isVisibleReevia && (
+                                        <p>{ReenviatEmail} <a href='/ReenviaAutenticacao'>Clique aqui</a></p>
+                                    )}
 
-                                <div className='recaptcha'>
-                                    <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
-                                </div>
-                                <div className='botao botaoAutenticacao'>
-                                    <Botao botaoProps={botaoProps}></Botao>
+                                    <div className='recaptcha'>
+                                        <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className={`btn-filtros ${classeDesativa}`}
+                                        onClick={() => handleButtonClick(classeDesativa)
+
+                                        }
+                                    >
+                                        <Tooltip title="Filtros">
+                                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                                {ativaDesativa}
+                                                <FaPlay />
+                                            </span>
+                                        </Tooltip>
+                                    </button>
+
                                 </div>
                             </div>
-                        </div>
+
+                        </fieldset>
                     </div>
-                </div>
-            </Grid>
+                </Grid>
+            </div>
+
 
             <div>
                 <Footer />

@@ -168,7 +168,6 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
         }}
         MenuListProps={{ 'aria-labelledby': `fade-button-${item.id}` }}
         TransitionProps={{ timeout: 100 }}
-        disablePortal
         keepMounted
         disableScrollLock
         PaperProps={{ sx: { willChange: 'transform,opacity' } }}
@@ -203,7 +202,6 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
                     }}
                     anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                     transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-                    disablePortal
                     keepMounted
                     disableScrollLock
                     TransitionProps={{ timeout: 100 }}
@@ -289,7 +287,6 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
                   open={Boolean(safeAnchor(menuElemento))}
                   onClose={handleMenuClose}
                   anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                  disablePortal
                   keepMounted
                   disableScrollLock
                   TransitionProps={{ timeout: 100 }}

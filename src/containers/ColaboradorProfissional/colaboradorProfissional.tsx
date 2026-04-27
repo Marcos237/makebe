@@ -56,7 +56,7 @@ const ColaboradorProfissional: React.FC = () => {
         if (!resultadosBusca || page !== undefined) {
             paginacao.objetos = []
             const colaboradorReponse = await GetPaginadoService(paginacao, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`);
-            
+
             if (colaboradorReponse) {
                 setResultadosBusca(colaboradorReponse);
             }
@@ -142,6 +142,7 @@ const ColaboradorProfissional: React.FC = () => {
             label: 'Edit',
             icon: <EditRoundedIcon />,
             href: '#',
+            class: "btn-busca",
             onClick: handleUpdateClick
         },
         {
@@ -149,6 +150,7 @@ const ColaboradorProfissional: React.FC = () => {
             label: 'Delete',
             icon: <DeleteIcon />,
             href: '/delete',
+            class: "btn-danger",
             onClick: handleDeleteClick
         }
     ]), [handleUpdateClick, handleDeleteClick]);
@@ -220,55 +222,64 @@ const ColaboradorProfissional: React.FC = () => {
             <Banner usuarioLogado={useUsuarioLogado} />
         </div>
 
-            <div className="persistir">
-                <div className="links-item">
-                    <button onClick={handleButtonClickListar} className="botao-link">
-                        <Tooltip title="listar">
-                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                                <FaUsers />
-                            </span>
-                        </Tooltip>
-                    </button>
-                </div>
-                    <ColaboradorPersistir
-                        persistirProps={{
-                            item: colaboradorProfissionalItem,
-                        }}
-                        persistirDropProps={persistirItensList ?? []}
-                    />
+        <div className="persistir">
+            <div className="nav-item">
+                <button onClick={handleButtonClickListar}
+                    className="btn-padrao"
+                    type="button">
+                    <Tooltip title="listar">
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                            <FaUsers />
+                        </span>
+                    </Tooltip>
+                </button>
             </div>
+            <div className="form-persitir">
+                <ColaboradorPersistir
+                    persistirProps={{
+                        item: colaboradorProfissionalItem,
+                    }}
+                    persistirDropProps={persistirItensList ?? []}
+                />
+            </div>
+        </div>
 
-            <div className="lista">
-                <div className="links-item">
-                    <button onClick={handleButtonClickSalvar} className="botao-link">
-                        <Tooltip title="novo">
-                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                                <FaUserTie />
-                            </span>
-                        </Tooltip>
-                    </button>
-                </div>
-                <div className="form-persitir">
-                    <ColaboradorProfissionalBusca
-                        selectItens={persistirItensList ?? []}
-                        onResultadosBusca={handleResultadosBusca}
-                    />
-                </div>
-                <div className="grid">
+
+        <div className="lista">
+            <div className="nav-item">
+                <button
+                    onClick={handleButtonClickSalvar}
+                    className="btn-padrao"
+                    type="button">
+                    <Tooltip title="novo">
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                            <FaUserTie />
+                        </span>
+                    </Tooltip>
+                </button>
+            </div>
+            <div className="form-persitir">
+                <ColaboradorProfissionalBusca
+                    selectItens={persistirItensList ?? []}
+                    onResultadosBusca={handleResultadosBusca}
+                />
+            </div>
+            <div className="form-persitir">
+
+                <Grid container spacing={2} className="ContainerGrid">
                     <div className="conteudo">
-                        <Grid container spacing={2} className="ContainerGrid">
 
-                            <fieldset className='icone-box icone-box-form'>
-                                <legend>Lista</legend>
-                                <Grid item xs={12} md={12}>
-                                    <GridViewLista gridviewProps={gridViewItens ?? {}} />
-                                </Grid>
-                            </fieldset>
-                        </Grid>
+                        <fieldset className='icone-box icone-box-form'>
+                            <legend>Lista</legend>
+                            <Grid item xs={12} md={12}>
+                                <GridViewLista gridviewProps={gridViewItens ?? {}} />
+                            </Grid>
+                        </fieldset>
+
                     </div>
-                </div>
-            </div>
-
+                </Grid>
+            </div >
+        </div >
         <div className="modal">
             {modalOpen && <ModalGeneric modalProps={modalOpen} />}
         </div>

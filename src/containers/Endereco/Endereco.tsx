@@ -104,13 +104,15 @@ const Endereco: React.FC = () => {
             label: 'Edit',
             icon: <EditRoundedIcon />,
             href: '#',
+            class: "btn-busca",
             onClick: handleUpdateClick
         },
         {
             id: 2,
             label: 'Delete',
             icon: <DeleteIcon />,
-            href: '#',
+            href: '/delete',
+            class: "btn-danger",
             onClick: handleDeleteClick
         }
     ]), [handleUpdateClick, handleDeleteClick]);
@@ -200,8 +202,10 @@ const Endereco: React.FC = () => {
 
 
             <div className="persistir">
-                <div className="links-item">
-                    <button onClick={handleButtonClickListar} className="botao-link">
+                <div className="nav-item">
+                    <button onClick={handleButtonClickListar}
+                        className="btn-padrao"
+                        type="button">
                         <Tooltip title="listar">
                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                                 <FaThList />
@@ -211,12 +215,15 @@ const Endereco: React.FC = () => {
                 </div>
                 <div className="form-persitir">
                     <EnderecoPersistir persistirProps={{ item: enderecoItem }} persistirDropProps={persistirItensList} tipoUsuario={tipoUsuarioId} />
-                </div>               
+                </div>
             </div>
-            
+
             <div className="lista">
-                <div className="links-item">
-                    <button onClick={handleButtonClickSalvar} className="botao-link">
+                <div className="nav-item">
+                    <button
+                        onClick={handleButtonClickSalvar}
+                        className="btn-padrao"
+                        type="button">
                         <Tooltip title="novo">
                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                                 <FaMapLocationDot />
@@ -224,7 +231,6 @@ const Endereco: React.FC = () => {
                         </Tooltip>
                     </button>
                 </div>
-
                 <div className="form-persitir">
                     <EnderecoBuscar
                         selectItens={persistirItensList ?? []}
@@ -232,22 +238,23 @@ const Endereco: React.FC = () => {
                         onResultadosBusca={handleResultadosBusca}
                         page={resultadosBusca?.paginaAtual ?? 1}
                     />
-
                 </div>
-                <div className="grid">
+                <div className="form-persitir">
+
                     <Grid container spacing={2} className="ContainerGrid">
                         <div className="conteudo">
+
                             <fieldset className='icone-box icone-box-form'>
                                 <legend>Lista</legend>
                                 <Grid item xs={12} md={12}>
                                     <GridViewLista gridviewProps={gridViewItens ?? {}} />
                                 </Grid>
                             </fieldset>
+
                         </div>
                     </Grid>
-                </div>
-            </div>
-
+                </div >
+            </div >
             <div className="modal">
                 {modalOpen && <ModalGeneric modalProps={modalOpen} />}
             </div>

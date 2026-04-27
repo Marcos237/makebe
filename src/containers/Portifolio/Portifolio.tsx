@@ -140,6 +140,7 @@ const Portifolio: React.FC = () => {
             label: 'Edit',
             icon: <EditRoundedIcon />,
             href: '#',
+            class: "btn-busca",
             onClick: handleUpdateClick
         },
         {
@@ -147,6 +148,7 @@ const Portifolio: React.FC = () => {
             label: 'Delete',
             icon: <DeleteIcon />,
             href: '/delete',
+            class: "btn-danger",
             onClick: handleDeleteClick
         }
     ]), [handleUpdateClick, handleDeleteClick]);
@@ -218,8 +220,10 @@ const Portifolio: React.FC = () => {
         </div>
 
         <div className="persistir">
-            <div className="links-item">
-                <button onClick={handleButtonClickListar} className="botao-link">
+            <div className="nav-item">
+                <button onClick={handleButtonClickListar}
+                    className="btn-padrao"
+                    type="button">
                     <Tooltip title="listar">
                         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                             <FaThList />
@@ -227,18 +231,23 @@ const Portifolio: React.FC = () => {
                     </Tooltip>
                 </button>
             </div>
-            <div className="form-persitir">
-                <PortifolioPersistir persistirProps={{ item: portifolioitem }}
-                    tiposPortifolioImagem={tipoPortifolioImagem}
-                    persistirDropProps={persistirItensList}
-                    tipoUsuario={tipoUsuarioId}
-                />
 
+
+            <div className="persistir">
+                <div className="form-persitir">
+                    <PortifolioPersistir persistirProps={{ item: portifolioitem }}
+                        tiposPortifolioImagem={tipoPortifolioImagem}
+                        persistirDropProps={persistirItensList}
+                        tipoUsuario={tipoUsuarioId}
+                    />
+                </div>
             </div>
         </div>
+
         <div className="lista">
-            <div className="links-item">
-                <button onClick={handleButtonClickSalvar} className="botao-link">
+            <div className="nav-item">
+                <button onClick={handleButtonClickSalvar}
+                    className="btn-padrao">
                     <Tooltip title="novo">
                         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                             <FaFolderOpen />
@@ -246,28 +255,28 @@ const Portifolio: React.FC = () => {
                     </Tooltip>
                 </button>
             </div>
-
             <div className="form-persitir">
                 <PortifolioBusca
                     selectItens={persistirItensList ?? []}
                     tipoUsuarioId={tipoUsuarioId}
                     onResultadosBusca={handleResultadosBusca} />
             </div>
+            <div className="form-persitir">
 
-            <div className="grid">
                 <Grid container spacing={2} className="ContainerGrid">
                     <div className="conteudo">
+
                         <fieldset className='icone-box icone-box-form'>
                             <legend>Lista</legend>
                             <Grid item xs={12} md={12}>
                                 <GridViewLista gridviewProps={gridViewItens ?? {}} />
                             </Grid>
                         </fieldset>
+
                     </div>
                 </Grid>
-            </div>
-        </div>
-
+            </div >
+        </div >
         <div className="modal">
             {modalOpen && <ModalGeneric modalProps={modalOpen} />}
         </div>

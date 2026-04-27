@@ -69,7 +69,7 @@ const GridViewLista: React.FC<{ gridviewProps: GrigViewItens<any> }> = ({ gridvi
                         {gridviewProps.actionButtons?.map((button) => (
                             <div key={button.id} className="buttons-itens">
                                 <a href={button.href} onClick={(event) => button.onClick?.(event, item)}>
-                                    <IconButton aria-label={button.label}>
+                                    <IconButton aria-label={button.label} className={button.class}>
                                         {button.icon}
                                     </IconButton>
                                 </a>

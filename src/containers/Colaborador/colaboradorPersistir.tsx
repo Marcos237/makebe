@@ -26,7 +26,6 @@ import Upload from '../../components/upload';
 import BotaoSubmit from '../../components/submitButton';
 import updatePersistirPrev from "../../hooks/useUpdatePersistirPrev";
 
-import '../../assets/styles/Colaborador/colaborador.css';
 
 const ColaboradorPersistir: React.FC<{
     persistirProps: PersistirItens<ColaboradorItens>;
@@ -201,12 +200,13 @@ const ColaboradorPersistir: React.FC<{
 
         <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} id="frmColaborador">
             <Grid container spacing={2} className="ContainerGrid">
+
                 <div className='conteudo'>
                     <fieldset className='icone-box icone-box-form'>
                         <legend>{usuario}</legend>
-
-                        <div className="links-login">
-                            <button onClick={handleButtonClickLimpar} className="botao-link">
+                        
+                        <div className="remove-item">
+                            <button onClick={handleButtonClickLimpar} className="btn-danger" type="button">
                                 <Tooltip title="limpar">
                                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                                         <FaRegTrashAlt />
@@ -216,7 +216,8 @@ const ColaboradorPersistir: React.FC<{
                         </div>
 
                         <Grid item md={6} xs={12} className='gridEsquerdo'>
-                            <div className="conteudoEsquerdo conteudoMenorEsquerdo">
+                            <div className='conteudoMenorEsquerdo conteudoMenorColaboradorEsquerdo'>
+
                                 <div className='formItens-imagem'>
                                     <Upload uploadProps={uploadItem.uploadProps} onUpload={handleImageUpload} />
                                 </div>
@@ -229,7 +230,7 @@ const ColaboradorPersistir: React.FC<{
                                             value: nome,
                                             type: 'text',
                                             onChange: (e: React.ChangeEvent<HTMLInputElement>) => setNome(e.target.value),
-                                            erroSession:"Nome"
+                                            erroSession: "Nome"
                                         }}
                                     />
                                 </div>
@@ -244,7 +245,7 @@ const ColaboradorPersistir: React.FC<{
                                             mask: cpfMaskConst,
                                             readonly: readOnlyItem,
                                             onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCpf(e.target.value),
-                                            erroSession:"CPF"
+                                            erroSession: "CPF"
 
                                         }}
                                     />
@@ -274,7 +275,7 @@ const ColaboradorPersistir: React.FC<{
                                             type: 'text',
                                             readonly: readOnlyItem,
                                             onChange: (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value),
-                                            erroSession:"Email"
+                                            erroSession: "Email"
                                         }}
                                     />
                                 </div>
@@ -282,9 +283,9 @@ const ColaboradorPersistir: React.FC<{
                         </Grid>
                         <div className="separador"></div>
                         <Grid item md={6} xs={12} className='gridDireito'>
-                            <div className="conteudoDireitoColaborador">
+                            <div className="conteudoMenorDireito conteudoDireitoColaborador">
                                 {tipoItem?.toString() !== TipoCliente && (
-                                    <div className="formItens-drop">
+                                    <div className="formItens">
                                         <Dropdown
                                             dropProps={{
                                                 name: "PermissaoId",
@@ -292,7 +293,7 @@ const ColaboradorPersistir: React.FC<{
                                                 itens: persistirProps.selectItems ?? [],
                                                 selectedId: permissaoId || '',
                                                 onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "permissao"),
-                                                erroSession:"PermissaoId"
+                                                erroSession: "PermissaoId"
                                             }}
                                         />
                                     </div>
@@ -310,7 +311,7 @@ const ColaboradorPersistir: React.FC<{
                                     />
                                 </div>
                                 {tipoItem?.toString() !== TipoCliente && (
-                                    <div className="formItens-drop">
+                                    <div className="formItens switch-item">
                                         <SwitchButton switchProps={switchButton} />
                                     </div>
                                 )}

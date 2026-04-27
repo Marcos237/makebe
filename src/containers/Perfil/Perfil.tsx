@@ -159,153 +159,147 @@ const Perfil: React.FC = () => {
             <div className='banner'>
                 <Banner usuarioLogado={useUsuarioLogadoItem} />
             </div>
-            <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} id="frmPerfil">
+            <div className="form-persitir">
                 <Grid container spacing={2} className="ContainerGrid">
-                    <div className='conteudo'>
-                        <fieldset className='icone-box icone-box-form'>
+                    <div className="conteudo">
+                        <fieldset
+                            className={'icone-box icone-box-form expandido'}>
                             <legend>Perfil</legend>
-                            <Grid item md={6} xs={12} className='gridEsquerdo'>
-                                <div className='conteudoEsquerdoPerfil conteudoMenorEsquerdo'>
-                                    <div className='formItens-imagem'>
-                                        <Upload uploadProps={uploadItem.uploadProps} onUpload={handleImageUpload} />
-                                    </div>
-                                    <div className='formItens'>
-                                        <CampoTexto
-                                            textBoxProps={{
-                                                name: "Nome",
-                                                tooltip: "digite seu nome",
-                                                label: "Nome*",
-                                                value: nome,
-                                                type: 'text',
-                                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setNome(e.target.value),
-                                                erroSession: "Nome"
-                                            }}
-                                        />
-                                    </div>
-                                    <div className='formItens'>
-                                        <CampoTexto
-                                            textBoxProps={{
-                                                name: "Cpf",
-                                                tooltip: "digite seu CPF",
-                                                label: "CPF*",
-                                                value: cpf,
-                                                type: 'text',
-                                                mask: cpfMaskConst,
-                                                readonly: isLogado,
-                                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCpf(e.target.value),
-                                                erroSession: "CPF"
+                            <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} id="frmPerfil">
+                                <Grid item md={6} xs={12} className='gridEsquerdo'>
+                                    <div className='conteudoEsquerdoPerfil conteudoMenorEsquerdo'>
+                                        <div className='formItens-imagem'>
+                                            <Upload uploadProps={uploadItem.uploadProps} onUpload={handleImageUpload} />
+                                        </div>
+                                        <div className='formItens'>
+                                            <CampoTexto
+                                                textBoxProps={{
+                                                    name: "Nome",
+                                                    tooltip: "digite seu nome",
+                                                    label: "Nome*",
+                                                    value: nome,
+                                                    type: 'text',
+                                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setNome(e.target.value),
+                                                    erroSession: "Nome"
+                                                }}
+                                            />
+                                        </div>
+                                        <div className='formItens'>
+                                            <CampoTexto
+                                                textBoxProps={{
+                                                    name: "Cpf",
+                                                    tooltip: "digite seu CPF",
+                                                    label: "CPF*",
+                                                    value: cpf,
+                                                    type: 'text',
+                                                    mask: cpfMaskConst,
+                                                    readonly: isLogado,
+                                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCpf(e.target.value),
+                                                    erroSession: "CPF"
 
-                                            }}
-                                        />
-                                    </div>
-                                    <div className='formItens'>
-                                        <CampoTexto
-                                            textBoxProps={{
-                                                name: "Telefone",
-                                                tooltip: "digite seu Telefone",
-                                                label: "Telefone*",
-                                                value: telefone,
-                                                type: 'text',
-                                                mask: foneMaskConst(telefone),
-                                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setTelefone(e.target.value),
-                                                erroSession: "Telefone"
-                                            }}
-                                        />
-                                    </div>
+                                                }}
+                                            />
+                                        </div>
+                                        <div className='formItens'>
+                                            <CampoTexto
+                                                textBoxProps={{
+                                                    name: "Telefone",
+                                                    tooltip: "digite seu Telefone",
+                                                    label: "Telefone*",
+                                                    value: telefone,
+                                                    type: 'text',
+                                                    mask: foneMaskConst(telefone),
+                                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setTelefone(e.target.value),
+                                                    erroSession: "Telefone"
+                                                }}
+                                            />
+                                        </div>
 
-                                    <div className='formItens'>
-                                        <CampoTexto
-                                            textBoxProps={{
-                                                name: "Email",
-                                                tooltip: "digite seu Email",
-                                                label: "Email*",
-                                                value: email,
-                                                type: 'text',
-                                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value),
-                                                erroSession: "Email"
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-                            </Grid>
-                            <div className="separador"></div>
-                            <Grid item md={6} xs={12} className='gridDireito'>
-                                <div className='conteudoDiretirPerfil conteudoMenorDireito'>
-                                    <div className="formItens">
-                                        <CampoTexto
-                                            textBoxProps={{
-                                                name: "Instagram",
-                                                tooltip: "digite seu Instagram",
-                                                label: "Instagram",
-                                                value: instagram,
-                                                type: 'text',
-                                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setInstagram(e.target.value)
-                                            }}
-                                        />
-                                    </div>
-
-                                    {!isLogado && (
-                                        <>
-                                            <div className="formItens">
-                                                <CampoTexto
-                                                    textBoxProps={{
-                                                        name: "Senha",
-                                                        tooltip: "digite sua senha",
-                                                        label: "Senha",
-                                                        value: senha,
-                                                        type: 'password',
-                                                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setSenha(e.target.value),
-                                                        erroSession: "Senha"
-                                                    }}
-                                                />
-                                            </div>
-
-                                            <div className="formItens">
-                                                <CampoTexto
-                                                    textBoxProps={{
-                                                        name: "ConfirmaSenha",
-                                                        tooltip: "digite sua confirmação de senha",
-                                                        label: "confirmação da senha",
-                                                        value: confirmacaoSenha,
-                                                        type: 'password',
-                                                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setConfirmacaoSenha(e.target.value),
-                                                        erroSession: "ConfirmaSenha"
-                                                    }}
-                                                />
-                                            </div>
-                                        </>
-                                    )}
-
-
-                                    <div className='recaptcha'>
-                                        <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
-                                    </div>
-
-                                    <div className='formItens'>
-                                        <div className='botao botao-salvar'>
-                                            <BotaoSubmit botaoProps={botaoProps} />
+                                        <div className='formItens'>
+                                            <CampoTexto
+                                                textBoxProps={{
+                                                    name: "Email",
+                                                    tooltip: "digite seu Email",
+                                                    label: "Email*",
+                                                    value: email,
+                                                    type: 'text',
+                                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value),
+                                                    erroSession: "Email"
+                                                }}
+                                            />
                                         </div>
                                     </div>
+                                </Grid>
+                                <div className="separador"></div>
+                                <Grid item md={6} xs={12} className='gridDireito'>
+                                    <div className='conteudoDiretirPerfil conteudoMenorDireito'>
+                                        <div className="formItens">
+                                            <CampoTexto
+                                                textBoxProps={{
+                                                    name: "Instagram",
+                                                    tooltip: "digite seu Instagram",
+                                                    label: "Instagram",
+                                                    value: instagram,
+                                                    type: 'text',
+                                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setInstagram(e.target.value)
+                                                }}
+                                            />
+                                        </div>
 
-                                </div>
-                            </Grid>
-                        </fieldset >
+                                        {!isLogado && (
+                                            <>
+                                                <div className="formItens">
+                                                    <CampoTexto
+                                                        textBoxProps={{
+                                                            name: "Senha",
+                                                            tooltip: "digite sua senha",
+                                                            label: "Senha",
+                                                            value: senha,
+                                                            type: 'password',
+                                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setSenha(e.target.value),
+                                                            erroSession: "Senha"
+                                                        }}
+                                                    />
+                                                </div>
+
+                                                <div className="formItens">
+                                                    <CampoTexto
+                                                        textBoxProps={{
+                                                            name: "ConfirmaSenha",
+                                                            tooltip: "digite sua confirmação de senha",
+                                                            label: "confirmação da senha",
+                                                            value: confirmacaoSenha,
+                                                            type: 'password',
+                                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setConfirmacaoSenha(e.target.value),
+                                                            erroSession: "ConfirmaSenha"
+                                                        }}
+                                                    />
+                                                </div>
+                                            </>
+                                        )}
+
+
+                                        <div className='recaptcha'>
+                                            <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
+                                        </div>
+
+                                        <div className='formItens'>
+                                            <div className='botao botao-salvar'>
+                                                <BotaoSubmit botaoProps={botaoProps} />
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </Grid>
+                            </form>
+                        </fieldset>
                     </div>
-                </Grid >
-                <div className='camposInvisiveis'>
-                    <CampoTexto
-                        textBoxProps={{
-                            name: "id",
-                            value: id,
-                            type: 'hidden',
-                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setId(e.target.value)
-                        }} />
-                </div>
-            </form >
+                </Grid>
+            </div>
 
-            < div >
+            <div className='footer-custom'>
                 <Footer />
-            </div >
+            </div>
         </>
     );
 }

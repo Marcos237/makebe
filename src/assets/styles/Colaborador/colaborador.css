@@ -1,4 +1,12 @@
+@media (max-width: 900px) {
 
-.conteudoDireitoColaborador {
-    margin-top: 17vh;
+    .conteudo-colaborador-pesquisar {
+        padding: 14px;
+    }
+
+
+    .conteudoDireitoColaborador {
+
+        margin-top: -5px;
+    }
 }

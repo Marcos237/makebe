@@ -41,6 +41,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import useUpdateGrid from "../../hooks/useUpdateGrid";
 import AgendaBusca from "./AgendaBusca";
 
+import '../../assets/styles/Agenda/agenda.css';
 
 const AgendaLoja: React.FC = () => {
     const [agendaItem, setAgendaItem] = useState<AgendaItens>();
@@ -136,7 +137,7 @@ const AgendaLoja: React.FC = () => {
 
     const handleModalDesativarItem = useCallback(async (id: number) => {
         if (submittingRef.current) return;
-        submittingRef.current = true;    
+        submittingRef.current = true;
         handleModalDesativar(id, `${API_BASE_AGENDA_URL}${UrlAgenda}`);
         fetchAgendaData(tipoItem.toString());
         setModalOpen(undefined);
@@ -168,16 +169,18 @@ const AgendaLoja: React.FC = () => {
             label: 'Edit',
             icon: <EditRoundedIcon />,
             href: '#',
-            onClick: handleUpdateClickItem
+            class: "btn-busca",
+            onClick: handleUpdateClick
         },
         {
             id: 2,
             label: 'Delete',
             icon: <DeleteIcon />,
             href: '/delete',
+            class: "btn-danger",
             onClick: handleDeleteClick
         }
-    ]), [handleUpdateClickItem, handleDeleteClick]);
+    ]), [handleUpdateClick, handleDeleteClick]);
 
     const handlePageChange = useCallback((event: React.ChangeEvent<unknown>, page: number) => {
         fetchAgendaData(tipoItem.toString(), page);
@@ -231,10 +234,13 @@ const AgendaLoja: React.FC = () => {
             <Banner usuarioLogado={useUsuarioLogado} />
         </div>
 
+
         <div className="persistir">
-            <div className="links-item">
-                <button type="button" onClick={handleButtonClickListar} className="botao-link">
-                    <Tooltip title="listar Agendas">
+            <div className="nav-item">
+                <button onClick={handleButtonClickListar}
+                    className="btn-padrao"
+                    type="button">
+                    <Tooltip title="listar">
                         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                             <TfiLayersAlt />
                         </span>
@@ -252,10 +258,14 @@ const AgendaLoja: React.FC = () => {
             </div>
         </div>
 
+
         <div className="lista">
-            <div className="links-item">
-                <button onClick={handleButtonClickSalvar} className="botao-link">
-                    <Tooltip title="salvar agenda">
+            <div className="nav-item">
+                <button
+                    onClick={handleButtonClickSalvar}
+                    className="btn-padrao"
+                    type="button">
+                    <Tooltip title="novo">
                         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                             <TfiAgenda />
                         </span>
@@ -269,21 +279,23 @@ const AgendaLoja: React.FC = () => {
                     onResultadosBusca={handleResultadosBusca}
                     page={resultadosBusca?.paginaAtual ?? 1}
                 />
-
             </div>
-            <div className="grid">
+            <div className="form-persitir">
+
                 <Grid container spacing={2} className="ContainerGrid">
                     <div className="conteudo">
+
                         <fieldset className='icone-box icone-box-form'>
                             <legend>Lista</legend>
                             <Grid item xs={12} md={12}>
                                 <GridViewLista gridviewProps={gridViewItens ?? {}} />
                             </Grid>
                         </fieldset>
+
                     </div>
                 </Grid>
-            </div>
-        </div>
+            </div >
+        </div >
         <div className="modal">
             {modalOpen && <ModalGeneric modalProps={modalOpen} />}
         </div>

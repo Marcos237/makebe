@@ -166,12 +166,22 @@
 @media (max-width: 900px) {
 
   .data-box {
-    padding: 20px;
+    padding: 25px;
     margin-left: -20 !important;
+    max-width: 320px;
   }
 
-  .fechar-item {
-    right: 26px;
+
+
+  .linha-item {
+    flex-wrap: wrap; /* permite quebrar */
+  }
+
+  .acoes {
+    width: 100%;              /* força ir pra linha de baixo */
+    display: flex;
+    justify-content: flex-end; /* mantém à direita */
+    margin-top: 6px;
   }
 
 }

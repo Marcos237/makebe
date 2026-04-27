@@ -32,6 +32,7 @@ import useUpdateGrid from "../../hooks/useUpdateGrid";
 import useUpdateFetch from '../../hooks/useUpdateFetch';
 import useFetchTipo from "../../hooks/useFetchTipo";
 
+import '../../assets/styles/Colaborador/colaborador.css';
 
 const Colaborador: React.FC = () => {
     const [colaboradorItem, setColaborador] = useState<ColaboradorItens>();
@@ -49,7 +50,7 @@ const Colaborador: React.FC = () => {
     useEffect(() => {
         if (tipoItem === "3") {
             setIsHiddenItem(true);
-        } 
+        }
     }, [tipoItem]);
 
     useHiddenItem("persistir", "lista", isHiddenItem);
@@ -122,6 +123,7 @@ const Colaborador: React.FC = () => {
             label: 'Edit',
             icon: <EditRoundedIcon />,
             href: '#',
+            class: "btn-busca",
             onClick: handleUpdateClick
         }
     ]), [handleUpdateClick]);
@@ -187,17 +189,17 @@ const Colaborador: React.FC = () => {
 
 
         <div className="persistir">
-            {tipoItem !== "3" && (
-                <div className="links-item">
-                    <button onClick={handleButtonClickListar} className="botao-link">
-                        <Tooltip title="listar">
-                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                                <FaUsers />
-                            </span>
-                        </Tooltip>
-                    </button>
-                </div>
-            )}
+            <div className="nav-item">
+                <button onClick={handleButtonClickListar}
+                    className="btn-padrao"
+                    type="button">
+                    <Tooltip title="listar">
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                            <FaUsers />
+                        </span>
+                    </Tooltip>
+                </button>
+            </div>
             <div className="form-persitir">
                 <ColaboradorPersistir
                     persistirProps={{
@@ -209,11 +211,12 @@ const Colaborador: React.FC = () => {
                 />
             </div>
         </div>
-
-
         <div className="lista">
-            <div className="links-item">
-                <button onClick={handleButtonClickSalvar} className="botao-link">
+            <div className="nav-item">
+                <button
+                    onClick={handleButtonClickSalvar}
+                    className="btn-padrao"
+                    type="button">
                     <Tooltip title="novo">
                         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                             <FaUserPlus />
@@ -226,22 +229,23 @@ const Colaborador: React.FC = () => {
                     selectItens={persistirItens?.selectItems || []}
                     onResultadosBusca={handleResultadosBusca}
                 />
-
             </div>
+            <div className="form-persitir">
 
-            <div className="grid">
                 <Grid container spacing={2} className="ContainerGrid">
                     <div className="conteudo">
+
                         <fieldset className='icone-box icone-box-form'>
                             <legend>Lista</legend>
                             <Grid item xs={12} md={12}>
                                 <GridViewLista gridviewProps={gridViewItens ?? {}} />
                             </Grid>
                         </fieldset>
+
                     </div>
                 </Grid>
-            </div>
-        </div>
+            </div >
+        </div >
         <div>
             <Footer />
         </div >

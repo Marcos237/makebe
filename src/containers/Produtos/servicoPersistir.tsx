@@ -137,14 +137,14 @@ const ServicoPersistir: React.FC<{
                     <fieldset className='icone-box icone-box-form'>
                         <legend>Colaborador</legend>
 
-                        <div className="links-login">
-                            <a href="#limpar"  onClick={handleButtonClickLimpar} className="botao-link">
+                        <div className="remove-item">
+                            <button onClick={handleButtonClickLimpar} className="btn-danger" type="button">
                                 <Tooltip title="limpar">
                                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                                         <FaRegTrashAlt />
                                     </span>
                                 </Tooltip>
-                            </a>
+                            </button>
                         </div>
 
                         <Grid item md={6} xs={12} className='gridEsquerdo'>
@@ -177,7 +177,7 @@ const ServicoPersistir: React.FC<{
                                                 const rawValue = e.target.value.replace(/\D/g, "");
                                                 setValor(rawValue === "" ? 0 : Number(rawValue) / 100);
                                             },
-                                            erroSession:"Valor"
+                                            erroSession: "Valor"
                                         }}
                                     />
                                 </div>
