@@ -114,82 +114,85 @@ const Login: React.FC = () => {
             <div className='banner'>
                 <Banner />
             </div>
-
-            <Grid container className="ContainerGrid" component="div">
-                <div className='conteudo'>
-                    <div className='icone-box'>
-                        <Grid item md={6} xs={12} className='gridEsquerdo hiddenTelaPequena'>
-                            <div className='conteudoEsquerdoLogin'>
-                                <div className='itensEsquedoLogin'>
-                                    <h2>Seja bem vindo!</h2>
-                                    <p>Por favor, faça o login para acessar sua conta. Caso ainda não tenha uma você pode se cadastrar.</p>
+            <div className="form-persitir">
+                <Grid container spacing={2} className="ContainerGrid">
+                    <div className="conteudo">
+                        <fieldset
+                            className={'icone-box icone-box-form expandido'}>
+                            <legend>Login</legend>
+                            <Grid item md={6} xs={12} className=''>
+                                <div className='conteudoEsquerdoLogin'>
+                                    <div className='itensEsquedoLogin'>
+                                        <h2>Seja bem vindo!</h2>
+                                        <p>Por favor, faça o login para acessar sua conta. Caso ainda não tenha uma você pode se cadastrar.</p>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div className="social-icons">
-                                <SocialIcons props={propsIcons} />
-                            </div>
-                        </Grid>
-                        <div className="separador"></div>
-                        <Grid item md={6} xs={12} className='gridDireito'>
-                            <div className="links-login">
-                                <a href="/AlteraSenha" className="esqueci-link">
-                                    <Tooltip title="Recuperar acesso">
-                                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                                            <FaLock />
-                                        </span>
-                                    </Tooltip>
-                                </a>
+                                <div className="social-icons">
+                                    <SocialIcons props={propsIcons} />
+                                </div>
+                            </Grid>
+                            <div className="separador"></div>
+                            <Grid item md={6} xs={12} className='gridDireito'>
+                                <div className="links-login">
+                                    <a href="/AlteraSenha" className="esqueci-link">
+                                        <Tooltip title="Recuperar acesso">
+                                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                                <FaLock />
+                                            </span>
+                                        </Tooltip>
+                                    </a>
 
-                                <a href="/perfil" className="cadastrar-link">
-                                    <Tooltip title="Criar nova conta">
-                                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                                            <FaUserPlus />
-                                        </span>
-                                    </Tooltip>
-                                </a>
-                            </div>
+                                    <a href="/perfil" className="cadastrar-link">
+                                        <Tooltip title="Criar nova conta">
+                                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                                <FaUserPlus />
+                                            </span>
+                                        </Tooltip>
+                                    </a>
+                                </div>
 
-                            <div className='conteudoDireitoLogin'>
-                                <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} id="frmLogin">
-                                    <CampoTexto
-                                        textBoxProps={{
-                                            name: "Login",
-                                            tooltip: "digite seu login",
-                                            label: "Login",
-                                            value: login,
-                                            type: 'text',
-                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setLogin(e.target.value),
-                                            errorClass: temErroLogin ? 'input-error' : '',
-                                            messageErro: messageErro,
-                                            erroSession: 'Login',
-                                        }}
-                                    />
-                                    <CampoTexto
-                                        textBoxProps={{
-                                            name: "Senha",
-                                            tooltip: "digite sua senha",
-                                            label: "Senha",
-                                            type: "password",
-                                            value: senha,
-                                            erroSession: 'Senha',
-                                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => setSenha(e.target.value)
-                                        }}
-                                    />
+                                <div className='conteudoDireitoLogin'>
+                                    <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} id="frmLogin">
+                                        <CampoTexto
+                                            textBoxProps={{
+                                                name: "Login",
+                                                tooltip: "digite seu login",
+                                                label: "Login",
+                                                value: login,
+                                                type: 'text',
+                                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setLogin(e.target.value),
+                                                errorClass: temErroLogin ? 'input-error' : '',
+                                                messageErro: messageErro,
+                                                erroSession: 'Login',
+                                            }}
+                                        />
+                                        <CampoTexto
+                                            textBoxProps={{
+                                                name: "Senha",
+                                                tooltip: "digite sua senha",
+                                                label: "Senha",
+                                                type: "password",
+                                                value: senha,
+                                                erroSession: 'Senha',
+                                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setSenha(e.target.value)
+                                            }}
+                                        />
 
-                                    <div className='recaptcha'>
-                                        <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
-                                    </div>
+                                        <div className='recaptcha'>
+                                            <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
+                                        </div>
 
-                                    <div className='botao'>
-                                        <BotaoSubmit botaoProps={botaoProps} />
-                                    </div>
-                                </form>
-                            </div>
-                        </Grid>
+                                        <div className='botao botao-salvar'>
+                                            <BotaoSubmit botaoProps={botaoProps} />
+                                        </div>
+                                    </form>
+                                </div> 
+                            </Grid>
+                        </fieldset>
                     </div>
-                </div>
-            </Grid>
+                </Grid>
+            </div>
 
             <div>
                 <Footer />

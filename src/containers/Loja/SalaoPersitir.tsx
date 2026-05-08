@@ -40,8 +40,8 @@ const SalaoPersistir: React.FC<{ persistirProps: PersistirItens<LojaItens> }> = 
 
     const fetchLojaData = useCallback(async () => {
         if (!persistirProps.item) return;
-        setId(persistirProps.item.id);
-        setTipoLojaId(persistirProps.item.tipoLojaId);
+        setId(persistirProps.item.id ?? 0);
+        setTipoLojaId(persistirProps.item.tipoLojaId ?? 0);
         setRazaoSocial(persistirProps.item.razaoSocial ?? '');
         setCnpj(persistirProps.item.cnpj ?? '');
         setEmail(persistirProps.item.email ?? '');
@@ -140,14 +140,16 @@ const SalaoPersistir: React.FC<{ persistirProps: PersistirItens<LojaItens> }> = 
         <div className='messageTextLoja'>
             <Mensagem mensagemProps={messageProps ?? {}} />
         </div>
+        
         <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} id="frmLoja">
             <Grid container spacing={2} className="ContainerGrid">
+                
                 <div className='conteudo'>
                     <fieldset className='icone-box icone-box-form'>
                         <legend>Loja</legend>
 
-                        <div className="links-login">
-                            <button onClick={handleButtonClickLimpar} className="botao-link">
+                        <div className="remove-item">
+                            <button onClick={handleButtonClickLimpar} className="btn-danger" type="button">
                                 <Tooltip title="limpar">
                                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                                         <FaRegTrashAlt />

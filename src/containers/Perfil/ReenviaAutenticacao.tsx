@@ -90,48 +90,55 @@ const ReenviaAutenticacao: React.FC = () => {
             <div className='banner'>
                 <Banner />
             </div>
-            <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} id="frmReenvia">
-                <div className='messageTextReenvia'>
-                    {isMessage && (
-                        <Mensagem mensagemProps={messageProps} />
-                    )}
-                </div>
-                <Grid container className="ContainerGrid">
-                    <div className='conteudo'>
-                        <div className='icone-box'>
-                            <div className="formItens">
-                            </div>
-                            <div className='itemReenvia'>
-                                <div className='textoReenvia'>
-                                    <p>{ReenviatText}</p>
-                                    <div className="formItens">
 
 
-                                        <CampoTexto
-                                            textBoxProps={{
-                                                name: "Email",
-                                                tooltip: "digite seu Email",
-                                                label: "Email*",
-                                                value: email,
-                                                type: 'text',
-                                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value),
-                                                erroSession:'Email',
-                                            }}
-                                        />
-                                    </div>
-                                    <div className='recaptcha'>
-                                        <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
-                                    </div>
+            <div className="form-persitir">
+                <Grid container spacing={2} className="ContainerGrid">
+                    <div className="conteudo">
+                        <fieldset
+                            className={'icone-box icone-box-form expandido'}>
+                            <legend>Reenvia e-mail</legend>
 
-                                    <div className='botaoReenvia'>
-                                        <BotaoSubmit botaoProps={botaoProps}/>
+                            <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} id="frmReenvia">
+                                <div className='messageTextReenvia'>
+                                    {isMessage && (
+                                        <Mensagem mensagemProps={messageProps} />
+                                    )}
+                                </div>
+
+                                <div className='itemReenvia'>
+                                    <div className='textoReenvia'>
+                                        <p>{ReenviatText}</p>
+                                        <div className="formItens">
+
+
+                                            <CampoTexto
+                                                textBoxProps={{
+                                                    name: "Email",
+                                                    tooltip: "digite seu Email",
+                                                    label: "Email*",
+                                                    value: email,
+                                                    type: 'text',
+                                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value),
+                                                    erroSession: 'Email',
+                                                }}
+                                            />
+                                        </div>
+                                        <div className='recaptcha'>
+                                            <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
+                                        </div>
+
+                                        <div className='botaoReenvia botao-salvar'>
+                                            <BotaoSubmit botaoProps={botaoProps} />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div >
+                            </form>
+
+                        </fieldset>
                     </div>
                 </Grid>
-            </form>
+            </div>
             <div>
                 <Footer />
             </div>

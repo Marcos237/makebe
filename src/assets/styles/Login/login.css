@@ -87,6 +87,17 @@
 
         .conteudoEsquerdoLogin,
         .conteudoDireitoLogin {
-            padding: 30px;
+            padding: 0;
+            margin-right: -6px;
+        }
+
+        .itensEsquedoLogin {
+            max-width: 100%;
+            padding: 0 16px 43px 21px;
+            box-sizing: border-box;
+        }
+
+        .social-icons {
+            bottom: 0;
         }
     }

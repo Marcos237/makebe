@@ -25,6 +25,10 @@
     padding: 30px;
 }
 
-.recaptcha {
-    padding-left: 24px;
-}
+    @media (max-width: 768px) {
+        .conteudoDireitoAlteraSenha,
+        .conteudoEsquerdoAlteraSenha {
+            padding: 0;
+            margin-right: -6px;
+        }
+    }

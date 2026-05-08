@@ -10,19 +10,20 @@ const PerfilValidar: React.FC = () => {
         <div className='banner'>
             <Banner />
         </div>
-        <Grid container className="ContainerGrid">
-            <div className='conteudo'>
-                <div className='icone-box'>
-                    <div className='itemValidar'>
-                        <div className='textoValidar'>
-                            <h2>Obrigado por cadastrar!</h2>
-                            <p>{MensagemCadastro}</p>
-                            <a className='link' href='/login'> clique aqui para fazer o login</a>
-                        </div>
-                    </div>
+
+        <div className="form-persitir form-custom">
+            <Grid container spacing={2} className="ContainerGrid grid-custom">
+                <div className="conteudo">
+                    <fieldset
+                        className={'icone-box icone-box-form expandido'}>
+                        <legend>Obrigado por cadastrar!</legend>
+
+                        <p>{MensagemCadastro}</p>
+                        <a className='link' href='/login'> clique aqui para fazer o login</a>
+                    </fieldset>
                 </div>
-            </div>
-        </Grid>
+            </Grid>
+        </div>
         <div>
             <Footer />
         </div>

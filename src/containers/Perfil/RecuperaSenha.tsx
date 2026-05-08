@@ -97,12 +97,13 @@ const RecuperaSenha: React.FC = () => {
             <div className='banner'>
                 <Banner usuarioLogado={useUsuarioLogadoItem} />
             </div>
-            <Box>
-                <form id='frmRecuperarSenha' onSubmit={handleSubmit} onKeyDown={handleFormKeyDown}>
-
-                    <Grid container className="ContainerGrid">
-                        <div className='conteudo'>
-                            <div className='icone-box'>
+            <div className="form-persitir">
+                <Grid container spacing={2} className="ContainerGrid">
+                    <div className="conteudo">
+                        <fieldset
+                            className={'icone-box icone-box-form expandido'}>
+                            <legend>Cadastrar Nova Senha</legend>
+                            <form id='frmRecuperarSenha' onSubmit={handleSubmit} onKeyDown={handleFormKeyDown}>
                                 <Grid item md={6} xs={12} className='gridEsquerdo hiddenTelaPequena'>
                                     <div className='conteudoEsquedoRecupera'>
                                         <h2>Por favor!</h2>
@@ -146,17 +147,17 @@ const RecuperaSenha: React.FC = () => {
                                         </div>
 
                                         <div className='formItens'>
-                                            <div className='botao'>
+                                            <div className='botao botao-salvar'>
                                                 <BotaoSubmit botaoProps={botaoProps} />
                                             </div>
                                         </div>
                                     </div>
                                 </Grid>
-                            </div>
-                        </div>
-                    </Grid>
-                </form>
-            </Box >
+                            </form>
+                        </fieldset>
+                    </div>
+                </Grid>
+            </div>
 
             <div>
                 <Footer />

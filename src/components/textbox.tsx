@@ -22,7 +22,6 @@ const darkTheme = createTheme({
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          backgroundColor: '#0d0d0d',
           borderRadius: 6,
           '& fieldset': {
             borderColor: '#333',
@@ -86,7 +85,7 @@ const CampoTexto: React.FC<TextBoxItens> = ({ textBoxProps }) => {
               id={name}
               name={name}
               multiline={multiline}
-              rows={rows || 4}
+              rows={multiline ? rows || 4 : undefined}
               label={label}
               placeholder={tooltip}
               value={value}

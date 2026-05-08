@@ -226,8 +226,8 @@ const AgendaLojaPersistir: React.FC<{
                     <fieldset className='icone-box icone-box-form'>
                         <legend>Agenda</legend>
 
-                        <div className="links-login">
-                            <button onClick={handleButtonClickLimpar} className="botao-link">
+                        <div className="remove-item">
+                            <button onClick={handleButtonClickLimpar} className="btn-danger" type="button">
                                 <Tooltip title="limpar">
                                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                                         <FaRegTrashAlt />
@@ -237,9 +237,10 @@ const AgendaLojaPersistir: React.FC<{
                         </div>
 
                         <Grid item md={6} xs={12} className='gridEsquerdo'>
-                            <div className="conteudoEsquerdo conteudoMenorEsquerdo">
+                            <div className='conteudoEsquerdoAgenda conteudoMenorEsquerdo'>
+
                                 {tipoItem?.toString() === TipoLoja && (
-                                    <div className="formItens-drop">
+                                    <div className="formItens">
                                         <Dropdown
                                             dropProps={{
                                                 name: "IdLoja",
@@ -253,7 +254,7 @@ const AgendaLojaPersistir: React.FC<{
                                     </div>
                                 )}
                                 {tipoItem?.toString() === TipoColaborador && (
-                                    <div className="formItens-drop">
+                                    <div className="formItens">
                                         <Dropdown
                                             dropProps={{
                                                 name: "IdColaborador",
@@ -266,13 +267,13 @@ const AgendaLojaPersistir: React.FC<{
                                         />
                                     </div>
                                 )}
-                                <div className="formItens-drop">
+
+                                <div className="formItens switch-agenda">
                                     <SwitchButton switchProps={switchButton} />
                                 </div>
 
 
-
-                                <div className="formItens-drop">
+                                <div className="formItens">
                                     <Dropdown
                                         dropProps={{
                                             name: "IdAgendaSemanaInicio",
@@ -285,7 +286,7 @@ const AgendaLojaPersistir: React.FC<{
                                         }}
                                     />
                                 </div>
-                                <div className="formItens-drop">
+                                <div className="formItens">
                                     <Dropdown
                                         dropProps={{
                                             name: "IdAgendaSemanaFim",
@@ -302,8 +303,9 @@ const AgendaLojaPersistir: React.FC<{
                             </div>
                         </Grid>
                         <div className="separador"></div>
+                        
                         <Grid item md={6} xs={12} className='gridDireito'>
-                            <div className="conteudoDireitoAgenda">
+                            <div className='conteudoDireitoAgenda conteudoMenorDireito'>
 
                                 <div className="formItensHorizontal itemPicker">
                                     <DateTimerPicker
@@ -326,12 +328,12 @@ const AgendaLojaPersistir: React.FC<{
                                 </div>
 
 
-                                <div className="formItens-drop">
+                                <div className="formItens switch-agenda">
                                     <SwitchButton switchProps={switchButtonBloqueio} />
                                 </div>
 
 
-                                <div className="formItensHorizontal itemPicker itemPickerBaixo">
+                                <div className="formItensHorizontal itemPicker">
                                     <DateTimerPicker
                                         name={"AgendaBloqueadaInicio"}
                                         label={DataLabelBloqueioAberto}
@@ -351,17 +353,17 @@ const AgendaLojaPersistir: React.FC<{
                                         isLeituraOnly={false}
                                     />
                                 </div>
-                                <div className="gridBotoes">
-                                    <div className="botao botao-salvar">
-                                        <BotaoSubmit botaoProps={botaoProps} />
-                                    </div>
+                            </div>
+
+                            <div className="gridBotoes">
+                                <div className="botao botao-salvar">
+                                    <BotaoSubmit botaoProps={botaoProps} />
                                 </div>
                             </div>
                         </Grid>
                     </fieldset>
                 </div>
-            </Grid>
-
+            </Grid >
             <div className='camposInvisiveis'>
                 <CampoTexto
                     textBoxProps={{

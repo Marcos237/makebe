@@ -175,11 +175,15 @@
 
 }
 
-@media (max-width: 500px) {
+@media (max-width: 900px) {
 
-    .MuiInputBase-root {
-        margin-bottom: 10px;
-        z-index: 1;
-        max-width: 260px !important;
+    .expandido-agendamento {
+        margin-top: -100px !important;
+        margin-left: 10px !important;
     }
+    .conteudo-agendamento {
+        max-width: 200px !important;
+
+    }
+
 }

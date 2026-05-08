@@ -76,7 +76,7 @@ const AlteraSenha: React.FC = () => {
         } else {
             setIsEnviado(true);
             setValue('');
-            setIsEnviaText(false);   
+            setIsEnviaText(false);
             setIsVisibleLogin(true)
         }
 
@@ -106,51 +106,56 @@ const AlteraSenha: React.FC = () => {
                 <Banner usuarioLogado={useUsuarioLogado} />
             </div>
 
-            <Grid container className="ContainerGrid">
-                <div className='conteudo'>
-                    <div className='icone-box'>
+            <div className="form-persitir">
+                <Grid container spacing={2} className="ContainerGrid">
+                    <div className="conteudo">
+                        <fieldset
+                            className={'icone-box icone-box-form expandido'}>
+                            <legend>Alterar Senha</legend>
 
-                        <Grid item md={6} xs={12} className='gridEsquerdo hiddenTelaPequena'>
-                            <div className='conteudoEsquerdoAlteraSenha'>
-                                <div className='itensEsquedoAlteraSenha'>
-                                    {isVisibleLogin && (
-                                        <p>{EnvioItemText} <a className='link' href='/login'>Login</a></p>
-                                    )}
-                                    {isEnviaText && (<p>{EsqueciText}</p>)}
+                            <Grid item md={6} xs={12} className='gridEsquerdo hiddenTelaPequena'>
+                                <div className='conteudoEsquerdoAlteraSenha'>
+                                    <div className='itensEsquedoAlteraSenha'>
+                                        {isVisibleLogin && (
+                                            <p>{EnvioItemText} <a className='link' href='/login'>Login</a></p>
+                                        )}
+                                        {isEnviaText && (<p>{EsqueciText}</p>)}
+                                    </div>
                                 </div>
-                            </div>
-                        </Grid>
-                        <div className="separador"></div>
-                        <Grid item md={6} xs={12} className='gridDireito'>
-                            <div className='conteudoDireitoAlteraSenha'>
+                            </Grid>
+                            <div className="separador"></div>
+                            <Grid item md={6} xs={12} className='gridDireito'>
+                                <div className='conteudoDireitoAlteraSenha'>
 
-                                <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} id="frmAlterarSenha">
-                                    <div className="formItens">
-                                        <CampoTexto
-                                            textBoxProps={{
-                                                name: "CPFEmail",
-                                                tooltip: "digite seu CPF ou Email",
-                                                label: "CPF ou Email*",
-                                                value: value,
-                                                type: 'text',
-                                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value),
-                                                erroSession:'CPFEmail'
-                                            }}
-                                        />
-                                    </div>
-                                    <div className='recaptcha'>
-                                        <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
-                                    </div>
+                                    <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} id="frmAlterarSenha">
+                                        <div className="formItens">
+                                            <CampoTexto
+                                                textBoxProps={{
+                                                    name: "CPFEmail",
+                                                    tooltip: "digite seu CPF ou Email",
+                                                    label: "CPF ou Email*",
+                                                    value: value,
+                                                    type: 'text',
+                                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value),
+                                                    erroSession: 'CPFEmail'
+                                                }}
+                                            />
+                                        </div>
+                                        <div className='recaptcha'>
+                                            <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
+                                        </div>
 
-                                    <div className='botao'>
-                                        <BotaoSubmit botaoProps={botaoProps} />
-                                    </div>
-                                </form>
-                            </div>
-                        </Grid>
+                                       <div className='botao botao-salvar'>
+                                            <BotaoSubmit botaoProps={botaoProps} />
+                                        </div>
+                                    </form>
+                                </div>
+                            </Grid>
+
+                        </fieldset>
                     </div>
-                </div>
-            </Grid>
+                </Grid>
+            </div>
             <div>
                 <Footer />
             </div>

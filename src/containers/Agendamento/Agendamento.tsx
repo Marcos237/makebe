@@ -25,9 +25,9 @@ import Calendario from "../../components/calendario";
 import Banner from "../../components/banner";
 import Footer from "../../components/footer";
 import useUpdateFetch from '../../hooks/useUpdateFetch';
-import '../../assets/styles/Agenda/agendamento.css';
-import "../../assets/styles/Agendamento/agendamento.css";
 import AgendamentoPersistir from "./AgendamentoPersistir";
+
+import "../../assets/styles/Agendamento/agendamento.css";
 
 const Agendamento: React.FC = () => {
     const [useUsuarioLogado, setUsuarioLogado] = useState<UsuarioLoginItens>();
@@ -294,11 +294,12 @@ const Agendamento: React.FC = () => {
             <Banner usuarioLogado={useUsuarioLogado} />
         </div>
 
-
         <div className="persistir">
-            <div className="links-item">
-                <button onClick={handleButtonClickListar} className="botao-link">
-                    <Tooltip title="listar" disableHoverListener={!isHiddenItem}>
+            <div className="nav-item">
+                <button onClick={handleButtonClickListar}
+                    className="btn-padrao"
+                    type="button">
+                    <Tooltip title="listar">
                         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                             <TfiAgenda />
                         </span>
@@ -318,16 +319,15 @@ const Agendamento: React.FC = () => {
 
         <div className="lista">
             <div className="form-persitir">
-                <Grid container spacing={2} className="ContainerGridAgendamento">
-                    <Grid item xs={12}>
-                        <fieldset className="icone-box icone-box-form">
+                <Grid container spacing={2} className="ContainerGrid">
+                    <div className="conteudo">
+                        <fieldset className="icone-box icone-box-form expandido-agendamento">
                             <legend>Calendário</legend>
-
                             <Grid item xs={12} className="gridEsquerdo">
-                                <Grid item xs={11} md={7} className="calendario-form">
+                                <Grid item xs={12} md={6} className="calendario-form">
                                     <div className="formItensHorizontal">
 
-                                        <div className="formItens-drop drop-calendario">
+                                        <div className="formItens drop-calendario">
                                             <Dropdown
                                                 dropProps={{
                                                     name: "ColaboradorId",
@@ -339,7 +339,7 @@ const Agendamento: React.FC = () => {
                                                 }}
                                             />
                                         </div>
-                                        <div className="formItens-drop drop-calendario drop-ano">
+                                        <div className="formItens drop-calendario">
                                             <Dropdown
                                                 dropProps={{
                                                     name: "Ano",
@@ -354,19 +354,20 @@ const Agendamento: React.FC = () => {
                                         </div>
                                     </div>
                                 </Grid>
-
-                                <Calendario
-                                    key={String(isHoraOpen)}
-                                    calendarioItem={{ ...calendarioItem, isHoraOpen }}
-                                />
-
+                                <Grid item xs={12} md={6} className="calendario-form">
+                                    <div className="conteudo-agendamento">
+                                        <Calendario
+                                            key={String(isHoraOpen)}
+                                            calendarioItem={{ ...calendarioItem, isHoraOpen }}
+                                        />
+                                    </div>
+                                </Grid>
                             </Grid>
                         </fieldset>
-                    </Grid>
+                    </div>
                 </Grid>
-
             </div>
-        </div>
+        </div >
 
         <div>
             <Footer />

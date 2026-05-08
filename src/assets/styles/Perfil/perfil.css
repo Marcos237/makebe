@@ -1,6 +1,7 @@
 .conteudoEsquerdoPerfil {
     padding: 60px;
 }
+
 .conteudoDiretirPerfil {
     padding: 60;
     margin-top: 17vh;
@@ -31,6 +32,24 @@
     text-align: center !important;
 }
 
-.recaptcha {
-    margin-left: -12;
+@media (max-width: 900px) {
+    .tituloUpload {
+        padding: 0 !important;
+        display: flex;
+    }
+
+    .formItens-imagem {
+        margin-left: 43px;
+    }
+
+    .conteudoEsquerdoPerfil,
+    .conteudoDiretirPerfil {
+        padding: 0;
+    }
+
+    .conteudoDiretirPerfil {
+        margin-top: -10 !important;
+    }
+
+
 }

@@ -98,6 +98,7 @@ const Salao: React.FC = () => {
             label: 'Edit',
             icon: <EditRoundedIcon />,
             href: '#',
+            class: "btn-busca",
             onClick: handleUpdateClick
         },
         {
@@ -105,6 +106,7 @@ const Salao: React.FC = () => {
             label: 'Delete',
             icon: <DeleteIcon />,
             href: '/delete',
+            class: "btn-danger",
             onClick: handleDeleteClick
         }
     ]), [handleUpdateClick, handleDeleteClick]);
@@ -190,8 +192,10 @@ const Salao: React.FC = () => {
             </div>
 
             <div className="persistir">
-                <div className="links-item">
-                    <button onClick={handleButtonClickListar} className="botao-link">
+                <div className="nav-item">
+                    <button onClick={handleButtonClickListar}
+                        className="btn-padrao"
+                        type="button">
                         <Tooltip title="listar">
                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                                 <FaThList />
@@ -203,9 +207,14 @@ const Salao: React.FC = () => {
                     <SalaoPersistir persistirProps={{ ...persistirItens, item: lojaItem }} />
                 </div>
             </div>
+
+            
             <div className="lista">
-                <div className="links-item">
-                    <button onClick={handleButtonClickSalvar} className="botao-link">
+                <div className="nav-item">
+                    <button
+                        onClick={handleButtonClickSalvar}
+                        className="btn-padrao"
+                        type="button">
                         <Tooltip title="novo">
                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                                 <FaShop />
@@ -219,9 +228,10 @@ const Salao: React.FC = () => {
                         onResultadosBusca={handleResultadosBusca}
                     />
                 </div>
-                <div className="grid">
-                    <div className="conteudo">
-                        <Grid container spacing={2} className="ContainerGrid">
+                <div className="form-persitir">
+
+                    <Grid container spacing={2} className="ContainerGrid">
+                        <div className="conteudo">
 
                             <fieldset className='icone-box icone-box-form'>
                                 <legend>Lista</legend>
@@ -229,10 +239,11 @@ const Salao: React.FC = () => {
                                     <GridViewLista gridviewProps={gridViewItens ?? {}} />
                                 </Grid>
                             </fieldset>
-                        </Grid>
-                    </div>
-                </div>
-            </div>
+
+                        </div>
+                    </Grid>
+                </div >
+            </div >
 
             <div className="modal">
                 {modalOpen && <ModalGeneric modalProps={modalOpen} />}
