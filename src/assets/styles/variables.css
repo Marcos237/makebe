@@ -1,0 +1,74 @@
+:root {
+  /* 📏 ESPAÇAMENTO */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+
+  /* 🎯 BACKGROUND */
+  --bg-primary: #0a0c10;
+  --bg-secondary: #0d1016;
+
+  /* 🌑 GRADIENT BACKGROUND */
+  --bg-gradient:
+    radial-gradient(800px 400px at 20% 10%, rgba(80, 120, 255, 0.12), transparent 60%),
+    radial-gradient(600px 300px at 80% 20%, rgba(255, 255, 255, 0.05), transparent 65%),
+    linear-gradient(180deg, var(--bg-primary), var(--bg-secondary));
+
+  /* 🔵 CORES PRINCIPAIS */
+  --primary: #5dade2;
+  --primary-strong: #1E90FF;
+  --primary-hover: #566573;
+
+  /* 🟢 SUCESSO */
+  --success: #48c9b0;
+  --success-hover: #1d8348;
+
+  /* 🟡 ATENÇÃO */
+  --warning: #f7dc6f;
+  --warning-hover: #d4ac0d;
+
+  /* 🔴 ERRO */
+  --danger: #ed145b;
+  --danger-light: #ea0562;
+  --danger-hover: #ff3b78;
+
+  /* ⚪ TEXTO */
+  --text-primary: #f0f0f0;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+
+  /* 🧱 BORDAS */
+  --border-default: #4d5656;
+  --border-light: rgba(255, 255, 255, 0.1);
+
+  /* 🌫️ SOMBRA */
+  --shadow-strong: 0 10px 40px rgba(0, 0, 0, 0.4);
+  --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+  /* 🧊 GLASS EFFECT */
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+
+  /* 🔲 BORDER RADIUS */
+  --radius-small: 6px;
+  --radius-medium: 12px;
+  --radius-large: 20px;
+
+  /* 🎨 GRADIENTS BOTÕES */
+  --gradient-primary: linear-gradient(160deg, #1f5f8f, #0b2f4f);
+  --gradient-primary-hover: linear-gradient(160deg, #2a6fa4, #134066);
+
+  --gradient-info: linear-gradient(160deg, #2fa4a9, #1b6f73);
+  --gradient-info-hover: linear-gradient(160deg, #4fc0c4, #2f8a8f);
+
+  --gradient-warning: linear-gradient(160deg, #6fb7e8, #3f8fc7);
+  --gradient-warning-hover: linear-gradient(160deg, #8ac9f2, #4fa0d8);
+
+  --gradient-success: linear-gradient(160deg, #1f8f5f, #0b4f2f);
+  --gradient-success-hover: linear-gradient(160deg, #2aa46f, #13663f);
+
+  --gradient-danger: linear-gradient(160deg, #ed145b, #a10f3e);
+  --gradient-danger-hover: linear-gradient(160deg, #ff3b78, #c0134c);
+}

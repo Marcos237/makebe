@@ -1,0 +1,129 @@
+.container {
+  min-height: 100vh;
+  background: var(--bg-gradient);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+.banner {
+  width: 100%;
+}
+
+.formPersistir {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 16px;
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-large);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  padding: 60px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.header h2 {
+  font-size: 1.8rem;
+  margin: 0 0 6px;
+}
+
+.header p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.form {
+  width: 100%;
+}
+
+.messageBox {
+  margin: 0;
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.messageBox legend {
+  padding: 0 8px;
+  margin: 0 auto;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.messageBox p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  text-align: center;
+}
+
+.link {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 48px;
+  padding: 14px 24px;
+  border-radius: 999px;
+  background: var(--gradient-primary);
+  color: #fff;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  box-sizing: border-box;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.link:hover {
+  transform: translateY(-2px);
+  background: var(--gradient-primary-hover);
+}
+
+.link:active {
+  transform: scale(0.97);
+}
+
+.footer {
+  margin-top: auto;
+}
+
+@media (max-width: 900px) {
+  .formPersistir {
+    padding: 24px 16px 40px;
+    align-items: flex-start;
+  }
+
+  .card {
+    padding: 24px 20px;
+  }
+
+  .header {
+    margin-bottom: 20px;
+  }
+
+  .header h2 {
+    font-size: 1.6rem;
+  }
+
+  .messageBox {
+    padding: 20px 16px;
+  }
+}

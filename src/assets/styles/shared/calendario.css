@@ -1,22 +1,62 @@
+.calendario-grid {
+  width: 100%;
+  margin: 0;
+  justify-content: center;
+}
+
+.calendario-grid-item {
+  display: flex;
+  justify-content: center;
+}
 
 .calendario {
-  padding: 20px;
-  border: 2px solid #555;
-  border-radius: 20px;
-  background-color: #1e1e1e;
-  width: 60%;
-  margin: 10px auto;
+  width: 100%;
+  max-width: 360px;
+  margin: 0;
+  padding: 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-large);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+
+.calendario :global(.MuiDateCalendar-root),
+.calendario .MuiDateCalendar-root {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.calendario :global(.MuiPickersCalendarHeader-root),
+.calendario .MuiPickersCalendarHeader-root {
+  width: 100%;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.calendario :global(.MuiDayCalendar-header),
+.calendario .MuiDayCalendar-header,
+.calendario :global(.MuiDayCalendar-weekContainer),
+.calendario .MuiDayCalendar-weekContainer {
+  justify-content: center;
+}
+
+.calendario :global(.MuiDayCalendar-slideTransition),
+.calendario .MuiDayCalendar-slideTransition {
+  min-height: 230px;
 }
 
 .calendario-dias {
-  position: absolute;
-  margin-top: -10px;
-  margin-left: 10px;
+  position: relative;
+  width: 100%;
+  margin-top: 12px;
 }
 
 .calendarioClick {
@@ -25,15 +65,32 @@
   border-radius: 50% !important;
 }
 
-
 @media (max-width: 900px) {
-
-  .calendario {
-    padding: 10px !important;
-    margin-top: 50px !important;
-    margin-left: -8px !important;
-    width: 130% !important;
-
+  .calendario-grid {
+    row-gap: 16px;
   }
 
+  .calendario-grid-item {
+    width: 100%;
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .calendario {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 14px !important;
+    margin: 0 !important;
+  }
+
+  .calendario :global(.MuiDayCalendar-header),
+  .calendario .MuiDayCalendar-header,
+  .calendario :global(.MuiDayCalendar-weekContainer),
+  .calendario .MuiDayCalendar-weekContainer {
+    justify-content: space-between;
+  }
+
+  .calendario-dias {
+    margin-top: 10px;
+  }
 }

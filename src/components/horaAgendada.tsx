@@ -33,8 +33,6 @@ const HoraAgendada: React.FC<{
 
     setClosing(true);
     try {
-      await new Promise(requestAnimationFrame);
-      await new Promise<void>((r) => setTimeout(r, 0));
       await Promise.resolve(onCloseClick?.());
     } finally {
       setClosing(false);
@@ -46,8 +44,6 @@ const HoraAgendada: React.FC<{
     const idColaborador = horaAgendadaItem?.[0].idColaborador ?? 0;
     setIsNovo(true);
     try {
-      await new Promise(requestAnimationFrame);
-      await new Promise<void>((r) => setTimeout(r, 0));
       await Promise.resolve(onNewClick?.(data, Number(idColaborador)));
     } finally {
       setIsNovo(false);
@@ -62,11 +58,10 @@ const HoraAgendada: React.FC<{
     setIsEditar(true);
     setLoadingEditarId(id);
     try {
-      await new Promise(requestAnimationFrame);
-      await new Promise<void>((r) => setTimeout(r, 0));
       await Promise.resolve(onUpdateClick?.(id));
     } finally {
       setIsEditar(false);
+      setLoadingEditarId(null);
     }
   }
 
@@ -74,8 +69,6 @@ const HoraAgendada: React.FC<{
     if (closing) return;
     setClosing(true);
     try {
-      await new Promise(requestAnimationFrame);
-      await new Promise<void>((r) => setTimeout(r, 0));
       await Promise.resolve(onDeleteClick?.(id));
     } finally {
       setClosing(false);

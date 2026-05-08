@@ -2,6 +2,33 @@
     cursor: pointer;
 }
 
+.upload-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.tituloUpload {
+    margin: 0;
+    padding: 0;
+}
+
+.icone-remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.upload-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+}
+
+
 .avatar {
     min-width: 8vw;
     min-height: 12vh;
@@ -22,8 +49,8 @@
 @media (max-width: 900px) {
 
     .avatar {
-        min-width: 16vw;
-        min-height: 8h;
+        min-width: 120px;
+        min-height: 120px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -31,5 +58,6 @@
         background-color: #F7F9F9;
         text-align: center;
         font-size: 40px;
+        border-radius: 50%;
     }
 }

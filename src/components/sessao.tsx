@@ -36,15 +36,17 @@ const Sessao: FC<{ sessaoProps: SessaoItens[], isOpen: number }> = ({ sessaoProp
                         key={index}
                         expanded={expanded === `panel${index}`}
                         onChange={handleChange(`panel${index}`)}
+                        className='sessaoAccordion'
                     >
                         <AccordionSummary
+                            className='sessaoResumo'
                             expandIcon={<ExpandMoreIcon />}
                             aria-controls={`panel${index}-content`}
                             id={`panel${index}-header`}
                         >
-                            <Typography>{sessao.nome}</Typography>
+                            <Typography className='sessaoTitulo'>{sessao.nome}</Typography>
                         </AccordionSummary>
-                        <AccordionDetails>
+                        <AccordionDetails className='sessaoDetalhes'>
                             {sessao.conteudo}
                         </AccordionDetails>
                     </Accordion>

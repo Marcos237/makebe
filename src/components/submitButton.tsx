@@ -1,62 +1,67 @@
 import * as React from "react";
-import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Tooltip from "@mui/material/Tooltip";
 import { BotaoItens } from "../Interfaces/Botao/botao";
 
 const BotaoSubmit: React.FC<{ botaoProps: BotaoItens }> = ({ botaoProps }) => {
+
   const {
     name,
     tooltip,
     label,
     icon: Icon,
-    color = "primary",
     width,
     isLoading = false,
     isDisable = false,
     classIcone,
+    className,
     marginRight,
     marginLeft,
-    form 
+    form
   } = botaoProps;
 
   const isDisabled = isLoading || isDisable;
 
   const btn = (
-    <Button
+    <button
       type="submit"
       form={form}
-      variant="contained"
-      color={color}
       disabled={isDisabled}
       aria-label={label || name}
       aria-busy={isLoading || undefined}
-      disableElevation
-      style={{ width }}
-      startIcon={
-        !isLoading && Icon ? (
-          <Icon
-            className={classIcone}
-            style={{ marginRight, marginLeft }}
-          />
-        ) : undefined
-      }
-      sx={{
-        "&.Mui-disabled": {
-          backgroundColor: "#34495e",
-          border: "2px solid #21618c",
-          opacity: 1,
-          color: "#ffffff",
-        },
+      className={className}
+      style={{
+        width: width || "100%",
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
-      {isLoading ? <CircularProgress size={20} color="inherit" /> : name}
-    </Button>
+      {isLoading ? (
+        <CircularProgress
+          size={20}
+          sx={{ color: "#fff" }}
+        />
+      ) : (
+        <>
+          {Icon ? (
+            <Icon
+              className={classIcone}
+              style={{ marginRight, marginLeft }}
+            />
+          ) : null}
+
+          {name}
+        </>
+      )}
+    </button>
   );
 
   return tooltip ? (
     <Tooltip title={tooltip}>
-      <span>{btn}</span>
+      <span style={{ display: "flex", width: width || "100%" }}>
+        {btn}
+      </span>
     </Tooltip>
   ) : (
     btn

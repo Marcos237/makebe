@@ -1,0 +1,191 @@
+/* Container */
+.container {
+  min-height: 100vh;
+  background: var(--bg-gradient);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+.banner {
+  width: 100%;
+}
+
+/* Centralização */
+.formPersistir {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 16px;
+}
+
+/* Card */
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-large);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  padding: 28px;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.header h2 {
+  font-size: 1.8rem;
+  margin-bottom: 6px;
+}
+
+.header p {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+/* Form */
+.form {
+  width: 100%;
+}
+
+.campos {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Recaptcha */
+.recaptcha {
+  margin: 18px 0;
+  display: flex;
+  justify-content: center;
+}
+
+/* Botão área */
+.botaoArea {
+  display: flex;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.botaoArea button {
+  flex: 1;
+  width: 100%;
+  padding: 14px 24px;
+  background: linear-gradient(160deg, #2fa4a9, #1b6f73);
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+}
+
+.botaoArea :global(span) {
+  display: flex;
+  width: 100%;
+}
+
+.botaoArea button:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(160deg, #4fc0c4, #2f8a8f);
+}
+
+.botaoArea button:active {
+  transform: scale(0.97);
+}
+
+.botaoArea button:disabled {
+  background: linear-gradient(160deg, #3aa89b, #2b7d73);
+  color: rgba(255, 255, 255, 0.9);
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+/* Ícone do botão */
+.botaoArea .iconeRotacionado {
+  transform: rotate(230deg);
+  display: inline-block;
+}
+
+/* Ações */
+.acoes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+/* Links */
+.esqueciLink {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.esqueciLink:hover {
+  color: var(--primary);
+}
+
+/* Botão secundário */
+.cadastrarBotao {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--gradient-primary);
+  color: white;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: 0.25s;
+}
+
+.cadastrarBotao:hover {
+  transform: translateY(-1px);
+}
+
+/* Divisor */
+.divisor {
+  text-align: center;
+  margin: 18px 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* Social */
+.socialIcons {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+/* Botão olho */
+.botaoOlho {
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--text-secondary);
+}
+
+.botaoOlho:hover {
+  color: var(--primary);
+}
+
+/* Footer */
+.footer {
+  margin-top: auto;
+}
+
+@media (max-width: 900px) {}
