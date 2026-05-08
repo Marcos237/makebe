@@ -26,7 +26,7 @@ const ModalCuston: React.FC<{ modalProps: ModalItem }> = ({ modalProps }) => {
                 )}
 
                 {modalProps.actions && modalProps.actions.length > 0 && (
-                    <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+                    <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2, flexWrap: 'wrap' }}>
                         {modalProps.actions.map((action, index) => (
                             <React.Fragment key={index}>
                                 {action}

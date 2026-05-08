@@ -7,14 +7,18 @@ export interface BotaoItens {
   label?: string;
   onIconClick?: () => void;
   onKeyDown?: () => React.KeyboardEvent<HTMLDivElement>;
-  icon?: ComponentType<any>; 
+  icon?: ComponentType<any>;
   width?: string;
   color?: ButtonProps['color'];
+  backgroundColor?: string;
   isLoading?: boolean;
   isDisable?: boolean;
   classIcone?: string;
   marginRight?: string;
   marginLeft?: string;
+  className?: string;
+  onClick?: () => void;
   type?: string;
+  variantStyle?: 'primary' | 'success' | 'danger';
   form?: string;
 }

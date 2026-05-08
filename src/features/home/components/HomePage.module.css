@@ -1,0 +1,17 @@
+.conteudo {
+    width: 100%;
+}
+
+.gridConteudo {
+    width: 100%;
+}
+
+.container {
+  background: var(--bg-gradient);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+.section {
+  padding: 60px 20px;
+}

@@ -1,0 +1,343 @@
+.root {
+    min-height: 100vh;
+    width: 100%;
+    background: var(--bg-gradient);
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.banner {
+    width: 100%;
+}
+
+.pageContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 40px 16px;
+}
+
+.section {
+    width: 100%;
+}
+
+.sectionBody {
+    width: 100%;
+    margin-bottom: 100px;
+}
+
+.section.hidden {
+    display: none;
+}
+
+.actionBar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+}
+
+.actionButton,
+.openButton,
+.filterButton,
+.searchButton,
+.clearButton,
+.deleteButton {
+    min-height: 44px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    transition: transform 0.2s ease, filter 0.2s ease, background 0.2s ease;
+}
+
+.actionButton,
+.searchButton,
+.openButton {
+    background: linear-gradient(160deg, #1f5f8f, #0b2f4f);
+}
+
+.actionButton:hover,
+.searchButton:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(160deg, #2a6fa4, #134066);
+}
+
+.filterButton {
+    background: #21BCFF;
+}
+
+.filterButton:hover {
+    transform: translateY(-2px);
+    background: #169fd9;
+}
+
+
+.openButton:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+}
+
+.clearButton,
+.deleteButton {
+    background: linear-gradient(160deg, #ed145b, #a10f3e);
+}
+
+.clearButton:hover,
+.deleteButton:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(160deg, #ff3b78, #c0134c);
+}
+
+.formPersistir {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.card {
+    width: 90%;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-large);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    padding: 28px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.header h2 {
+    font-size: 1.8rem;
+    margin-bottom: 6px;
+}
+
+.header p {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.form {
+    width: 100%;
+}
+
+.messageText {
+    margin-bottom: 80px;
+}
+
+.messageText :global(.texto) {
+    display: flex !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+.formActions {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 16px;
+}
+
+.campos {
+    gap: 16px;
+}
+
+.camposLayout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.coluna {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+}
+
+.formItens {
+    width: 100%;
+    max-width: 364px;
+}
+
+.separador {
+    width: 1px;
+    min-height: 100%;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.form :global(.MuiInputBase-root) {
+    min-height: 48px;
+    border-radius: 10px !important;
+}
+
+.form :global(.MuiOutlinedInput-root) {
+    border-radius: 10px !important;
+}
+
+.botaoArea {
+    display: flex;
+    width: 100%;
+    max-width: 364px;
+    margin-top: 20px;
+}
+
+.botaoArea :global(span) {
+    display: flex;
+    width: 100%;
+}
+
+.botaoArea button {
+    width: 100%;
+    padding: 14px 24px;
+    border-radius: 999px;
+    background: linear-gradient(160deg, #2fa4a9, #1b6f73);
+    color: white;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.searchActions {
+    display: flex;
+    width: 100%;
+    max-width: 364px;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.searchActions button {
+    flex: 1;
+}
+
+.hiddenFields {
+    display: none;
+}
+
+.searchPanel {
+    width: 100%;
+    margin-bottom: 28px;
+}
+
+.searchHeader {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.searchHeader h2 {
+    font-size: 1.8rem;
+    margin-bottom: 6px;
+}
+
+.searchHeader p {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.listHeader {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.listHeader h2 {
+    font-size: 1.8rem;
+    margin-bottom: 6px;
+}
+
+.listHeader p {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.gridWrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.gridWrapper :global(.MuiDataGrid-root),
+.gridWrapper :global(.MuiTable-root) {
+    background: rgba(0, 0, 0, 0.12);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+}
+
+.gridWrapper :global(.MuiDataGrid-columnHeaders),
+.gridWrapper :global(thead) {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.footer {
+    margin-top: auto;
+}
+
+@media (max-width: 900px) {
+    .pageContent {
+        padding: 24px 16px 40px;
+        gap: 20px;
+    }
+
+    .card {
+        width: 100%;
+        padding: 24px 18px;
+    }
+
+    .camposLayout {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .coluna {
+        gap: 16px;
+        align-items: stretch;
+    }
+
+    .formItens,
+    .botaoArea {
+        max-width: none;
+    }
+
+    .separador {
+        display: none;
+    }
+
+    .searchButton,
+    .clearButton,
+    .filterButton,
+    .actionButton,
+    .openButton,
+    .deleteButton {
+        width: 100%;
+        max-width: none;
+    }
+
+    .searchActions {
+        max-width: none;
+        justify-content: stretch;
+        flex-direction: column;
+    }
+
+    .searchPanel {
+        margin-bottom: 24px;
+    }
+
+    .sectionBody {
+        width: 100%;
+        margin-bottom: 40px;
+    }
+}

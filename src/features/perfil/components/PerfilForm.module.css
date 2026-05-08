@@ -1,0 +1,178 @@
+.container {
+    min-height: 100vh;
+    background: var(--bg-gradient);
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.banner {
+    width: 100%;
+}
+
+.formPersistir {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 16px;
+}
+
+.card {
+    width: 100%;
+    max-width: 920px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-large);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    padding: 28px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.header h2 {
+    font-size: 1.8rem;
+    margin-bottom: 6px;
+}
+
+.header p {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.form {
+    width: 100%;
+}
+
+.campos {
+    gap: 16px;
+}
+
+.camposLayout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.coluna {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+}
+
+.formItens,
+.formItensImagem {
+    width: 100%;
+    max-width: 364px;
+}
+
+.formItensImagem {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
+    margin-left: 60px;
+}
+
+.coluna:last-child .formItens:first-child {
+    margin-top: 180px;
+}
+
+.separador {
+    width: 1px;
+    min-height: 100%;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+
+.form :global(.MuiInputBase-root) {
+    min-height: 48px;
+    border-radius: 10px !important;
+}
+
+.form :global(.MuiOutlinedInput-root) {
+    border-radius: 10px !important;
+}
+
+.recaptcha {
+    width: 100%;
+    max-width: 364px;
+    margin: 4px 0 0;
+    display: flex;
+    justify-content: center;
+}
+
+.botaoArea {
+    display: flex;
+    width: 100%;
+    max-width: 364px;
+    margin-top: 20px;
+}
+
+.botaoArea :global(span) {
+  display: flex;
+  width: 100%;
+}
+
+.botaoArea button {
+    width: 100%;
+    padding: 14px 24px;
+    border-radius: 999px;
+    background: linear-gradient(160deg, #2fa4a9, #1b6f73);
+    color: white;
+    font-weight: 600;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.footerCustom {
+    margin-top: auto;
+}
+
+@media (max-width: 900px) {
+    .formPersistir {
+        align-items: flex-start;
+        padding: 24px 16px 40px;
+    }
+
+    .card {
+        padding: 24px 18px;
+    }
+
+    .camposLayout {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .coluna {
+        gap: 16px;
+        align-items: stretch;
+    }
+
+    .coluna:last-child .formItens:first-child {
+        margin-top: 0;
+    }
+
+    .formItens,
+    .formItensImagem,
+    .recaptcha,
+    .botaoArea {
+        max-width: none;
+    }
+
+    .separador {
+        display: none;
+    }
+
+    .formItensImagem {
+    margin-left: 30px;
+}
+}

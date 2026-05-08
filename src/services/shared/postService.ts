@@ -12,6 +12,7 @@ export const PostService = async <T>(  item: T, url: string): Promise<ResponseIt
         Authorization: `Bearer ${token}`,
       },
     };
+
     const response = await axios.post<ResponseItem<T>>(`${url}`, item, config);
     return response.data; 
     } catch (error) {

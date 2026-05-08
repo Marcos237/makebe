@@ -1,0 +1,33 @@
+.MuiTooltip-tooltip {
+    position: relative !important;
+    font-size: 14px !important;
+    padding: 10px 16px !important;
+    border-radius: 8px !important;
+    background-color: #ed145b !important;
+    color: white !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+
+:root {
+    --arrow-size: 8px;
+    --tooltip-bg: #ed145b;
+}
+
+
+.MuiTooltip-tooltip::after {
+    content: "";
+    position: absolute;
+    top: calc(-1 * var(--arrow-size) - 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: var(--arrow-size);
+    border-style: solid;
+    border-color: transparent transparent var(--tooltip-bg) transparent;
+}
+
+.MuiTooltip-tooltip[data-popper-placement^="bottom"]::after {
+    top: auto;
+    bottom: calc(-1 * var(--arrow-size) - 6px);
+    border-color: var(--tooltip-bg) transparent transparent transparent;
+}

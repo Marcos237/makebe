@@ -1,0 +1,19 @@
+.confirmButton {
+  background: #4fd1c5 !important;
+}
+
+.confirmButton:hover,
+.confirmButton.MuiButton-root:hover {
+  background: #38b2ac !important;
+  filter: none !important;
+}
+
+.cancelButton {
+  background: #a10f3e !important;
+}
+
+.cancelButton:hover,
+.cancelButton.MuiButton-root:hover {
+  background: linear-gradient(135deg, #8a0d36 0%, #730b2d 100%) !important;
+  filter: none !important;
+}

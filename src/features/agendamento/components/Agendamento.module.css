@@ -1,0 +1,338 @@
+.root {
+    min-height: 100vh;
+    width: 100%;
+    background: var(--bg-gradient);
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.banner {
+    width: 100%;
+}
+
+.pageContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 40px 16px;
+}
+
+.section {
+    width: 100%;
+}
+
+.sectionBody {
+    width: 100%;
+    margin-bottom: 40px;
+}
+
+.actionBar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+}
+
+.actionButton,
+.openButton,
+.deleteButton,
+.calendarToggle {
+    min-height: 44px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    transition: transform 0.2s ease, filter 0.2s ease, background 0.2s ease;
+}
+
+.actionButton {
+    background: linear-gradient(160deg, #1f5f8f, #0b2f4f);
+}
+
+.actionButton:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(160deg, #2a6fa4, #134066);
+}
+
+.deleteButton {
+    background: linear-gradient(160deg, #ed145b, #a10f3e);
+}
+
+.deleteButton:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(160deg, #ff3b78, #c0134c);
+}
+
+.calendarToggle {
+    background: rgba(237, 20, 91, 0.12);
+    border: 1px solid rgba(237, 20, 91, 0.35);
+    color: #ed145b;
+    min-width: 44px;
+    padding: 0;
+}
+
+.calendarToggle:hover {
+    transform: translateY(-2px);
+    background: rgba(237, 20, 91, 0.18);
+}
+
+.formPersistir {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.card {
+    width: 90%;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-large);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    padding: 28px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.header h2 {
+    font-size: 1.8rem;
+    margin-bottom: 6px;
+}
+
+.header p {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.messageText {
+    margin-bottom: 32px;
+}
+
+.messageText :global(.texto) {
+    display: flex !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+.form {
+    width: 100%;
+}
+
+.formActions {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 16px;
+}
+
+.camposLayout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.coluna {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+}
+
+.campos {
+    gap: 16px;
+}
+
+.formItens,
+.formItensImagem,
+.pickerRow,
+.botaoArea {
+    width: 100%;
+    max-width: 364px;
+}
+
+.formItensImagem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.avatar {
+    width: 148px !important;
+    height: 148px !important;
+    border: 3px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+.nomeAvatar,
+.dataAvatar {
+    color: #ed145b;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.separador {
+    width: 1px;
+    min-height: 100%;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.form :global(.MuiInputBase-root) {
+    min-height: 48px;
+    border-radius: 10px !important;
+}
+
+.form :global(.MuiOutlinedInput-root) {
+    border-radius: 10px !important;
+}
+
+.agendadosHeader {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    max-width: 364px;
+}
+
+.agendadosPanel {
+    width: 100%;
+    max-width: 364px;
+    position: relative;
+    z-index: 10;
+}
+
+.agendadosPanel :global(.data-box) {
+    padding: 20px 24px;
+    margin-top: 12px;
+}
+
+.pickerRow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
+}
+
+.botaoArea {
+    display: flex;
+    margin-top: 20px;
+}
+
+.botaoArea :global(span) {
+    display: flex;
+    width: 100%;
+}
+
+.botaoArea button {
+    width: 100%;
+    min-height: 48px;
+    padding: 14px 24px;
+    border-radius: 999px;
+    background: linear-gradient(160deg, #2fa4a9, #1b6f73);
+    color: white;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.botaoArea button:hover {
+    background: linear-gradient(160deg, #2fa4a9, #1b6f73);
+    filter: brightness(1.04);
+}
+
+.hiddenFields {
+    display: none;
+}
+
+.calendarControls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px;
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+.calendarItem {
+    min-width: 0;
+}
+
+.calendarWrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.calendarWrapper :global(.calendario) {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    padding: 10px;
+}
+
+.footer {
+    margin-top: auto;
+}
+
+@media (max-width: 900px) {
+    .pageContent {
+        padding: 24px 16px 40px;
+        gap: 20px;
+    }
+
+    .card {
+        width: 100%;
+        padding: 24px 18px;
+    }
+
+    .camposLayout {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .coluna {
+        gap: 16px;
+        align-items: stretch;
+    }
+
+    .formItens,
+    .formItensImagem,
+    .pickerRow,
+    .botaoArea,
+    .agendadosHeader,
+    .agendadosPanel {
+        max-width: none;
+    }
+
+    .pickerRow,
+    .calendarControls {
+        grid-template-columns: 1fr;
+    }
+
+    .separador {
+        display: none;
+    }
+
+    .actionButton,
+    .deleteButton {
+        width: 100%;
+        max-width: none;
+    }
+
+    .agendadosPanel :global(.data-box) {
+        padding: 20px 16px;
+    }
+}

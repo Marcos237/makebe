@@ -1,22 +1,16 @@
 import React from 'react';
 import { Routes, Route , Navigate} from 'react-router-dom';
-import Home from './containers/Home/home';
-import Login from './containers/Login/login';
-import Perfil from './containers/Perfil/Perfil';
-import PerfilValidar from './containers/Perfil/PerfiValidar';
-import Deslogar from './containers/Login/deslogar';
-import Autenticacao from './containers/Perfil/Autenticacao'
-import ReenviaAutenticacao from './containers/Perfil/ReenviaAutenticacao';
-import AlteraSenha from './containers/Login/alterasenha'
-import RecuperaSenha from './containers/Perfil/RecuperaSenha';
-import Salao from './containers/Loja/Salao';
-import Endereco from './containers/Endereco/Endereco';
-import Portifolio from './containers/Portifolio/Portifolio';
-import Colaborador from './containers/Colaborador/colaborador';
-import Servico from './containers/Produtos/servico';
-import ColaboradorProfissional from './containers/ColaboradorProfissional/colaboradorProfissional';
-import Agenda from  './containers/Agenda/Agenda';
-import Agendamento from './containers/Agendamento/Agendamento';
+import Home from './features/home';
+import { AlteraSenhaPage, LoginForm, LogoutPage } from './features/login';
+import { Autenticacao, PerfilForm, PerfilValidar, RecuperaSenha, ReenviaAutenticacao } from './features/perfil';
+import Salao from './features/loja';
+import Endereco from './features/endereco';
+import Portifolio from './features/portifolio';
+import Colaborador from './features/colaborador';
+import Servico from './features/produtos';
+import ColaboradorProfissional from './features/colaborador-profissional';
+import Agenda from './features/agenda';
+import Agendamento from './features/agendamento';
 
 const App: React.FC = () => {
   return (
@@ -24,13 +18,13 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<Navigate to="/Home" replace />} />
         <Route path="/Home" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/perfil" element={<Perfil />} />
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/perfil" element={<PerfilForm />} />
         <Route path="/perfilValidar" element={<PerfilValidar />} />
-        <Route path="/deslogar" element={<Deslogar />} />
+        <Route path="/deslogar" element={<LogoutPage />} />
         <Route path="/autenticacao/:chave" element={<Autenticacao />} />
         <Route path="/reenviaAutenticacao" element={<ReenviaAutenticacao />} />
-        <Route path="/alteraSenha" element={<AlteraSenha />} />
+        <Route path="/alteraSenha" element={<AlteraSenhaPage />} />
         <Route path="/recuperaSenha/:chave" element={<RecuperaSenha />} />
         <Route path="/loja" element={<Salao />} />
         <Route path="/Endereco/:urlParametro" element={<Endereco />} />

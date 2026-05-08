@@ -78,14 +78,14 @@ const Calendario: React.FC<{ calendarioItem: CalendarioItem }> = ({ calendarioIt
   return (
     <ThemeProvider theme={darkTheme}>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
-        <Grid container spacing={2}>
+        <Grid container spacing={2} className="calendario-grid">
           {months.map((month, idx) => {
             const min = month.startOf("month");
             const max = month.endOf("month");
 
 
             return (
-              <Grid item xs={12} sm={6} md={4} key={idx}>
+              <Grid item xs={12} sm={6} md={4} key={idx} className="calendario-grid-item">
                 <Box className="calendario">
                   <DateCalendar
                     key={`cal-${idx}-${version}`}
