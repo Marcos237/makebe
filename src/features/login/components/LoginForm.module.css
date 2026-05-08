@@ -64,6 +64,16 @@
   margin: 18px 0;
   display: flex;
   justify-content: center;
+  width: 100%;
+  overflow: hidden;
+}
+
+.recaptcha :global(.g-recaptcha) {
+  max-width: 100%;
+}
+
+.recaptcha :global(.g-recaptcha > div) {
+  margin: 0 auto;
 }
 
 /* Botão área */
@@ -71,6 +81,9 @@
   display: flex;
   width: 100%;
   margin-top: 20px;
+  position: relative;
+  z-index: 2;
+  isolation: isolate;
 }
 
 .botaoArea button {
@@ -87,6 +100,8 @@
   font-size: 1rem;
   font-weight: 600;
   border: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .botaoArea :global(span) {
@@ -114,6 +129,7 @@
 .botaoArea .iconeRotacionado {
   transform: rotate(230deg);
   display: inline-block;
+
 }
 
 /* Ações */
@@ -188,4 +204,39 @@
   margin-top: auto;
 }
 
-@media (max-width: 900px) {}
+@media (max-width: 900px) {
+  .formPersistir {
+    align-items: flex-start;
+    padding: 24px 16px 40px;
+  }
+
+  .card {
+    padding: 24px 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .recaptcha {
+    justify-content: flex-start;
+  }
+
+  .recaptcha :global(.g-recaptcha) {
+    transform: scale(0.89);
+    transform-origin: left top;
+  }
+
+  .recaptcha :global(.g-recaptcha > div) {
+    margin: 0;
+  }
+
+  .acoes {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .cadastrarBotao,
+  .esqueciLink {
+    justify-content: center;
+  }
+}
