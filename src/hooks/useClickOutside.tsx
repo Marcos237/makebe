@@ -1,7 +1,13 @@
 import { useEffect } from "react";
 
-function useClickOutside(ref: React.RefObject<HTMLElement>, onOutside: () => void) {
+function useClickOutside(
+  ref: React.RefObject<HTMLElement>,
+  onOutside: () => void,
+  enabled: boolean = true
+) {
   useEffect(() => {
+    if (!enabled) return;
+
     const handler = (e: MouseEvent | TouchEvent) => {
       if (!ref.current || ref.current.contains(e.target as Node)) return;
       onOutside();
@@ -12,7 +18,7 @@ function useClickOutside(ref: React.RefObject<HTMLElement>, onOutside: () => voi
       document.removeEventListener("mousedown", handler);
       document.removeEventListener("touchstart", handler);
     };
-  }, [ref, onOutside]);
+  }, [enabled, ref, onOutside]);
 }
 
 export default useClickOutside;
