@@ -5,21 +5,27 @@ body {
     background-position: center;
     background-attachment: fixed;
     background:
-        radial-gradient(800px 400px at 20% 10%,
-            rgba(80, 120, 255, 0.12),
+        radial-gradient(900px 520px at 18% 26%,
+            rgba(28, 66, 140, 0.28),
+            transparent 62%),
+        radial-gradient(760px 420px at 82% 78%,
+            rgba(34, 106, 164, 0.22),
             transparent 60%),
-        radial-gradient(600px 300px at 80% 20%,
-            rgba(255, 255, 255, 0.05),
-            transparent 65%),
+        radial-gradient(540px 280px at 50% 18%,
+            rgba(255, 255, 255, 0.035),
+            transparent 70%),
         linear-gradient(180deg,
-            #0a0c10,
-            #0d1016);
+            #08111f 0%,
+            #0a1526 45%,
+            #0d1d33 100%);
     position: relative;
+    min-height: 100vh;
 }
 
 
 #root {
     flex: 1;
+    min-height: 100vh;
 }
 
 /* Container global - não afetar componentes com CSS Modules */

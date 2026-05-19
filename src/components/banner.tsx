@@ -14,6 +14,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import "../assets/styles/Banner/banner.css";
 
@@ -29,6 +30,7 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
   const subMenuRef = useRef<HTMLDivElement | null>(null);
   const subMenuNivel2Ref = useRef<HTMLDivElement | null>(null);
   const safeAnchor = (el: HTMLElement | null) => (el && el.isConnected ? el : null);
+  const isMobile = useMediaQuery('(max-width:820px)');
 
   const closeAllMenus = useCallback(() => {
     setMenuElemento(null);
@@ -255,7 +257,7 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
   return (
     <>
       <ThemeProvider theme={darkTheme}>
-        <AppBar position="static" className="menu" sx={{ backgroundColor: 'black' }}>
+        <AppBar position="static" className="menu" sx={{ backgroundColor: 'transparent', backgroundImage: 'none' }}>
           <Container maxWidth="xl">
             <Toolbar disableGutters>
               <Typography variant="h6" noWrap component="a" href="/Home" sx={{
@@ -267,10 +269,15 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
                 textDecoration: 'none',
               }}>
                 <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
-                  <img src={`${URL_IMAGENS}/logo_5.png`} alt="Logo" className="imagem" />
+                  <img
+                    src={`${URL_IMAGENS}/logo_5.png`}
+                    alt="Logo"
+                    className="imagem"
+                    style={{ width: '64px', height: '54px' }}
+                  />
                 </Box>
               </Typography>
-              <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+              <Box className="mobileMenuTrigger" sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                 <IconButton
                   size="large"
                   aria-label="account of current user"
@@ -305,16 +312,18 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
               </Box>
               <Box
                 sx={{
-                  flexGrow: 1,
+                  flexGrow: 0,
                   display: { xs: 'none', md: 'flex' },
-                  justifyContent: 'flex-start',
-                  alignItems: 'flex-end',
-                  mr: 6,
-                  height: '200px',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  mr: 1,
+                  minHeight: '72px',
+                  gap: 3.2,
+                  flexWrap: 'nowrap',
                 }}
               >
                 {menuUsuarioLogadoItems.map(item => (
-                  <Box key={item.id}>
+                  <Box key={item.id} sx={{ display: 'flex', m: 0, p: 0 }}>
                     <Button
                       component={Link}
                       to={item.menuUrl}
@@ -324,11 +333,14 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
                           : handleMenuClose
                       }
                       sx={{
-                        my: 2,
+                        my: 0,
                         color: 'white',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: 1
+                        justifyContent: 'center',
+                        gap: 0.5,
+                        px: 0.55,
+                        minWidth: 0
                       }}
                     >
                       {item.menuDescricao}
@@ -342,12 +354,13 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
                 ))}
               </Box>
 
-              <Box sx={{
+              <Box className="profileArea" sx={{
                 flexGrow: 0,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'flex-end',
-                mt: { md: 12 }
+                mt: 0,
+                minHeight: '72px'
               }}>
                 <Tooltip title={tooltipText()}>
                   <span>
@@ -355,15 +368,16 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
                       <Avatar
                         alt={usuarioLogado?.nome || ''}
                         src={usuarioLogado?.urlImagem}
-                        sx={{ width: 80, height: 80, fontSize: 40 }} />
+                        sx={{ width: 56, height: 56, fontSize: 28 }} />
                     </IconButton>
                   </span>
                 </Tooltip>
                 <Menu
-                  sx={{ mt: '45px' }}
+                  sx={{ mt: isMobile ? '6px' : '12px' }}
                   id="menu-appbar-user"
                   anchorEl={anchorElUser}
-                  anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                  anchorOrigin={{ vertical: isMobile ? 'bottom' : 'top', horizontal: 'right' }}
+                  transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                   keepMounted
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUser}

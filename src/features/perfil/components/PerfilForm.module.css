@@ -173,6 +173,8 @@
     }
 
     .formItensImagem {
-    margin-left: 30px;
-}
+        margin-left: 0;
+        justify-content: center;
+        align-items: center;
+    }
 }
