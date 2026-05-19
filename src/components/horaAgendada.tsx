@@ -1,8 +1,9 @@
 // HoraAgendada.tsx
-import React, { useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { HoraAgendadaItem } from "../Interfaces/Agendamento/horaAgendadaItem";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Grid, IconButton, Tooltip, Box } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import CloseIcon from "@mui/icons-material/Close";
 import { TfiAgenda } from "react-icons/tfi";
 import { FaRegTrashAlt, FaRegCalendarAlt } from "react-icons/fa";
@@ -22,10 +23,15 @@ const HoraAgendada: React.FC<{
 }> = ({ horaAgendadaItem, diaISO, onCloseClick, onUpdateClick, onDeleteClick, onNewClick, isReadOnly }) => {
   const darkTheme = createTheme({ palette: { mode: "dark" } });
   const boxRef = useRef<HTMLDivElement>(null);
+  const isMobile = useMediaQuery("(max-width:820px)");
   const [closing, setClosing] = useState(false);
   const [isNovo, setIsNovo] = useState(false);
   const [isEditar, setIsEditar] = useState(false);
   const [loadingEditarId, setLoadingEditarId] = useState<number | null>(null);
+
+  const handleOutsideClose = useCallback(() => {
+    onCloseClick?.();
+  }, [onCloseClick]);
 
   const handleClose = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -86,7 +92,7 @@ const HoraAgendada: React.FC<{
     return (horaAgendadaItem ?? []).filter(i => i.data === dataSelecionada);
   }, [horaAgendadaItem, dataSelecionada]);
 
-  useClickOutside(boxRef, () => onCloseClick?.());
+  useClickOutside(boxRef, handleOutsideClose, !isMobile);
 
 
   if (!dataSelecionada) return null;
