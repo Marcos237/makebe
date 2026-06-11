@@ -1,6 +1,5 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Home from './features/home';
 import { AlteraSenhaPage, LoginForm, LogoutPage } from './features/login';
 import { Autenticacao, PerfilForm, PerfilValidar, RecuperaSenha, ReenviaAutenticacao } from './features/perfil';
 import Salao from './features/loja';
