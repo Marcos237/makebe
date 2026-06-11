@@ -6,5 +6,6 @@ export const API_BASE_AGENDA_URL= "https://www.makebeapp.com.br/api/makebe-agend
 // export const API_BASE_AGENDA_URL= "https://makebeappdev/api/makebe-agenda/"
 
 export const URL_IMAGENS = "https://www.makebeapp.com.br/imagens";
-// export const RECAPTCHA_SITE_KEY = "6LeQZ0IsAAAAALpkPpap5_FVYux0KcPG1wVUnEYk"; 
-export const RECAPTCHA_SITE_KEY = "6LfVK_YsAAAAADH3D6vYda9kLI2NUaJzhjkKggsj"; 
+export const RECAPTCHA_SITE_KEY = "6Lcb1i0sAAAAADPx6Nbn6e5c6PNflq8QvYP-XCm3"; 
+// export const RECAPTCHA_SITE_KEY = "6LfVK_YsAAAAADH3D6vYda9kLI2NUaJzhjkKggsj"; 
+
