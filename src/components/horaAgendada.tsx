@@ -154,6 +154,9 @@ const HoraAgendada: React.FC<{
                 return (
                   <div key={key} className="box-item">
                     <span className="data-box-name nome">{nome}</span>
+                    {agendamento.descricaoServico && (
+                      <span className="data-box-servico">{agendamento.descricaoServico}</span>
+                    )}
                     <div className="linha-item">
                       <span className="data-box-text hora">
                         {agendamento.dataInicio?.toString() ?? ""}

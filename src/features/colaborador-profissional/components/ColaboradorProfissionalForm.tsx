@@ -2,10 +2,12 @@ import React, { useCallback, useState } from "react";
 import { Tooltip } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { FaRegTrashAlt, FaSave } from "react-icons/fa";
+import DateTimerPicker from "../../../components/dateTimerPicker";
 import BotaoSubmit from "../../../components/submitButton";
 import Dropdown from "../../../components/dropdown";
 import Mensagem from "../../../components/mensagem";
 import CampoTexto from "../../../components/textbox";
+import { formatarHora, formatarHoraComData } from "../../../functions/formatDataHora";
 import { useFormErros } from "../../../hooks/useFormErros";
 import updatePersistirPrev from "../../../hooks/useUpdatePersistirPrev";
 import { BotaoItens } from "../../../Interfaces/Botao/botao";
@@ -29,6 +31,8 @@ const ColaboradorProfissionalForm: React.FC<{
     const [lojaId, setLojaId] = useState<number>(0);
     const [servicoId, setServicoId] = useState<number>(0);
     const [descricao, setDescricao] = useState<string>("");
+    const [periodoInativoInicio, setPeriodoInativoInicio] = useState<string>("");
+    const [periodoInativoFim, setPeriodoInativoFim] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [erros, setErros] = useState<ErroItem[]>([]);
     const [erroTrigger, setErroTrigger] = useState(0);
@@ -40,12 +44,23 @@ const ColaboradorProfissionalForm: React.FC<{
     useFormErros(erros, erroTrigger);
 
     const fetchColaboradorProfissionalData = useCallback(async () => {
-        setId(persistirProps.item?.id || 0);
-        setUsuarioId(persistirProps.item?.usuarioId || "");
-        setColaboradorId(persistirProps.item?.colaboradorId ?? 0);
-        setLojaId(persistirProps.item?.lojaId ?? 0);
-        setServicoId(persistirProps.item?.servicoId ?? 0);
-        setDescricao(persistirProps.item?.descricao ?? "");
+        const item = persistirProps.item;
+        setId(item?.id || 0);
+        setUsuarioId(item?.usuarioId || "");
+        setColaboradorId(item?.colaboradorId ?? 0);
+        setLojaId(item?.lojaId ?? 0);
+        setServicoId(item?.servicoId ?? 0);
+        setDescricao(item?.descricao ?? "");
+        setPeriodoInativoInicio(
+            item?.PeriodoInativoInicioExtenso ??
+            (item as ColaboradorProfissionalItem & { periodoInativoInicioExtenso?: string })?.periodoInativoInicioExtenso ??
+            "",
+        );
+        setPeriodoInativoFim(
+            item?.PeriodoInativoFimExtenso ??
+            (item as ColaboradorProfissionalItem & { periodoInativoFimExtenso?: string })?.periodoInativoFimExtenso ??
+            "",
+        );
     }, [persistirProps]);
 
     updatePersistirPrev(fetchColaboradorProfissionalData, undefined, persistirProps.item);
@@ -57,6 +72,8 @@ const ColaboradorProfissionalForm: React.FC<{
         setLojaId(0);
         setServicoId(0);
         setDescricao("");
+        setPeriodoInativoInicio("");
+        setPeriodoInativoFim("");
     };
 
     const enviarSatusMessage = () => {
@@ -76,6 +93,8 @@ const ColaboradorProfissionalForm: React.FC<{
             lojaId: lojaId ?? 0,
             servicoId: servicoId ?? 0,
             descricao: descricao ?? "",
+            PeriodoInativoInicioExtenso: formatarHoraComData(periodoInativoInicio) ?? undefined,
+            PeriodoInativoFimExtenso: formatarHoraComData(periodoInativoFim) ?? undefined,
         };
 
         const colaboradorResponse = await salvarColaboradorProfissional(colabolador);
@@ -216,6 +235,27 @@ const ColaboradorProfissionalForm: React.FC<{
                                         erroSession: "Descricao",
                                     }}
                                 />
+                            </div>
+                            <div className={styles.periodoInativoSection}>
+                                <div className={styles.periodoInativoLegenda}>Periodo Inativo</div>
+                                <div className={styles.pickerSplit}>
+                                    <DateTimerPicker
+                                        name="PeriodoInativoInicio"
+                                        label="Periodo Inicio"
+                                        value={formatarHora(periodoInativoInicio)}
+                                        onChange={setPeriodoInativoInicio}
+                                        tipo="hora"
+                                        erroSession="PeriodoInativoInicio"
+                                    />
+                                    <DateTimerPicker
+                                        name="PeriodoInativoFim"
+                                        label="Periodo Fim"
+                                        value={formatarHora(periodoInativoFim)}
+                                        onChange={setPeriodoInativoFim}
+                                        tipo="hora"
+                                        erroSession="PeriodoInativoFim"
+                                    />
+                                </div>
                             </div>
                             <div className={styles.botaoArea}>
                                 <BotaoSubmit botaoProps={botaoProps} />

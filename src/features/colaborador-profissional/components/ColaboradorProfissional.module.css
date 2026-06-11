@@ -166,7 +166,30 @@
 .botaoArea,
 .searchActions {
     width: 100%;
+    max-width: 360px;
+}
+
+.periodoInativoSection {
+    width: 100%;
+    max-width: 340px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.periodoInativoLegenda {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 2px;
+}
+
+.pickerSplit {
+    width: 100%;
     max-width: 364px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 10px;
 }
 
 .separador {
@@ -295,8 +318,16 @@
 
     .formItens,
     .botaoArea,
-    .searchActions {
+    .searchActions,
+    .pickerSplit {
         max-width: none;
+    }
+        .periodoInativoSection {
+            max-width: 350px;
+        }
+
+    .pickerSplit {
+        grid-template-columns: 1fr;
     }
 
     .separador {

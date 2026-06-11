@@ -260,7 +260,7 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
         <AppBar position="static" className="menu" sx={{ backgroundColor: 'transparent', backgroundImage: 'none' }}>
           <Container maxWidth="xl">
             <Toolbar disableGutters>
-              <Typography variant="h6" noWrap component="a" href="/Home" sx={{
+              <Typography className="bannerHomeLink" variant="h6" noWrap component={Link} to="/" sx={{
                 mr: 2,
                 display: { xs: 'none', md: 'flex' },
                 fontWeight: 700,

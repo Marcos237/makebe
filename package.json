@@ -39,6 +39,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "start:iisexpress": "powershell -ExecutionPolicy Bypass -File .\\scripts\\start-iisexpress.ps1",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

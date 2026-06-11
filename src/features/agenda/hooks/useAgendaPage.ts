@@ -53,7 +53,7 @@ export const useAgendaPage = () => {
         const agendaDefault: AgendaItens = {
             id: 0,
             isTodoDia: false,
-            bloqueado: false,
+            IsBloqueadoHoje: false,
             agendaAbertaInicio: "",
             agendaAbertaFim: "",
             idAgendaSemanaInicio: 0,

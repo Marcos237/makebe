@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginService } from "../services/loginService";
+import { removeTokenFromLocalStorage } from "../../../config/ArmazenaToken";
 
 export const useLogout = () => {
     const navigate = useNavigate();
@@ -11,7 +12,8 @@ export const useLogout = () => {
             isCalled.current = true;
             const deslogar = async () => {
                 await loginService.logout();
-                navigate("/Home");
+                removeTokenFromLocalStorage();
+                navigate("/");
             };
             deslogar();
         }

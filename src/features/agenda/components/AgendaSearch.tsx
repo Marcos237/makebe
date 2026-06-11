@@ -10,8 +10,6 @@ import IconButton from '@mui/material/IconButton';
 import {
     DataLabelAgendaAberta,
     DataLabelAgendaFechada,
-    DataLabelBloqueioAberto,
-    DataLabelBloqueioFechado,
     TipoColaborador,
     TipoLoja,
 } from "../../../constants/Agenda/agendaConstant";
@@ -38,8 +36,6 @@ const AgendaSearch: React.FC<{
     const [idAgendaSemanaFim, setAgendaSemanaFim] = useState<number>(0);
     const [agendaAbertaInicio, setAgendaAbertaInicio] = useState<string>("");
     const [agendaAbertaFim, setAgendaAbertaFim] = useState<string>("");
-    const [agendaBloqueadaInicio, setAgendaBloqueadaInicio] = useState<string>("");
-    const [agendaBloqueadaFim, setAgendaBloqueadaFim] = useState<string>("");
     const [loja, setLoja] = useState<string>("");
     const [mostrarFiltros, setMostrarFiltros] = useState(false);
 
@@ -57,8 +53,6 @@ const AgendaSearch: React.FC<{
             idAgendaSemanaFim: idAgendaSemanaFim ?? 0,
             agendaAbertaInicio: formatarHoraComData(agendaAbertaInicio ?? ""),
             agendaAbertaFim: formatarHoraComData(agendaAbertaFim ?? ""),
-            agendaBloqueadaInicio: formatarHoraComData(agendaBloqueadaInicio ?? ""),
-            agendaBloqueadaFim: formatarHoraComData(agendaBloqueadaFim ?? ""),
             nome: tipoItem?.toString() === TipoUsuarioColaboradorId ? colaborador ?? "" : "",
             razaoSocial: tipoItem?.toString() === TipoUsuarioLojaId ? loja ?? "" : "",
             tipo: Number(tipoItem) ?? 0,
@@ -110,8 +104,6 @@ const AgendaSearch: React.FC<{
         setAgendaSemanaFim(0);
         setAgendaAbertaInicio("");
         setAgendaAbertaFim("");
-        setAgendaBloqueadaInicio("");
-        setAgendaBloqueadaFim("");
         setColaborador("");
         setColaboradorId(0);
         setLoja("");
@@ -127,12 +119,10 @@ const AgendaSearch: React.FC<{
             descricao: "",
             agendaAbertaInicio: "",
             agendaAbertaFim: "",
-            bloqueado: false,
+            IsBloqueadoHoje: false,
             isTodoDia: false,
             idAgendaSemanaInicio: 0,
             idAgendaSemanaFim: 0,
-            agendaBloqueadaInicio: "",
-            agendaBloqueadaFim: "",
             diaInicioSemana: "",
             diaSemanaFim: "",
             idLoja: 0,
@@ -152,12 +142,6 @@ const AgendaSearch: React.FC<{
         }
         if (tipo === "agendaFechada") {
             setAgendaAbertaFim("");
-        }
-        if (tipo === "bloquadaInicio") {
-            setAgendaBloqueadaInicio("");
-        }
-        if (tipo === "bloquadaFim") {
-            setAgendaBloqueadaFim("");
         }
     };
 
@@ -267,28 +251,7 @@ const AgendaSearch: React.FC<{
                                     </div>
                                     {renderTrashButton("agendaFechada")}
                                 </div>
-                                <div className={styles.pickerWithAction}>
-                                    <div className={styles.pickerField}>
-                                        <DateTimerPicker
-                                            label={DataLabelBloqueioAberto}
-                                            value={agendaBloqueadaInicio ? dayjs(agendaBloqueadaInicio) : null}
-                                            onChange={setAgendaBloqueadaInicio}
-                                            tipo="hora"
-                                        />
-                                    </div>
-                                    {renderTrashButton("bloquadaInicio")}
-                                </div>
-                                <div className={styles.pickerWithAction}>
-                                    <div className={styles.pickerField}>
-                                        <DateTimerPicker
-                                            label={DataLabelBloqueioFechado}
-                                            value={agendaBloqueadaFim ? dayjs(agendaBloqueadaFim) : null}
-                                            onChange={setAgendaBloqueadaFim}
-                                            tipo="hora"
-                                        />
-                                    </div>
-                                    {renderTrashButton("bloquadaFim")}
-                                </div>
+
                             </div>
 
                             <div className={styles.searchActions}>

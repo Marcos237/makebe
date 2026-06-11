@@ -26,6 +26,7 @@ const AgendamentoPage: React.FC = () => {
         horasAgendadas,
         isHoraOpen,
         isLeitura,
+        refreshSelectedDay,
         usuarioLogado,
     } = useAgendamentoPage();
 
@@ -54,6 +55,7 @@ const AgendamentoPage: React.FC = () => {
                                 onSave: handleSaveSuccess,
                             }}
                             onDayClick={handleDayClick}
+                            onRefreshDay={refreshSelectedDay}
                             horasAgendadas={horasAgendadas}
                         />
                     </div>

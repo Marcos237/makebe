@@ -157,7 +157,7 @@
 .pickerRow,
 .botaoArea {
     width: 100%;
-    max-width: 364px;
+    max-width: 664px;
 }
 
 .formItensImagem {
@@ -219,6 +219,16 @@
 }
 
 .pickerRow {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pickerFull {
+    width: 100%;
+}
+
+.pickerSplit {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 12px;
@@ -319,6 +329,10 @@
 
     .pickerRow,
     .calendarControls {
+        grid-template-columns: 1fr;
+    }
+
+    .pickerSplit {
         grid-template-columns: 1fr;
     }
 

@@ -35,8 +35,9 @@ import styles from "./Agendamento.module.css";
 const AgendamentoForm: React.FC<{
     persistirProps: PersistirItens<AgendamentoItem>;
     onDayClick?: (date: Dayjs | null) => void | Promise<void>;
+    onRefreshDay?: () => void | Promise<void>;
     horasAgendadas?: Array<HoraAgendadaItem>;
-}> = ({ persistirProps, onDayClick, horasAgendadas }) => {
+}> = ({ persistirProps, onDayClick, onRefreshDay, horasAgendadas }) => {
     const [messageItens, setMessageItens] = useState<MensagemItens>();
     const [colaborador, setColaborador] = useState<ColaboradorItens>();
     const [clientes, setClientes] = useState<Array<SelectItens>>();
@@ -159,6 +160,7 @@ const AgendamentoForm: React.FC<{
             const messageRetorno = await RetornarMessageService(true, true, []);
             setMessageItens(messageRetorno);
             enviarSatusMessage();
+            await Promise.resolve(onRefreshDay?.());
             window.setTimeout(() => {
                 persistirProps.onSave?.();
             }, 2000);
@@ -198,8 +200,10 @@ const AgendamentoForm: React.FC<{
         if (nextOpen) {
             const data = formatarData(dataInicio);
             void onDayClick?.(data);
+        } else {
+            void onRefreshDay?.();
         }
-    }, [dataInicio, isHoraOpen, onDayClick]);
+    }, [dataInicio, isHoraOpen, onDayClick, onRefreshDay]);
 
     const messageProps: MensagemItens = {
         texto: messageItens?.texto,
@@ -317,22 +321,16 @@ const AgendamentoForm: React.FC<{
                             </div>
 
                             <div className={styles.pickerRow}>
-                                <DateTimerPicker
-                                    name="DataInicioAgendamento"
-                                    label="Hora Inicio"
-                                    value={formatarHora(dataInicioAgendamento)}
-                                    onChange={setDataInicioAgendamento}
-                                    tipo="hora"
-                                    erroSession="DataInicioAgendamento"
-                                />
-                                <DateTimerPicker
-                                    name="DataTerminoAgendamento"
-                                    label="Hora Termino"
-                                    value={formatarHora(dataTerminoAgendamento)}
-                                    onChange={setDataTerminoAgendamento}
-                                    tipo="hora"
-                                    erroSession="DataTerminoAgendamento"
-                                />
+                                <div className={styles.pickerFull}>
+                                    <DateTimerPicker
+                                        name="DataInicioAgendamento"
+                                        label="Hora Inicio"
+                                        value={formatarHora(dataInicioAgendamento)}
+                                        onChange={setDataInicioAgendamento}
+                                        tipo="hora"
+                                        erroSession="DataInicioAgendamento"
+                                    />
+                                </div>
                             </div>
 
                             <div className={styles.botaoArea}>

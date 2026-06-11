@@ -7,6 +7,8 @@ export interface ColaboradorProfissionalItem {
     lojaId?: number;
     servicoId?: number;
     descricao?: string;
+    PeriodoInativoInicioExtenso?: string;
+    PeriodoInativoFimExtenso?: string;
     nomeColaborador?: string;
     razaoSocial?: string;
     descricaoServico?: string;

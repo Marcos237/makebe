@@ -35,9 +35,30 @@ export const useAgendamentoPage = () => {
     const [mesSelected, setMesSelected] = useState<number>(0);
     const [isReadOnly, setIsReadOnly] = useState<boolean>(true);
     const [isDayItem, setIsDayItem] = useState<boolean>(true);
+    const [selectedDateParam, setSelectedDateParam] = useState<string>("");
     const currentYear = dayjs().year();
 
     useHiddenItem("lista", "persistir", isHiddenItem);
+
+    const mapAgendamentosToHoras = useCallback((agendamentos?: AgendamentoItem[]) => {
+        if (!agendamentos) return [];
+
+        return agendamentos.map((a) => {
+            const ini = dayjs(a.dataInicioAgendamento as any);
+            const fim = dayjs(a.dataTerminoAgendamento as any);
+
+            return {
+                id: a.id ?? 0,
+                name: a.nomeUsuario ?? "",
+                descricaoServico: a.descricaoServico ?? "",
+                data: ini.isValid() ? ini.format("DD/MM/YYYY") : "",
+                dataInicio: ini.isValid() ? [ini.format("HH:mm")] : [],
+                dataFim: fim.isValid() ? [fim.format("HH:mm")] : [],
+                tooltipItem: "editar",
+                idColaborador: a.idColaborador ?? "",
+            };
+        });
+    }, []);
 
     const agendamentoData = useCallback(async () => {
         if (isDayItem) {
@@ -56,23 +77,9 @@ export const useAgendamentoPage = () => {
         }
 
         setIsReadOnly(false);
-        const itens: HoraAgendadaItem[] = response.datas.map((a) => {
-            const ini = dayjs(a.dataInicioAgendamento as any);
-            const fim = dayjs(a.dataTerminoAgendamento as any);
-
-            return {
-                id: a.id,
-                name: a.nomeUsuario ?? "",
-                data: ini.isValid() ? ini.format("DD/MM/YYYY") : "",
-                dataInicio: ini.isValid() ? [ini.format("HH:mm")] : [],
-                dataFim: fim.isValid() ? [fim.format("HH:mm")] : [],
-                idColaborador: a.idColaborador ?? "",
-            };
-        });
-
-        setHorasAgendadas(itens);
+        setHorasAgendadas(mapAgendamentosToHoras(response.datas));
         setIsDayItem(true);
-    }, [anoItem, colaboradorId, currentYear, isDayItem]);
+    }, [anoItem, colaboradorId, currentYear, isDayItem, mapAgendamentosToHoras]);
 
     const fetchColaboradorData = useCallback(async () => {
         const colaboradorResponse = await buscarColaboradoresAgendamento();
@@ -91,8 +98,26 @@ export const useAgendamentoPage = () => {
         setUsuarioLogado(sessao);
     }, []);
 
+    const refreshSelectedDay = useCallback(async (dateParam?: string) => {
+        const dataParam = dateParam ?? selectedDateParam;
+        const idColaborador = Number(colaboradorId ?? 0) ?? 0;
+
+        if (!dataParam || idColaborador === 0) {
+            return;
+        }
+
+        const response = await buscarAgendamentosPorData(dataParam, idColaborador);
+        const dataSelecionada = dayjs(dataParam, "YYYY-MM-DD", true).format("DD/MM/YYYY");
+        const itensDoDia = mapAgendamentosToHoras(response.datas);
+
+        setHorasAgendadas((prev) => {
+            const semDiaSelecionado = prev.filter((item) => item.data !== dataSelecionada);
+            return [...semDiaSelecionado, ...itensDoDia];
+        });
+    }, [colaboradorId, selectedDateParam, mapAgendamentosToHoras]);
+
     const handlerCloseClick = async () => {
-        agendamentoData();
+        await refreshSelectedDay();
         setIsHoraOpen(false);
         setIsDayItem(true);
     };
@@ -100,6 +125,7 @@ export const useAgendamentoPage = () => {
     const handlerEditar = useCallback(async (id?: number) => {
         if (!id) return;
 
+        await refreshSelectedDay();
         const response = await buscarAgendamentoPorId(id);
         if (!response.data) {
             setHorasAgendadas([]);
@@ -124,13 +150,15 @@ export const useAgendamentoPage = () => {
             idUsuario: response?.data?.idUsuario,
         }));
         setIsHiddenItem(false);
-    }, [imagem]);
+    }, [imagem, refreshSelectedDay]);
 
     const handlerNovo = useCallback(async (data?: string, id?: number) => {
         if (!data) return;
 
         const dataFormat = formatarData(data);
         const idColaborador = id?.toString() ?? "0";
+        const parsed = dayjs(data, "DD/MM/YYYY", true);
+        setSelectedDateParam(parsed.isValid() ? parsed.format("YYYY-MM-DD") : "");
 
         setAgendamentoItem((prev) => ({
             ...prev,
@@ -155,9 +183,9 @@ export const useAgendamentoPage = () => {
             return;
         }
 
-        agendamentoData();
+        await refreshSelectedDay();
         setIsHoraOpen(false);
-    }, [agendamentoData]);
+    }, [refreshSelectedDay]);
 
     const handleDropdownChange = (e: SelectChangeEvent<string>, tipo: string) => {
         if (tipo === "ano") {
@@ -184,11 +212,12 @@ export const useAgendamentoPage = () => {
         const mesNumero = date.month() + 1;
         setMesSelected(mesNumero);
         const dataParam = date.format("YYYY-MM-DD");
+        setSelectedDateParam(dataParam);
         const idColaborador = Number(colaboradorId ?? 0) ?? 0;
         const response = await buscarAgendamentosPorData(dataParam, idColaborador);
 
         if (!response.datas) {
-            setHorasAgendadas([]);
+            setHorasAgendadas((prev) => prev.filter((item) => item.data !== date.format("DD/MM/YYYY")));
             setAgendamentoItem((prev) => ({
                 ...prev,
                 id: 0,
@@ -201,29 +230,18 @@ export const useAgendamentoPage = () => {
                 idServico: 0,
             }));
             setIsHiddenItem(false);
+            setIsHoraOpen(true);
             setIsDayItem(true);
             return;
         }
-
-        const itens: HoraAgendadaItem[] = response.datas.map((a) => {
-            const ini = dayjs(a.dataInicioAgendamento as any);
-            const fim = dayjs(a.dataTerminoAgendamento as any);
-
-            return {
-                id: a.id ?? 0,
-                name: a.nomeUsuario ?? "",
-                data: ini.isValid() ? ini.format("DD/MM/YYYY") : "",
-                dataInicio: ini.isValid() ? [ini.format("HH:mm")] : [],
-                dataFim: fim.isValid() ? [fim.format("HH:mm")] : [],
-                tooltipItem: "editar",
-                idColaborador: a.idColaborador ?? "",
-            };
+        const itens = mapAgendamentosToHoras(response.datas);
+        setHorasAgendadas((prev) => {
+            const semDiaSelecionado = prev.filter((item) => item.data !== date.format("DD/MM/YYYY"));
+            return [...semDiaSelecionado, ...itens];
         });
-
         setIsHoraOpen(true);
-        setHorasAgendadas(itens);
         setIsDayItem(true);
-    }, [colaboradorId, imagem]);
+    }, [colaboradorId, imagem, mapAgendamentosToHoras]);
 
     const calendarioItem: CalendarioItem = {
         year: anoItem !== undefined && anoItem !== null ? Number(anoItem) : Number(currentYear),
@@ -236,6 +254,7 @@ export const useAgendamentoPage = () => {
         onDeleteClick: handlerDeletar,
         onNewClick: handlerNovo,
         isReadOnly,
+        diaISO: selectedDateParam,
     };
 
     const anos: SelectItens[] = Array.from(
@@ -275,8 +294,9 @@ export const useAgendamentoPage = () => {
     }, [anoItem, colaboradorId]);
 
     const handleSaveSuccess = useCallback(() => {
+        void refreshSelectedDay();
         handleButtonClickListar();
-    }, [handleButtonClickListar]);
+    }, [handleButtonClickListar, refreshSelectedDay]);
 
     return {
         agendamentoItem,
@@ -293,6 +313,7 @@ export const useAgendamentoPage = () => {
         horasAgendadas,
         isHoraOpen,
         isLeitura,
+        refreshSelectedDay,
         usuarioLogado,
     };
 };

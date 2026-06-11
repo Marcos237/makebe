@@ -160,6 +160,7 @@ const Calendario: React.FC<{ calendarioItem: CalendarioItem }> = ({ calendarioIt
                     {calendarioItem.isHoraOpen && idx === mesIndex && (
                       <HoraAgendada
                         horaAgendadaItem={calendarioItem.agendamentos}
+                        diaISO={calendarioItem.diaISO}
                         onCloseClick={calendarioItem.onCloseClick}
                         onUpdateClick={calendarioItem.onUpdateClick}
                         onDeleteClick={calendarioItem.onDeleteClick}

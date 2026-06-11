@@ -64,6 +64,19 @@
   padding-bottom: 4px;
 }
 
+.data-box-servico {
+  width: 100%;
+  margin-left: 10px;
+  margin-bottom: 6px;
+  color: #ed145b;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 .data-box-tittle {
   display: flex;
   justify-content: center;
