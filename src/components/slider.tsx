@@ -22,10 +22,35 @@ const pexelsImages = [
   pexelsImage7, pexelsImage8, pexelsImage9
 ];
 
-const Carrousel: React.FC = () => {
+export interface CarrouselItem {
+  nomeImagem?: string;
+  urlImagem?: string;
+  tituloImagem?: string;
+}
+
+interface CarrouselProps {
+  items?: CarrouselItem[];
+}
+
+const Carrousel: React.FC<CarrouselProps> = ({ items = [] }) => {
+  const imagens = items
+    .filter((item) => Boolean(item?.urlImagem))
+    .map((item, index) => ({
+      id: item.nomeImagem ?? `${index}`,
+      url: item.urlImagem ?? "",
+      titulo: item.tituloImagem ?? `imagem${index + 1}`,
+    }));
+
+  const imagensFallback = pexelsImages.map((image, index) => ({
+    id: `${index}`,
+    url: image,
+    titulo: `imagem${index + 1}`,
+  }));
+
+  const slides = imagens.length > 0 ? imagens : imagensFallback;
+
   return (
     <Box className="sessao">
-
         <Grid container spacing={0}>
           <Grid item xs={12}>
             <div className="carrousel">
@@ -41,9 +66,14 @@ const Carrousel: React.FC = () => {
                 }}
                 modules={[Autoplay, Pagination, Navigation]}
               >
-                {pexelsImages.map((image, index) => (
-                  <SwiperSlide key={index} className="imagens">
-                    <img src={image} alt={`imagem${index + 1}`} className="carrousel-image" />
+                {slides.map((slide, index) => (
+                  <SwiperSlide key={slide.id} className="imagens">
+                    <div className="carrousel-slide">
+                      <img src={slide.url} alt={slide.titulo} className="carrousel-image" />
+                      <div className="carrousel-caption">
+                        {slide.titulo}
+                      </div>
+                    </div>
                   </SwiperSlide>
                 ))}
               </Swiper>

@@ -10,8 +10,24 @@
   width: 100% !important;
 }
 
+.carrousel-slide {
+  position: relative;
+}
+
 .carrousel-image {
   width: 100% !important;
   height: 400px;
   object-fit: cover;
+}
+
+.carrousel-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 16px 20px;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.72) 100%);
 }

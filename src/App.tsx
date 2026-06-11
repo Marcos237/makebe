@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route , Navigate} from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Home from './features/home';
 import { AlteraSenhaPage, LoginForm, LogoutPage } from './features/login';
 import { Autenticacao, PerfilForm, PerfilValidar, RecuperaSenha, ReenviaAutenticacao } from './features/perfil';
@@ -11,13 +11,15 @@ import Servico from './features/produtos';
 import ColaboradorProfissional from './features/colaborador-profissional';
 import Agenda from './features/agenda';
 import Agendamento from './features/agendamento';
+import ProtectedRoute from './components/ProtectedRoute';
+import ExternalRedirect from './components/ExternalRedirect';
 
 const App: React.FC = () => {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<Navigate to="/Home" replace />} />
-        <Route path="/Home" element={<Home />} />
+        <Route path="/" element={<ExternalRedirect />} />
+        <Route path="/Home" element={<ExternalRedirect />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/perfil" element={<PerfilForm />} />
         <Route path="/perfilValidar" element={<PerfilValidar />} />
@@ -26,14 +28,14 @@ const App: React.FC = () => {
         <Route path="/reenviaAutenticacao" element={<ReenviaAutenticacao />} />
         <Route path="/alteraSenha" element={<AlteraSenhaPage />} />
         <Route path="/recuperaSenha/:chave" element={<RecuperaSenha />} />
-        <Route path="/loja" element={<Salao />} />
-        <Route path="/Endereco/:urlParametro" element={<Endereco />} />
-        <Route path="/Portifolio/:urlParametro" element={<Portifolio />} />
-        <Route path="/Colaborador/:urlParametro" element={<Colaborador />} />
-        <Route path="/ColaboradorProfissional" element={<ColaboradorProfissional />} /> 
-        <Route path="/Produtos/Servico" element={<Servico />} /> 
-        <Route path="/Agenda/:urlParametro" element={<Agenda />} /> 
-        <Route path="/Agendamento" element={<Agendamento />} />
+        <Route path="/loja" element={<ProtectedRoute><Salao /></ProtectedRoute>} />
+        <Route path="/Endereco/:urlParametro" element={<ProtectedRoute><Endereco /></ProtectedRoute>} />
+        <Route path="/Portifolio/:urlParametro" element={<ProtectedRoute><Portifolio /></ProtectedRoute>} />
+        <Route path="/Colaborador/:urlParametro" element={<ProtectedRoute><Colaborador /></ProtectedRoute>} />
+        <Route path="/ColaboradorProfissional" element={<ProtectedRoute><ColaboradorProfissional /></ProtectedRoute>} /> 
+        <Route path="/Produtos/Servico" element={<ProtectedRoute><Servico /></ProtectedRoute>} /> 
+        <Route path="/Agenda/:urlParametro" element={<ProtectedRoute><Agenda /></ProtectedRoute>} /> 
+        <Route path="/Agendamento" element={<ProtectedRoute><Agendamento /></ProtectedRoute>} />
       </Routes>
     </div>
   );

@@ -18,4 +18,5 @@ export interface CalendarioItem {
   onDeleteClick?: (id?: number) => void | Promise<void>;
   onNewClick?: (data?: string, id?: number) => void | Promise<void>;
   isReadOnly?: boolean;
+  diaISO?: string;
 }

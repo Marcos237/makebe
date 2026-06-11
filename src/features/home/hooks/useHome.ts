@@ -8,7 +8,7 @@ export const useHome = () => {
     useEffect(() => {
         const fetchVitrineData = async () => {
             const sessao = await buscarUsuarioLogadoHome();
-            setUsuarioLogado(sessao);
+            setUsuarioLogado(sessao.data);
         };
 
         fetchVitrineData();

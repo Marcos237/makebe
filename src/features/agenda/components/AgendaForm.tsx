@@ -54,6 +54,7 @@ const AgendaForm: React.FC<{
     const [isLeitura, setIsLeitura] = useState<boolean>(false);
     const [erros, setErros] = useState<ErroItem[]>([]);
     const [erroTrigger, setErroTrigger] = useState(0);
+    const isAgendaColaborador = tipoItem?.toString() === TipoColaborador;
 
     const lojaProps = persistirDropProps.find((item) => item.name === "loja")?.selectItems ?? [];
     const colaboradorProps = persistirDropProps.find((item) => item.name === "colaborador")?.selectItems ?? [];
@@ -68,14 +69,21 @@ const AgendaForm: React.FC<{
         setAgendaSemanaFim(persistirProps?.item?.idAgendaSemanaFim ?? 0);
         setAgendaAbertaInicio(persistirProps?.item?.agendaAbertaInicio ?? "");
         setAgendaAbertaFim(persistirProps?.item?.agendaAbertaFim ?? "");
-        setAgendaBloqueadaInicio(persistirProps?.item?.agendaBloqueadaInicio ?? "");
-        setAgendaBloqueadaFim(persistirProps?.item?.agendaBloqueadaFim ?? "");
-        setBloquadoHoje(persistirProps?.item?.bloqueado ?? false);
+        setAgendaBloqueadaInicio(isAgendaColaborador ? persistirProps?.item?.agendaBloqueadaInicio ?? "" : "");
+        setAgendaBloqueadaFim(isAgendaColaborador ? persistirProps?.item?.agendaBloqueadaFim ?? "" : "");
+        setBloquadoHoje(isAgendaColaborador
+            ? (
+                persistirProps?.item?.IsBloqueadoHoje ??
+                persistirProps?.item?.isBloqueadoHoje ??
+                (persistirProps?.item as AgendaItens & { IsBloquedoHoje?: boolean })?.IsBloquedoHoje ??
+                false
+            )
+            : false);
         setIdLoja(persistirProps?.item?.idLoja ?? 0);
         setTipo(tipoItem);
         setColaboradorId(persistirProps?.item?.idColaborador);
         setIsLeitura(persistirProps?.item?.isTodoDia ?? false);
-    }, [persistirProps, tipoItem]);
+    }, [isAgendaColaborador, persistirProps, tipoItem]);
 
     updatePersistirPrev(fetchAgendaPersistir, undefined, persistirProps.item);
 
@@ -117,12 +125,16 @@ const AgendaForm: React.FC<{
             idAgendaSemanaFim,
             agendaAbertaInicio: formatarHoraComData(agendaAbertaInicio),
             agendaAbertaFim: formatarHoraComData(agendaAbertaFim),
-            agendaBloqueadaInicio: formatarHoraComData(agendaBloqueadaInicio),
-            agendaBloqueadaFim: formatarHoraComData(agendaBloqueadaFim),
-            bloqueado: isBloqueadoHoje,
             idLoja,
             idColaborador,
             tipo: Number(tipoItem) ?? tipo,
+            ...(isAgendaColaborador
+                ? {
+                    agendaBloqueadaInicio: formatarHoraComData(agendaBloqueadaInicio),
+                    agendaBloqueadaFim: formatarHoraComData(agendaBloqueadaFim),
+                    IsBloqueadoHoje: isBloqueadoHoje,
+                }
+                : {}),
         };
 
         const agendaResponse = await salvarAgenda(agenda);
@@ -323,32 +335,36 @@ const AgendaForm: React.FC<{
                                 </div>
                             </div>
 
-                            <div className={styles.switchAgenda}>
-                                <SwitchButton switchProps={switchButtonBloqueio} />
-                            </div>
+                            {isAgendaColaborador && (
+                                <>
+                                    <div className={styles.switchAgenda}>
+                                        <SwitchButton switchProps={switchButtonBloqueio} />
+                                    </div>
 
-                            <div className={styles.pickerGroup}>
-                                <div className={styles.formItens}>
-                                    <DateTimerPicker
-                                        name="AgendaBloqueadaInicio"
-                                        label={DataLabelBloqueioAberto}
-                                        value={formatarHora(agendaBloqueadaInicio)}
-                                        onChange={setAgendaBloqueadaInicio}
-                                        tipo="hora"
-                                        isLeituraOnly={false}
-                                        erroSession="AgendaBloqueadaInicio"
-                                    />
-                                </div>
-                                <div className={styles.formItens}>
-                                    <DateTimerPicker
-                                        label={DataLabelBloqueioFechado}
-                                        value={formatarHora(agendaBloqueadaFim)}
-                                        onChange={setAgendaBloqueadaFim}
-                                        tipo="hora"
-                                        isLeituraOnly={false}
-                                    />
-                                </div>
-                            </div>
+                                    <div className={styles.pickerGroup}>
+                                        <div className={styles.formItens}>
+                                            <DateTimerPicker
+                                                name="AgendaBloqueadaInicio"
+                                                label={DataLabelBloqueioAberto}
+                                                value={formatarHora(agendaBloqueadaInicio)}
+                                                onChange={setAgendaBloqueadaInicio}
+                                                tipo="hora"
+                                                isLeituraOnly={false}
+                                                erroSession="AgendaBloqueadaInicio"
+                                            />
+                                        </div>
+                                        <div className={styles.formItens}>
+                                            <DateTimerPicker
+                                                label={DataLabelBloqueioFechado}
+                                                value={formatarHora(agendaBloqueadaFim)}
+                                                onChange={setAgendaBloqueadaFim}
+                                                tipo="hora"
+                                                isLeituraOnly={false}
+                                            />
+                                        </div>
+                                    </div>
+                                </>
+                            )}
 
                             <div className={styles.botaoArea}>
                                 <BotaoSubmit botaoProps={botaoProps} />

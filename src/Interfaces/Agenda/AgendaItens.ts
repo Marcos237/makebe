@@ -7,7 +7,8 @@ export interface AgendaItens {
     descricao?: string;
     agendaAbertaInicio?: string;
     agendaAbertaFim?: string;
-    bloqueado?: boolean;
+    IsBloqueadoHoje?: boolean;
+    isBloqueadoHoje?: boolean;
     isTodoDia?: boolean;
     idAgendaSemanaInicio?: number;
     idAgendaSemanaFim?: number;
