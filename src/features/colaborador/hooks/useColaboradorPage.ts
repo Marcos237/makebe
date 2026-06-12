@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { useParams } from "react-router-dom";
 import {
@@ -32,6 +32,7 @@ export const useColaboradorPage = () => {
     const [gridViewItens, setGridView] = useState<GrigViewItens<ColaboradorItens>>();
     const [readOnly, setReadOnly] = useState<boolean>(false);
     const [isHiddenItem, setIsHiddenItem] = useState(false);
+    const ultimaPaginacaoRef = useRef<PaginacaoItens<ColaboradorItens>>();
     const { urlParametro } = useParams();
 
     const tipoItem = urlParametro === "CadastroCliente" ? TipoCliente : urlParametro === "CadastroColaborador" ? TipoColaborador : 0;
@@ -62,16 +63,21 @@ export const useColaboradorPage = () => {
             tipo: Number(tipoUsuario),
         };
 
-        const paginacao = paginar(resultadosBusca, page);
-        if (!resultadosBusca || page !== undefined) {
-            paginacao.objetoPesquisa = resultadosBusca?.objetoPesquisa ?? colaboradorDefault;
-            paginacao.objetos = [];
-            paginacao.objetoPesquisa.tipo = Number(tipoUsuario);
+        const basePaginacao = ultimaPaginacaoRef.current ?? resultadosBusca;
+        const paginacao = paginar(basePaginacao, page);
 
-            const colaboradorReponse = await buscarColaboradoresPaginado(paginacao);
-            if (colaboradorReponse) {
-                setResultadosBusca(colaboradorReponse);
-            }
+        paginacao.objetoPesquisa = basePaginacao?.objetoPesquisa ?? colaboradorDefault;
+        paginacao.objetos = [];
+
+        if (paginacao.objetoPesquisa) {
+            paginacao.objetoPesquisa.tipo = Number(tipoUsuario);
+        }
+
+        ultimaPaginacaoRef.current = paginacao;
+
+        const colaboradorReponse = await buscarColaboradoresPaginado(paginacao);
+        if (colaboradorReponse) {
+            setResultadosBusca(colaboradorReponse);
         }
     }, [resultadosBusca]);
 
@@ -169,6 +175,9 @@ export const useColaboradorPage = () => {
     });
 
     const handleResultadosBusca = (resultados: PaginacaoItens<ColaboradorItens>) => {
+        ultimaPaginacaoRef.current = paginar(resultados, resultados?.paginaAtual ?? 1);
+        ultimaPaginacaoRef.current.objetoPesquisa = resultados?.objetoPesquisa;
+        ultimaPaginacaoRef.current.objetos = [];
         setResultadosBusca(resultados);
     };
 
