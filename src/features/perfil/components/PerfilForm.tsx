@@ -23,6 +23,7 @@ const PerfilForm: React.FC = () => {
         isLoading,
         uploadItem,
         isLogado,
+        recaptchaRenderKey,
         useUsuarioLogadoItem,
         handleRecaptchaChange,
         handleImageUpload,
@@ -89,7 +90,7 @@ const PerfilForm: React.FC = () => {
                                             mask: cpfMaskConst,
                                             readonly: isLogado,
                                             onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCpf(e.target.value),
-                                            erroSession: "CPF"
+                                            erroSession: "Cpf"
                                         }}
                                     />
                                 </div>
@@ -170,7 +171,11 @@ const PerfilForm: React.FC = () => {
                                 )}
 
                                 <div className={styles.recaptcha}>
-                                    <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
+                                    <RecaptchaComponent
+                                        key={recaptchaRenderKey}
+                                        siteKey={RECAPTCHA_SITE_KEY}
+                                        onChange={handleRecaptchaChange}
+                                    />
                                 </div>
 
                                 <div className={styles.botaoArea}>

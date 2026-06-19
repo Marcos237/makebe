@@ -6,6 +6,7 @@ import { perfilService } from '../services/perfilService';
 import { useUsuarioLogado } from '../../../hooks/useUsuarioLogado';
 import { UsuarioPerfilItens, ErroItem } from '../types';
 import { UploadItens } from '../../../Interfaces/TextBox/UploadItens';
+import { useFormErros } from '../../../hooks/useFormErros';
 
 export const usePerfil = () => {
     const navigate = useNavigate();
@@ -27,6 +28,9 @@ export const usePerfil = () => {
     const [useUsuarioLogadoItem, setUsuarioLogado] = useState<any>();
     const [erros, setErros] = useState<ErroItem[]>([]);
     const [erroTrigger, setErroTrigger] = useState(0);
+    const [recaptchaRenderKey, setRecaptchaRenderKey] = useState(0);
+
+    useFormErros(erros, erroTrigger);
 
     // Carregar dados do perfil
     const fetchPerfilData = useCallback(async () => {
@@ -115,6 +119,8 @@ export const usePerfil = () => {
                 }));
                 setErros(errosConvertidos);
                 setErroTrigger(prev => prev + 1);
+                setRecaptchaValue(null);
+                setRecaptchaRenderKey(prev => prev + 1);
             } else if (!isLogado) {
                 navigate('/perfilValidar');
             }
@@ -145,6 +151,7 @@ export const usePerfil = () => {
         uploadItem,
         isLogado,
         recaptchaValue,
+        recaptchaRenderKey,
         useUsuarioLogadoItem,
         erros,
         erroTrigger,
