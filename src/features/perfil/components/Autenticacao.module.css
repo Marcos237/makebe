@@ -67,12 +67,20 @@
 }
 
 .link {
-  color: var(--primary);
+  color: #d81b60;
   text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .link:hover {
   text-decoration: underline;
+}
+
+.errorText {
+  color: #7fffd4;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .recaptcha {
@@ -96,16 +104,21 @@
   flex: 1;
   width: 100%;
   padding: 14px 24px;
-  background: linear-gradient(160deg, #1f5f8f, #0b2f4f);
+  background: linear-gradient(160deg, #7fffd4, #3cbfa3);
   border-radius: 999px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: white;
+  color: #083b35;
   font-size: 1rem;
   font-weight: 600;
   border: none;
+}
+
+.botaoErro {
+  background: linear-gradient(160deg, #7fffd4, #3cbfa3);
+  color: #083b35;
 }
 
 .botaoConteudo {

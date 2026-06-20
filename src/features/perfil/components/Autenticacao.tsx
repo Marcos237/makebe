@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { useParams } from "react-router-dom";
 import { AutenticacaoItens } from "../../../Interfaces/Usuario/AutenticacaoItens";
-import { ReenviatEmail, UrlAutenticacaoDoisFatores } from '../../../constants/Usuario/autenticacaoConstant';
+import { UrlAutenticacaoDoisFatores } from '../../../constants/Usuario/autenticacaoConstant';
 import { Tooltip } from '@mui/material';
 import { PutService } from '../../../services/shared/putService';
 import { RECAPTCHA_SITE_KEY, API_BASE_URL } from '../../../config/apiConfig';
-import { FaPlay } from 'react-icons/fa';
 import RecaptchaComponent from '../../../components/recaptcha';
 import Banner from '../../../components/banner';
 import Footer from '../../../components/footer';
@@ -13,9 +12,9 @@ import styles from './Autenticacao.module.css';
 
 const Autenticacao: React.FC = () => {
     const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
-    const [isVisibleReevia, setIsVisibleReevia] = useState(false);
     const [isVisibleLogin, setIsVisibleLogin] = useState(false);
-    const [ativaDesativa, setAtivaDesativa] = useState<string>("ativar");
+    const [isActivationError, setIsActivationError] = useState(false);
+    const [ativaDesativa, setAtivaDesativa] = useState<string>("Ativar conta");
     const [classeDesativa, setClasseDesativa] = useState<string>("");
     const { chave } = useParams();
     const autenticacaoItens: AutenticacaoItens = {
@@ -29,14 +28,18 @@ const Autenticacao: React.FC = () => {
     const handleButtonClick = async (value: string) => {
         if (value === "readonly") return;
         const retorno = await PutService(autenticacaoItens ?? {}, `${API_BASE_URL}${UrlAutenticacaoDoisFatores}`);
-        if (!retorno?.notifications || retorno?.notifications?.length === 0) {
+        const notifications = retorno?.notifications;
+        const isSuccess = Array.isArray(notifications) && notifications.length === 0;
+
+        if (isSuccess) {
             setIsVisibleLogin(true);
-            setIsVisibleReevia(false);
+            setIsActivationError(false);
             setAtivaDesativa("Ativado");
             setClasseDesativa("readonly");
         } else {
-            setIsVisibleReevia(true);
             setIsVisibleLogin(false);
+            setIsActivationError(true);
+            setAtivaDesativa("Cadastro não pode ser ativado");
             setClasseDesativa("readonly");
         }
     };
@@ -59,8 +62,8 @@ const Autenticacao: React.FC = () => {
                                 {isVisibleLogin && (
                                     <p><a className={styles.link} href='/login'>Clique aqui para fazer o login</a></p>
                                 )}
-                                {isVisibleReevia && (
-                                    <p>{ReenviatEmail} <a className={styles.link} href='/ReenviaAutenticacao'>Clique aqui</a></p>
+                                {isActivationError && (
+                                    <p className={styles.errorText}>Cadastro não pode ser ativado</p>
                                 )}
                             </div>
 
@@ -71,13 +74,12 @@ const Autenticacao: React.FC = () => {
                             <div className={styles.botaoArea}>
                                 <button
                                     type="button"
-                                    className={classeDesativa ? `${styles.botao} ${styles.readonly}` : styles.botao}
+                                    className={`${styles.botao} ${classeDesativa ? styles.readonly : ''} ${isActivationError ? styles.botaoErro : ''}`.trim()}
                                     onClick={() => handleButtonClick(classeDesativa)}
                                 >
                                     <Tooltip title="Filtros">
                                         <span className={styles.botaoConteudo}>
                                             {ativaDesativa}
-                                            <FaPlay />
                                         </span>
                                     </Tooltip>
                                 </button>
