@@ -26,6 +26,7 @@ import EditorTexto from "../../../components/ckEditor";
 import Dropdown from "../../../components/dropdown";
 import Mensagem from "../../../components/mensagem";
 import updatePersistirPrev from "../../../hooks/useUpdatePersistirPrev";
+import { mapNotificationErrors } from "../../../utils/mapNotificationErrors";
 import styles from "./Portifolio.module.css";
 
 const PortifolioPersistir: React.FC<{
@@ -216,12 +217,7 @@ const PortifolioPersistir: React.FC<{
 
             setIsLoading(false);
         } else {
-            const errosConvertidos: ErroItem[] = retorno?.notifications?.map((n) => ({
-                Key: n.notificationProps?.Key ?? "",
-                Mensagem: n.notificationProps?.Message ?? "",
-                erroSession: n.notificationProps?.Key ?? ""
-            })) ?? [];
-
+            const errosConvertidos: ErroItem[] = mapNotificationErrors(retorno?.notifications);
             setErros(errosConvertidos);
             setErroTrigger(prev => prev + 1);
         }

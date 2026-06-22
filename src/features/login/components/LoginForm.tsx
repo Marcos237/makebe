@@ -19,8 +19,7 @@ const LoginForm: React.FC = () => {
         senha,
         setSenha,
         isLoading,
-        temErroLogin,
-        messageErro,
+        recaptchaRenderKey,
         handleRecaptchaChange,
         handleSubmit,
         handleFormKeyDown,
@@ -80,8 +79,6 @@ const botaoProps: BotaoItens = {
                                     value: login,
                                     type: 'text',
                                     onChange: (e: React.ChangeEvent<HTMLInputElement>) => setLogin(e.target.value),
-                                    errorClass: temErroLogin ? 'input-error' : '',
-                                    messageErro: messageErro,
                                     erroSession: 'Login',
                                 }}
                             />
@@ -114,6 +111,7 @@ const botaoProps: BotaoItens = {
                         {/* RECAPTCHA */}
                         <div className={styles.recaptcha}>
                             <RecaptchaComponent 
+                                key={recaptchaRenderKey}
                                 siteKey={RECAPTCHA_SITE_KEY} 
                                 onChange={handleRecaptchaChange} 
                             />

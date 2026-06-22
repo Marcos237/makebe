@@ -9,9 +9,16 @@ const SwitchButton: React.FC<{ switchProps: SwitchButtonItem }> = ({ switchProps
             <label>{switchProps.label}</label>
         </div>
 
-        <div className="switch-container">
+        <div className={`erroSession_${switchProps.erroSession ?? switchProps.name ?? ''}`}></div>
+        <div className="switch-container" data-name={switchProps.name}>
             <label className="switch">
-                <input type="checkbox" checked={switchProps.checked} onChange={switchProps.handleChange} />
+                <input
+                    id={switchProps.name}
+                    name={switchProps.name}
+                    type="checkbox"
+                    checked={switchProps.checked}
+                    onChange={switchProps.handleChange}
+                />
                 <span className="slider"></span>
             </label>
         </div>

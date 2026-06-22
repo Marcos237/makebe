@@ -16,6 +16,7 @@ import RecaptchaComponent from '../../../components/recaptcha';
 import Banner from '../../../components/banner';
 import Footer from '../../../components/footer';
 import CampoTexto from '../../../components/textbox';
+import { mapNotificationErrors } from '../../../utils/mapNotificationErrors';
 import styles from './RecuperaSenha.module.css';
 
 const RecuperaSenha: React.FC = () => {
@@ -53,11 +54,7 @@ const RecuperaSenha: React.FC = () => {
         if (!retorno?.notifications || retorno?.notifications?.length === 0) {
             navigate('/login', { state: { retorno } });
         } else {
-            const errosConvertidos: ErroItem[] = retorno.notifications.map((n: any) => ({
-                Key: n.notificationProps?.Key ?? '',
-                Mensagem: n.notificationProps?.Message ?? '',
-                erroSession: n.notificationProps?.Key ?? ''
-            }));
+            const errosConvertidos: ErroItem[] = mapNotificationErrors(retorno.notifications);
             setErros(errosConvertidos);
             setErroTrigger(prev => prev + 1);
             setIsLoading(false);

@@ -292,8 +292,20 @@ body > button:active {
     border-color: #ea0562 !important;
 }
 
+.input-error .MuiOutlinedInput-notchedOutline,
+.input-error .MuiInputBase-root fieldset,
+.input-error .MuiSelect-select,
+.input-error .MuiAutocomplete-inputRoot,
+.input-error .slider {
+    border-color: #ea0562 !important;
+}
+
 .input-error {
     border-color: #ea0562 !important;
+}
+
+.input-error .slider {
+    box-shadow: 0 0 0 1px #ea0562 inset !important;
 }
 
 .label-error {

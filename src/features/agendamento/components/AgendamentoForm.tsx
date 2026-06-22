@@ -24,6 +24,7 @@ import { SelectItens } from "../../../Interfaces/shared/selectItens";
 import { MensagemItens } from "../../../Interfaces/Mensagens/MensagemItens";
 import { UsuarioClienteItem } from "../../../Interfaces/Usuario/usuarioClienteItem";
 import { RetornarMessageService } from "../../../services/shared/retornarMessageService";
+import { mapNotificationErrors } from "../../../utils/mapNotificationErrors";
 import {
     buscarClientesAgendamento,
     buscarColaboradorPorId,
@@ -165,11 +166,7 @@ const AgendamentoForm: React.FC<{
                 persistirProps.onSave?.();
             }, 2000);
         } else {
-            const errosConvertidos: ErroItem[] = response?.notifications?.map((n) => ({
-                Key: n.notificationProps?.Key ?? "",
-                Mensagem: n.notificationProps?.Message ?? "",
-                erroSession: n.notificationProps?.Key ?? "",
-            })) ?? [];
+            const errosConvertidos: ErroItem[] = mapNotificationErrors(response?.notifications);
             setErros(errosConvertidos);
             setErroTrigger((prev) => prev + 1);
             enviarSatusMessage();

@@ -21,6 +21,7 @@ const AlteraSenhaPage: React.FC = () => {
         isEnviaText,
         isLoading,
         isVisibleLogin,
+        recaptchaRenderKey,
         setValue,
         usuarioLogado,
         value,
@@ -70,7 +71,7 @@ const AlteraSenhaPage: React.FC = () => {
                             />
 
                             <div className={styles.recaptcha}>
-                                <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
+                                <RecaptchaComponent key={recaptchaRenderKey} siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
                             </div>
 
                             <div className={styles.botaoArea}>

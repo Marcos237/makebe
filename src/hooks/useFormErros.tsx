@@ -5,7 +5,7 @@ export function useFormErros(erros: ErroItem[], trigger: number) {
     useEffect(() => {
         if (!erros || erros.length === 0) return;
 
-        document.querySelectorAll('.MuiOutlinedInput-root.input-error').forEach(el =>
+        document.querySelectorAll('.input-error').forEach(el =>
             el.classList.remove('input-error', 'fade-out')
         );
 
@@ -15,11 +15,41 @@ export function useFormErros(erros: ErroItem[], trigger: number) {
 
         document.querySelectorAll('.error-message').forEach(el => el.remove());
 
-        const inputs = document.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(
-            'input, textarea, select, span, [role="button"], [role="combobox"]'
+        const inputs = document.querySelectorAll<HTMLElement>(
+            'input, textarea, select, button, span, [role="button"], [role="combobox"], [name], [data-name]'
         );
 
+        const marcarCampoComErro = (input: HTMLElement) => {
+            const fieldRoot = input.closest(
+                '.MuiOutlinedInput-root, .MuiInputBase-root, .MuiFormControl-root, .switch-container, .switch'
+            );
+
+            if (fieldRoot) {
+                fieldRoot.classList.add('input-error');
+            }
+
+            const inputId = input.getAttribute('id');
+            if (inputId) {
+                const label = document.querySelector(`label[for="${inputId}"]`);
+                if (label) {
+                    label.classList.add('label-error');
+                }
+            }
+
+            const parentLabel = input.closest('label');
+            if (parentLabel) {
+                parentLabel.classList.add('label-error');
+            }
+
+            const combo = fieldRoot?.querySelector('[role="combobox"]');
+            if (combo) {
+                combo.classList.add('label-error');
+            }
+        };
+
         erros.forEach((erro) => {
+            const erroKeyNormalizado = (erro.Key ?? '').trim().toLowerCase();
+
             if (erro.Key === 'session') {
                 const erroSession = `.erroSession_${erro.Key}`
                 const errorSessionDiv = document.querySelector(erroSession);
@@ -33,25 +63,11 @@ export function useFormErros(erros: ErroItem[], trigger: number) {
                 return;
             }
             inputs.forEach(input => {
-                let nome = input.name || input.dataset.name;
-                if (nome === erro.Key) {
-                    const parent = input.closest('.MuiOutlinedInput-root');
-                    if (parent) parent.classList.add('input-error');
+                const nome = input.getAttribute('name') || input.dataset.name || '';
+                if (nome.trim().toLowerCase() === erroKeyNormalizado) {
+                    marcarCampoComErro(input);
 
-                    const label = document.querySelector(`label[for="${input.id}"]`);
-                    if (label) label.classList.add('label-error');
-
-                    const combo = parent?.querySelector('[role="combobox"]');
-
-                    if (combo) {
-                        combo.classList.add('label-error');
-                        const label = parent?.previousElementSibling;
-                        if (label?.tagName.toLowerCase() === 'label') {
-                            label.classList.add('label-error');
-                        }
-                    }
-
-                    const erroSession = `.erroSession_${erro.Key}`;
+                    const erroSession = `.erroSession_${nome}`;
                     const errorSessionDiv = document.querySelector(erroSession);
 
                     if (errorSessionDiv) {
@@ -66,7 +82,7 @@ export function useFormErros(erros: ErroItem[], trigger: number) {
                     }
                 }
                 if (nome && nome.includes("Imagem") && erro.Key === nome) {
-                    const isCampoImagem = input.type === 'file';
+                    const isCampoImagem = input instanceof HTMLInputElement && input.type === 'file';
 
                     if (isCampoImagem) {
                         const label = document.querySelector(`label[for="${nome}"]`);
@@ -90,7 +106,7 @@ export function useFormErros(erros: ErroItem[], trigger: number) {
 
 
         const timeout = setTimeout(() => {
-            document.querySelectorAll('.MuiOutlinedInput-root.input-error').forEach(el =>
+            document.querySelectorAll('.input-error').forEach(el =>
                 el.classList.add('fade-out')
             );
             document.querySelectorAll('.label-error').forEach(el =>

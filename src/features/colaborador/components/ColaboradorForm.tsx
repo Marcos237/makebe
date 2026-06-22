@@ -20,6 +20,7 @@ import { PersistirItens } from "../../../Interfaces/shared/persistirItens";
 import { SwitchButtonItem } from "../../../Interfaces/shared/switchButtonItem";
 import { UploadItens } from "../../../Interfaces/TextBox/UploadItens";
 import { RetornarMessageService } from "../../../services/shared/retornarMessageService";
+import { mapNotificationErrors } from "../../../utils/mapNotificationErrors";
 import { cpfMaskConst, foneMaskConst } from "../../../utils/mascaras";
 import { salvarColaborador } from "../services/colaboradorService";
 import styles from "./Colaborador.module.css";
@@ -125,11 +126,7 @@ const ColaboradorForm: React.FC<{
                 persistirProps.onSave?.();
             }, 3000);
         } else {
-            const errosConvertidos: ErroItem[] = colaboradorResponse?.notifications?.map((n) => ({
-                Key: n.notificationProps?.Key ?? "",
-                Mensagem: n.notificationProps?.Message ?? "",
-                erroSession: n.notificationProps?.Key ?? "",
-            })) ?? [];
+            const errosConvertidos: ErroItem[] = mapNotificationErrors(colaboradorResponse?.notifications);
             setErros(errosConvertidos);
             setErroTrigger((prev) => prev + 1);
             enviarSatusMessage();
@@ -162,6 +159,8 @@ const ColaboradorForm: React.FC<{
 
     const switchButton: SwitchButtonItem = {
         label: "Status : ",
+        name: "Status",
+        erroSession: "Status",
         checked: status,
         handleChange: () => setStatus(!status),
     };
