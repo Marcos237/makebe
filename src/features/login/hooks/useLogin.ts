@@ -1,16 +1,15 @@
 // filepath: src/features/login/hooks/useLogin.ts
 
 import { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { loginService } from '../services/loginService';
 import { saveTokenToLocalStorage } from '../../../config/ArmazenaToken';
-import { UsuarioLoginItens, ErroItem, UsuarioPerfilItens } from '../types';
+import { UsuarioLoginItens, ErroItem } from '../types';
 import { useFormErros } from '../../../hooks/useFormErros';
 import { mapNotificationErrors } from '../../../utils/mapNotificationErrors';
 
+const LOGIN_REDIRECT_URL = 'https://www.makebeapp.com.br/vitrine/';
+
 export const useLogin = () => {
-    const navigate = useNavigate();
-    
     const [login, setLogin] = useState<string>('');
     const [senha, setSenha] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -49,22 +48,15 @@ export const useLogin = () => {
                 setSenha('');
             } else if (response) {
                 saveTokenToLocalStorage(response.chave ?? '');
-                
-                const usuarioLogado: UsuarioPerfilItens = {
-                    id: response.usuarioId ?? 0,
-                    urlImagem: response.urlImagem,
-                    nome: response.nome ?? '',
-                    urlInicial: response.urlInicial ?? '',
-                };
-                
-                navigate(response.urlInicial ?? '', { state: { usuarioLogado } });
+
+                window.location.assign(LOGIN_REDIRECT_URL);
             }
         } catch (error) {
             console.error('Erro no login:', error);
         } finally {
             setIsLoading(false);
         }
-    }, [login, senha, recaptchaValue, navigate]);
+    }, [login, senha, recaptchaValue]);
 
     const handleFormKeyDown = useCallback((event: React.KeyboardEvent<HTMLFormElement>) => {
         if (event.key === 'Enter') {
