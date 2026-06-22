@@ -28,6 +28,7 @@ import { SwitchButtonItem } from "../../../Interfaces/shared/switchButtonItem";
 import { useFormErros } from "../../../hooks/useFormErros";
 import updatePersistirPrev from "../../../hooks/useUpdatePersistirPrev";
 import { RetornarMessageService } from "../../../services/shared/retornarMessageService";
+import { mapNotificationErrors } from "../../../utils/mapNotificationErrors";
 import { salvarAgenda } from "../services/agendaService";
 import styles from "./Agenda.module.css";
 
@@ -151,12 +152,7 @@ const AgendaForm: React.FC<{
                 persistirProps.onSave?.();
             }, 3000);
         } else {
-            const errosConvertidos: ErroItem[] = agendaResponse?.notifications?.map((n) => ({
-                Key: n.notificationProps?.Key ?? "",
-                Mensagem: n.notificationProps?.Message ?? "",
-                erroSession: n.notificationProps?.Key ?? "",
-            })) ?? [];
-
+            const errosConvertidos: ErroItem[] = mapNotificationErrors(agendaResponse?.notifications);
             setErros(errosConvertidos);
             setErroTrigger((prev) => prev + 1);
             enviarSatusMessage();
@@ -200,12 +196,16 @@ const AgendaForm: React.FC<{
 
     const switchButton: SwitchButtonItem = {
         label: SwitchTodoDia,
+        name: "IsTodoDia",
+        erroSession: "IsTodoDia",
         checked: isTodoDia,
         handleChange: () => handleChange("todoDia"),
     };
 
     const switchButtonBloqueio: SwitchButtonItem = {
         label: SwitchBloqueio,
+        name: "IsBloqueadoHoje",
+        erroSession: "IsBloqueadoHoje",
         checked: isBloqueadoHoje,
         handleChange: () => handleChange("bloquiadoHoje"),
     };
@@ -355,11 +355,13 @@ const AgendaForm: React.FC<{
                                         </div>
                                         <div className={styles.formItens}>
                                             <DateTimerPicker
+                                                name="AgendaBloqueadaFim"
                                                 label={DataLabelBloqueioFechado}
                                                 value={formatarHora(agendaBloqueadaFim)}
                                                 onChange={setAgendaBloqueadaFim}
                                                 tipo="hora"
                                                 isLeituraOnly={false}
+                                                erroSession="AgendaBloqueadaFim"
                                             />
                                         </div>
                                     </div>

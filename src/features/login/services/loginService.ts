@@ -5,16 +5,14 @@ import { API_BASE_URL } from '../../../config/apiConfig';
 import { UrlDeslogar, UrlLogin } from '../../../constants/login/loginConstant';
 import { UrlEsqueciSenha } from '../../../constants/Usuario/autenticacaoConstant';
 import { UrlUsuarioLogado } from '../../../constants/Usuario/usuarioConstant';
-import { EsqueciSenhaItens, UsuarioLoginItens } from '../types';
+import { EsqueciSenhaItens, LoginResponse, UsuarioLoginItens } from '../types';
 import { GetAllService } from '../../../services/shared/getAllService';
 import { ResponseItem } from '../../../Interfaces/shared/ResponseItem';
 
 export const loginService = {
-    async authenticate(credentials: UsuarioLoginItens): Promise<any> {
-
+    async authenticate(credentials: UsuarioLoginItens): Promise<LoginResponse | null> {
         const response = await PostService(credentials, `${API_BASE_URL}${UrlLogin}`);
-        console.log(response)
-        return response?.data ?? null;
+        return response as LoginResponse;
     },
 
     async logout(): Promise<void> {

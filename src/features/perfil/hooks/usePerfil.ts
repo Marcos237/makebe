@@ -7,6 +7,7 @@ import { useUsuarioLogado } from '../../../hooks/useUsuarioLogado';
 import { UsuarioPerfilItens, ErroItem } from '../types';
 import { UploadItens } from '../../../Interfaces/TextBox/UploadItens';
 import { useFormErros } from '../../../hooks/useFormErros';
+import { mapNotificationErrors } from '../../../utils/mapNotificationErrors';
 
 export const usePerfil = () => {
     const navigate = useNavigate();
@@ -112,11 +113,7 @@ export const usePerfil = () => {
             }
 
             if (response?.notifications && response.notifications.length > 0) {
-                const errosConvertidos: ErroItem[] = response.notifications.map((n: any) => ({
-                    Key: n.notificationProps?.Key ?? '',
-                    Mensagem: n.notificationProps?.Message ?? '',
-                    erroSession: n.notificationProps?.Key ?? ''
-                }));
+                const errosConvertidos: ErroItem[] = mapNotificationErrors(response.notifications);
                 setErros(errosConvertidos);
                 setErroTrigger(prev => prev + 1);
                 setRecaptchaValue(null);

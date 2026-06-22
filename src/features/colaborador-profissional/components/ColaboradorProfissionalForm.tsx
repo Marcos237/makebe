@@ -16,6 +16,7 @@ import { MensagemItens } from "../../../Interfaces/Mensagens/MensagemItens";
 import { ErroItem } from "../../../Interfaces/shared/erroItem";
 import { PersistirItens } from "../../../Interfaces/shared/persistirItens";
 import { RetornarMessageService } from "../../../services/shared/retornarMessageService";
+import { mapNotificationErrors } from "../../../utils/mapNotificationErrors";
 import { salvarColaboradorProfissional } from "../services/colaboradorProfissionalService";
 import styles from "./ColaboradorProfissional.module.css";
 
@@ -111,11 +112,7 @@ const ColaboradorProfissionalForm: React.FC<{
                 persistirProps.onSave?.();
             }, 3000);
         } else {
-            const errosConvertidos: ErroItem[] = colaboradorResponse?.notifications?.map((n) => ({
-                Key: n.notificationProps?.Key ?? "",
-                Mensagem: n.notificationProps?.Message ?? "",
-                erroSession: n.notificationProps?.Key ?? "",
-            })) ?? [];
+            const errosConvertidos: ErroItem[] = mapNotificationErrors(colaboradorResponse?.notifications);
             setErros(errosConvertidos);
             setErroTrigger((prev) => prev + 1);
             enviarSatusMessage();

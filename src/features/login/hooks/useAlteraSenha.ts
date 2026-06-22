@@ -5,6 +5,7 @@ import { ErroItem } from "../../../Interfaces/shared/erroItem";
 import { UsuarioLoginItens } from "../../../Interfaces/Usuario/UsuarioLoginItens";
 import { EsqueciSenhaItens } from "../types";
 import { loginService } from "../services/loginService";
+import { mapNotificationErrors } from "../../../utils/mapNotificationErrors";
 
 export const useAlteraSenha = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -17,6 +18,7 @@ export const useAlteraSenha = () => {
     const [isEnviado, setIsEnviado] = useState<boolean>();
     const [erros, setErros] = useState<ErroItem[]>([]);
     const [erroTrigger, setErroTrigger] = useState(0);
+    const [recaptchaRenderKey, setRecaptchaRenderKey] = useState(0);
 
     useFormErros(erros, erroTrigger);
 
@@ -48,12 +50,12 @@ export const useAlteraSenha = () => {
         const response = await loginService.solicitarAlteracaoSenha(reenviaItens);
         if (response?.notifications && response.notifications.length > 0) {
             setIsVisibleLogin(false);
-            const errosConvertidos: ErroItem[] = response.notifications.map((n: any) => ({
-                Key: "CPFEmail",
-                Mensagem: n.notificationProps?.Message ?? "",
-            }));
+            const errosConvertidos: ErroItem[] = mapNotificationErrors(response.notifications)
+                .map((erro) => ({ ...erro, Key: "CPFEmail", erroSession: "CPFEmail" }));
             setErros(errosConvertidos);
             setErroTrigger((prev) => prev + 1);
+            setRecaptchaValue(null);
+            setRecaptchaRenderKey((prev) => prev + 1);
             setValue("");
         } else {
             setIsEnviado(true);
@@ -80,6 +82,7 @@ export const useAlteraSenha = () => {
         isEnviaText,
         isLoading,
         isVisibleLogin,
+        recaptchaRenderKey,
         setValue,
         usuarioLogado,
         value,

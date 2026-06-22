@@ -15,6 +15,7 @@ import { MensagemItens } from "../../../Interfaces/Mensagens/MensagemItens";
 import { ErroItem } from "../../../Interfaces/shared/erroItem";
 import { PersistirItens } from "../../../Interfaces/shared/persistirItens";
 import { RetornarMessageService } from "../../../services/shared/retornarMessageService";
+import { mapNotificationErrors } from "../../../utils/mapNotificationErrors";
 import { buscarDadosCorreiosEndereco, salvarEndereco } from "../services/enderecoService";
 import styles from "./Endereco.module.css";
 
@@ -130,11 +131,7 @@ const EnderecoForm: React.FC<{
                 persistirProps.onSave?.();
             }, 3000);
         } else {
-            const errosConvertidos: ErroItem[] = retorno?.notifications?.map((n) => ({
-                Key: n.notificationProps?.Key ?? "",
-                Mensagem: n.notificationProps?.Message ?? "",
-                erroSession: n.notificationProps?.Key ?? "",
-            })) ?? [];
+            const errosConvertidos: ErroItem[] = mapNotificationErrors(retorno?.notifications);
             setErros(errosConvertidos);
             setErroTrigger((prev) => prev + 1);
             enviarSatusMessage();

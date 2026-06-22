@@ -16,6 +16,7 @@ import CampoTexto from "../../../components/textbox";
 import Mensagem from "../../../components/mensagem";
 import BotaoSubmit from "../../../components/submitButton";
 import updatePersistirPrev from "../../../hooks/useUpdatePersistirPrev";
+import { mapNotificationErrors } from "../../../utils/mapNotificationErrors";
 import HoraPicker from "../../../components/horaPicker";
 import styles from "./Produtos.module.css";
 
@@ -97,11 +98,7 @@ const ServicoPersistir: React.FC<{
                 persistirProps.onSave?.();
             }, 2000);
         } else {
-            const errosConvertidos: ErroItem[] = servicoResponse?.notifications?.map((n) => ({
-                Key: n.notificationProps?.Key ?? "",
-                Mensagem: n.notificationProps?.Message ?? "",
-                erroSession: n.notificationProps?.Key ?? ""
-            })) ?? [];
+            const errosConvertidos: ErroItem[] = mapNotificationErrors(servicoResponse?.notifications);
             setErros(errosConvertidos);
             setErroTrigger(prev => prev + 1);
             enviarSatusMessage();

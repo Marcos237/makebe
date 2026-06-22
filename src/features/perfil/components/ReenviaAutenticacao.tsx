@@ -15,6 +15,7 @@ import { MensagemItens } from "../../../Interfaces/Mensagens/MensagemItens";
 import { ErroItem } from "../../../Interfaces/shared/erroItem";
 import { ReenviaItens } from "../../../Interfaces/Usuario/ReenviaItens";
 import { PostService } from "../../../services/shared/postService";
+import { mapNotificationErrors } from "../../../utils/mapNotificationErrors";
 import styles from "./ReenviaAutenticacao.module.css";
 
 const ReenviaAutenticacao: React.FC = () => {
@@ -24,6 +25,7 @@ const ReenviaAutenticacao: React.FC = () => {
     const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
     const [erros, setErros] = useState<ErroItem[]>([]);
     const [erroTrigger, setErroTrigger] = useState(0);
+    const [recaptchaRenderKey, setRecaptchaRenderKey] = useState(0);
 
     useFormErros(erros, erroTrigger);
 
@@ -38,13 +40,11 @@ const ReenviaAutenticacao: React.FC = () => {
         const response = await PostService(reenviaItens, `${API_BASE_URL}${UrlReenviaEmail}`);
 
         if (response?.notifications && response.notifications.length > 0) {
-            const errosConvertidos: ErroItem[] = response.notifications.map((n) => ({
-                Key: n.notificationProps?.Key ?? "",
-                Mensagem: n.notificationProps?.Message ?? "",
-                erroSession: n.notificationProps?.Key ?? "",
-            }));
+            const errosConvertidos: ErroItem[] = mapNotificationErrors(response.notifications);
             setErros(errosConvertidos);
             setErroTrigger((prev) => prev + 1);
+            setRecaptchaValue(null);
+            setRecaptchaRenderKey((prev) => prev + 1);
             setIsLoading(false);
             setMessage(false);
         } else {
@@ -116,7 +116,7 @@ const ReenviaAutenticacao: React.FC = () => {
                         </div>
 
                         <div className={styles.recaptcha}>
-                            <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={setRecaptchaValue} />
+                            <RecaptchaComponent key={recaptchaRenderKey} siteKey={RECAPTCHA_SITE_KEY} onChange={setRecaptchaValue} />
                         </div>
 
                         <div className={styles.botaoArea}>

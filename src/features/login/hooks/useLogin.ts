@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { loginService } from '../services/loginService';
 import { saveTokenToLocalStorage } from '../../../config/ArmazenaToken';
 import { UsuarioLoginItens, ErroItem, UsuarioPerfilItens } from '../types';
+import { useFormErros } from '../../../hooks/useFormErros';
+import { mapNotificationErrors } from '../../../utils/mapNotificationErrors';
 
 export const useLogin = () => {
     const navigate = useNavigate();
@@ -15,9 +17,9 @@ export const useLogin = () => {
     const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
     const [erros, setErros] = useState<ErroItem[]>([]);
     const [erroTrigger, setErroTrigger] = useState<number>(0);
+    const [recaptchaRenderKey, setRecaptchaRenderKey] = useState<number>(0);
 
-    const temErroLogin = erros.some(e => e.Key === 'Login');
-    const messageErro = erros.find(e => e.Key === 'Login')?.Mensagem;
+    useFormErros(erros, erroTrigger);
 
     const handleRecaptchaChange = useCallback((value: string | null) => {
         setRecaptchaValue(value);
@@ -37,13 +39,12 @@ export const useLogin = () => {
             const response = await loginService.authenticate(credentials);
 
             if (response?.notifications && response.notifications.length > 0) {
-                const errosConvertidos: ErroItem[] = response.notifications.map((n: any) => ({
-                    Key: n.notificationProps?.Key ?? '',
-                    Mensagem: n.notificationProps?.Message ?? '',
-                }));
+                const errosConvertidos: ErroItem[] = mapNotificationErrors(response.notifications);
 
                 setErros(errosConvertidos);
                 setErroTrigger(prev => prev + 1);
+                setRecaptchaValue(null);
+                setRecaptchaRenderKey(prev => prev + 1);
                 setLogin('');
                 setSenha('');
             } else if (response) {
@@ -83,10 +84,9 @@ export const useLogin = () => {
         setSenha,
         isLoading,
         recaptchaValue,
+        recaptchaRenderKey,
         erros,
         erroTrigger,
-        temErroLogin,
-        messageErro,
         // Actions
         handleRecaptchaChange,
         handleSubmit,
