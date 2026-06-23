@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Navigate } from "react-router-dom";
 import { API_BASE_URL } from "../config/apiConfig";
 import {
   getTokenFromLocalStorage,
@@ -7,7 +8,6 @@ import {
   removeTokenFromLocalStorage,
 } from "../config/ArmazenaToken";
 import { UrlUsuarioLogado } from "../constants/Usuario/usuarioConstant";
-import ExternalRedirect from "./ExternalRedirect";
 
 const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
@@ -55,7 +55,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }
   }
 
   if (!isAuthorized) {
-    return <ExternalRedirect />;
+    return <Navigate to="/vitrine" replace />;
   }
 
   return children;

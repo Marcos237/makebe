@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Box, Button, Menu, MenuItem } from '@mui/material';
 import { URL_IMAGENS } from '../config/apiConfig';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { MenuUsuarioItens } from '../Interfaces/Banner/MenuUsuarioItens';
 import { BannerItens } from '../Interfaces/Banner/bannerItens';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -20,11 +20,24 @@ import "../assets/styles/Banner/banner.css";
 
 const normalizeMenuUrl = (url?: string): string => {
   if (!url) {
-    return '/vitrine';
+    return '#';
+  }
+
+  if (url === '#') {
+    return '#';
   }
 
   if (/^https?:\/\//i.test(url)) {
-    return url;
+    try {
+      const parsedUrl = new URL(url);
+      url = `${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`;
+    } catch {
+      return url;
+    }
+  }
+
+  if (/^\/vitrine(\/|$)/i.test(url)) {
+    url = url.replace(/^\/vitrine/i, '') || '/';
   }
 
   const [pathPart, hashPart] = url.split('#');
@@ -43,6 +56,7 @@ const normalizeMenuUrl = (url?: string): string => {
 };
 
 const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
+  const navigate = useNavigate();
   const [menuElemento, setMenuElemento] = useState<HTMLElement | null>(null);
   const [openSubMenu, setOpenSubMenu] = useState<number | null>(null);
   const [subElemento, setSubElemento] = useState<null | HTMLElement>(null);
@@ -151,6 +165,7 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
   };
 
   const handleSubMenuToggle = (e: React.MouseEvent<HTMLElement>, itemId: number) => {
+    e.preventDefault();
     setOpenSubMenu(prev => (prev === itemId ? null : itemId));
     setSubElemento(e.currentTarget);
   };
@@ -173,7 +188,7 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
       setSubElemento(event.currentTarget);
       return;
     }
-    window.location.href = normalizeMenuUrl(item.menuUrl);
+    navigate(normalizeMenuUrl(item.menuUrl));
     handleMenuClose();
   };
 
@@ -348,11 +363,11 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
                 {menuUsuarioLogadoItems.map(item => (
                   <Box key={item.id} sx={{ display: 'flex', m: 0, p: 0 }}>
                     <Button
-                      component={Link}
-                      to={normalizeMenuUrl(item.menuUrl)}
+                      component={item.subMenus && item.subMenus.length > 0 ? 'button' : Link}
+                      to={item.subMenus && item.subMenus.length > 0 ? undefined : normalizeMenuUrl(item.menuUrl)}
                       onClick={
                         item.subMenus && item.subMenus.length > 0
-                          ? (event) => handleSubMenuToggle(event, item.id)
+                          ? (event: React.MouseEvent<HTMLElement>) => handleSubMenuToggle(event, item.id)
                           : handleMenuClose
                       }
                       sx={{

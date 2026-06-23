@@ -1,7 +1,6 @@
 // filepath: src/features/perfil/hooks/usePerfil.ts
 
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { perfilService } from '../services/perfilService';
 import { useUsuarioLogado } from '../../../hooks/useUsuarioLogado';
 import { UsuarioPerfilItens, ErroItem } from '../types';
@@ -10,7 +9,6 @@ import { useFormErros } from '../../../hooks/useFormErros';
 import { mapNotificationErrors } from '../../../utils/mapNotificationErrors';
 
 export const usePerfil = () => {
-    const navigate = useNavigate();
     const { fetchUsuarioLogado } = useUsuarioLogado();
 
     // State do formulário
@@ -118,15 +116,13 @@ export const usePerfil = () => {
                 setErroTrigger(prev => prev + 1);
                 setRecaptchaValue(null);
                 setRecaptchaRenderKey(prev => prev + 1);
-            } else if (!isLogado) {
-                navigate('/perfilValidar');
             }
         } catch (error) {
             console.error('Erro ao salvar perfil:', error);
         } finally {
             setIsLoading(false);
         }
-    }, [id, nome, cpf, email, telefone, instagram, senha, confirmacaoSenha, recaptchaValue, uploadItem, isLogado, navigate]);
+    }, [id, nome, cpf, email, telefone, instagram, senha, confirmacaoSenha, recaptchaValue, uploadItem, isLogado]);
 
     const handleFormKeyDown = useCallback((event: React.KeyboardEvent<HTMLFormElement>) => {
         if (event.key === 'Enter') {

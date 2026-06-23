@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { AlteraSenhaPage, LoginForm, LogoutPage } from './features/login';
 import { Autenticacao, PerfilForm, PerfilValidar, RecuperaSenha, ReenviaAutenticacao } from './features/perfil';
 import Salao from './features/loja';
@@ -11,15 +11,16 @@ import ColaboradorProfissional from './features/colaborador-profissional';
 import Agenda from './features/agenda';
 import Agendamento from './features/agendamento';
 import ProtectedRoute from './components/ProtectedRoute';
-import ExternalRedirect from './components/ExternalRedirect';
+import { HomePage } from './features/home';
 
 const App: React.FC = () => {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<ExternalRedirect />} />
-        <Route path="/Home" element={<ExternalRedirect />} />
-        <Route path="/home" element={<ExternalRedirect />} />
+        <Route path="/" element={<Navigate to="/vitrine" replace />} />
+        <Route path="/Home" element={<Navigate to="/vitrine" replace />} />
+        <Route path="/home" element={<Navigate to="/vitrine" replace />} />
+        <Route path="/vitrine" element={<HomePage />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/perfil" element={<PerfilForm />} />
         <Route path="/perfilValidar" element={<PerfilValidar />} />
@@ -37,7 +38,6 @@ const App: React.FC = () => {
         <Route path="/Produtos/Servico" element={<ProtectedRoute><Servico /></ProtectedRoute>} /> 
         <Route path="/Agenda/:urlParametro" element={<ProtectedRoute><Agenda /></ProtectedRoute>} /> 
         <Route path="/Agendamento" element={<ProtectedRoute><Agendamento /></ProtectedRoute>} />
-        <Route path="*" element={<ExternalRedirect />} />
       </Routes>
     </div>
   );
