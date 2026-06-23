@@ -29,6 +29,7 @@ const App: React.FC = () => {
         <Route path="/alteraSenha" element={<AlteraSenhaPage />} />
         <Route path="/recuperaSenha/:chave" element={<RecuperaSenha />} />
         <Route path="/loja" element={<ProtectedRoute><Salao /></ProtectedRoute>} />
+        <Route path="/loja/" element={<ProtectedRoute><Salao /></ProtectedRoute>} />
         <Route path="/Endereco/:urlParametro" element={<ProtectedRoute><Endereco /></ProtectedRoute>} />
         <Route path="/Portifolio/:urlParametro" element={<ProtectedRoute><Portifolio /></ProtectedRoute>} />
         <Route path="/Colaborador/:urlParametro" element={<ProtectedRoute><Colaborador /></ProtectedRoute>} />

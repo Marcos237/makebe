@@ -18,6 +18,29 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import "../assets/styles/Banner/banner.css";
 
+const normalizeMenuUrl = (url?: string): string => {
+  if (!url) {
+    return '/vitrine';
+  }
+
+  if (/^https?:\/\//i.test(url)) {
+    return url;
+  }
+
+  const [pathPart, hashPart] = url.split('#');
+  const [pathname, search = ''] = pathPart.split('?');
+  const normalizedPath = pathname
+    .split('/')
+    .map((segment, index) => (index === 0 ? segment : segment.toLowerCase()))
+    .join('/')
+    .replace(/\/+$/, '');
+
+  const finalPath = normalizedPath || '/';
+  const finalSearch = search ? `?${search}` : '';
+  const finalHash = hashPart ? `#${hashPart}` : '';
+
+  return `${finalPath}${finalSearch}${finalHash}`;
+};
 
 const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
   const [menuElemento, setMenuElemento] = useState<HTMLElement | null>(null);
@@ -150,7 +173,7 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
       setSubElemento(event.currentTarget);
       return;
     }
-    window.location.href = item.menuUrl;
+    window.location.href = normalizeMenuUrl(item.menuUrl);
     handleMenuClose();
   };
 
@@ -219,7 +242,7 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
                         }}
                       >
                         <Link
-                          to={filho.subMenuUrl || ''}
+                          to={normalizeMenuUrl(filho.subMenuUrl)}
                           style={{ textDecoration: 'none', color: 'inherit' }}
                         >
                           {filho.subMenuDescricao}
@@ -230,7 +253,7 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
                 </>
               ) : (
                 <Link
-                  to={subItem.subMenuUrl || ''}
+                  to={normalizeMenuUrl(subItem.subMenuUrl)}
                   style={{ textDecoration: 'none', color: 'inherit', flexGrow: 1 }}
                 >
                   {subItem.subMenuDescricao}
@@ -326,7 +349,7 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
                   <Box key={item.id} sx={{ display: 'flex', m: 0, p: 0 }}>
                     <Button
                       component={Link}
-                      to={item.menuUrl}
+                      to={normalizeMenuUrl(item.menuUrl)}
                       onClick={
                         item.subMenus && item.subMenus.length > 0
                           ? (event) => handleSubMenuToggle(event, item.id)
@@ -384,7 +407,7 @@ const Banner: React.FC<BannerItens> = ({ usuarioLogado }) => {
                 >
                   {menuUsuarioItems.map((item) => (
                     <MenuItem key={item.id} onClick={handleCloseUser}>
-                      <Link to={item.menuUrl} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      <Link to={normalizeMenuUrl(item.menuUrl)} style={{ textDecoration: 'none', color: 'inherit' }}>
                         <Typography textAlign="center">{item.menuDescricao}</Typography>
                       </Link>
                     </MenuItem>
