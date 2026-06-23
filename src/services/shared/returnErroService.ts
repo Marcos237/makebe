@@ -1,5 +1,8 @@
 import axios, { AxiosError } from "axios";
 import { NotificationItens } from "../../Interfaces/shared/NotificationItens";
+import { removeTokenFromLocalStorage } from "../../config/ArmazenaToken";
+
+const VITRINE_PATHS = ["/", "/home", "/Home", "/vitrine", "/vitrine/"];
 
 export function returnErroService(error: unknown): NotificationItens[] | null {
   if (!axios.isAxiosError(error)) {
@@ -11,10 +14,15 @@ export function returnErroService(error: unknown): NotificationItens[] | null {
 
 
   if (
-    axiosError?.response?.status === 403 &&
+    [401, 403].includes(axiosError?.response?.status ?? 0) &&
     !['/Perfil', '/perfil'].includes(window.location.pathname)
   ) {
-    window.location.href = "/login";
+    removeTokenFromLocalStorage();
+
+    if (!VITRINE_PATHS.includes(window.location.pathname)) {
+      window.location.href = "/vitrine";
+    }
+
     return null;
   }
 

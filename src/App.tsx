@@ -19,6 +19,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<ExternalRedirect />} />
         <Route path="/Home" element={<ExternalRedirect />} />
+        <Route path="/home" element={<ExternalRedirect />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/perfil" element={<PerfilForm />} />
         <Route path="/perfilValidar" element={<PerfilValidar />} />
@@ -35,6 +36,7 @@ const App: React.FC = () => {
         <Route path="/Produtos/Servico" element={<ProtectedRoute><Servico /></ProtectedRoute>} /> 
         <Route path="/Agenda/:urlParametro" element={<ProtectedRoute><Agenda /></ProtectedRoute>} /> 
         <Route path="/Agendamento" element={<ProtectedRoute><Agendamento /></ProtectedRoute>} />
+        <Route path="*" element={<ExternalRedirect />} />
       </Routes>
     </div>
   );
