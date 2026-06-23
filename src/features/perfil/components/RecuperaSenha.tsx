@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Grid } from '@mui/material';
 import { RecuperaText, UrlEsqueciSenha } from '../../../constants/Usuario/autenticacaoConstant';
 import { BotaoItens } from '../../../Interfaces/Botao/botao';
@@ -20,7 +20,6 @@ import { mapNotificationErrors } from '../../../utils/mapNotificationErrors';
 import styles from './RecuperaSenha.module.css';
 
 const RecuperaSenha: React.FC = () => {
-    const navigate = useNavigate();
     const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
     const [senha, setSenha] = useState<string>('');
     const [confirmacaoSenha, setConfirmacaoSenha] = useState<string>('');
@@ -52,7 +51,7 @@ const RecuperaSenha: React.FC = () => {
         };
         const retorno = await PutService(recuperaItens, `${API_BASE_URL}${UrlEsqueciSenha}`);
         if (!retorno?.notifications || retorno?.notifications?.length === 0) {
-            navigate('/login', { state: { retorno } });
+            setIsLoading(false);
         } else {
             const errosConvertidos: ErroItem[] = mapNotificationErrors(retorno.notifications);
             setErros(errosConvertidos);
