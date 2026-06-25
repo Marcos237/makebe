@@ -10,9 +10,9 @@ import { GetAllService } from '../../../services/shared/getAllService';
 import { ResponseItem } from '../../../Interfaces/shared/ResponseItem';
 
 export const loginService = {
-    async authenticate(credentials: UsuarioLoginItens): Promise<LoginResponse | null> {
-        const response = await PostService(credentials, `${API_BASE_URL}${UrlLogin}`);
-        return response as LoginResponse;
+    async authenticate(credentials: UsuarioLoginItens): Promise<ResponseItem<LoginResponse> | null> {
+        const response = await PostService( credentials,`${API_BASE_URL}${UrlLogin}`);
+        return response as ResponseItem<LoginResponse>;
     },
 
     async logout(): Promise<void> {

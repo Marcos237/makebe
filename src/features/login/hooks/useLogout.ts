@@ -13,6 +13,7 @@ export const useLogout = () => {
                 removeTokenFromLocalStorage();
             };
             deslogar();
+            window.location.replace("/vitrine");
         }
     }, []);
 };
