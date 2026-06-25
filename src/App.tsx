@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { AlteraSenhaPage, LoginForm, LogoutPage } from './features/login';
 import { Autenticacao, PerfilForm, PerfilValidar, RecuperaSenha, ReenviaAutenticacao } from './features/perfil';
 import Salao from './features/loja';
@@ -13,13 +13,23 @@ import Agendamento from './features/agendamento';
 import ProtectedRoute from './components/ProtectedRoute';
 import { HomePage } from './features/home';
 
+const RedirectToVitrine: React.FC = () => {
+  React.useEffect(() => {
+    window.location.replace('/vitrine');
+  }, []);
+
+  return null;
+};
+
 const App: React.FC = () => {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<Navigate to="/vitrine" replace />} />
-        <Route path="/Home" element={<Navigate to="/vitrine" replace />} />
-        <Route path="/home" element={<Navigate to="/vitrine" replace />} />
+        <Route path="/" element={<RedirectToVitrine />} />
+        <Route path="/Home" element={<RedirectToVitrine />} />
+        <Route path="/Home/*" element={<RedirectToVitrine />} />
+        <Route path="/home" element={<RedirectToVitrine />} />
+        <Route path="/home/*" element={<RedirectToVitrine />} />
         <Route path="/vitrine" element={<HomePage />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/perfil" element={<PerfilForm />} />

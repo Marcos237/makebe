@@ -37,7 +37,11 @@ export const useLogin = () => {
         try {
             const response = await loginService.authenticate(credentials);
 
-            if (response?.notifications && response.notifications.length > 0) {
+            if (!response) {
+                return;
+            }
+
+            if (response.notifications && response.notifications.length > 0) {
                 const errosConvertidos: ErroItem[] = mapNotificationErrors(response.notifications);
 
                 setErros(errosConvertidos);
@@ -46,10 +50,13 @@ export const useLogin = () => {
                 setRecaptchaRenderKey(prev => prev + 1);
                 setLogin('');
                 setSenha('');
-            } else if (response) {
-                saveTokenToLocalStorage(response.chave ?? '');
+            } else {
+                const responseItem = response.data;
+
+                saveTokenToLocalStorage(responseItem?.chave ?? '');
                 setErros([]);
-                navigate('/vitrine');
+
+                window.location.replace('/vitrine');
             }
         } catch (error) {
             console.error('Erro no login:', error);

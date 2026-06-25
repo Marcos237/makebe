@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Navigate } from "react-router-dom";
 import { API_BASE_URL } from "../config/apiConfig";
 import {
   getTokenFromLocalStorage,
@@ -9,7 +8,11 @@ import {
 } from "../config/ArmazenaToken";
 import { UrlUsuarioLogado } from "../constants/Usuario/usuarioConstant";
 
-const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
+interface ProtectedRouteProps {
+  children: React.ReactElement;
+}
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -25,18 +28,20 @@ const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }
 
       try {
         const token = getTokenFromLocalStorage();
+
         await axios.get(`${API_BASE_URL}${UrlUsuarioLogado}`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
-
         if (isMounted) {
           setIsAuthorized(true);
         }
-      } catch {
+      } catch (error) {
+        console.error(error);
         removeTokenFromLocalStorage();
+
         if (isMounted) {
           setIsAuthorized(false);
         }
@@ -50,12 +55,17 @@ const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }
     };
   }, []);
 
+  useEffect(() => {
+    if (isAuthorized === false) {
+    }
+  }, [isAuthorized]);
+
   if (isAuthorized === null) {
     return null;
   }
 
   if (!isAuthorized) {
-    return <Navigate to="/vitrine" replace />;
+    return null;
   }
 
   return children;
