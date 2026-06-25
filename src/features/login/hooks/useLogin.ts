@@ -1,7 +1,6 @@
 // filepath: src/features/login/hooks/useLogin.ts
 
 import { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { loginService } from '../services/loginService';
 import { saveTokenToLocalStorage } from '../../../config/ArmazenaToken';
 import { UsuarioLoginItens, ErroItem } from '../types';
@@ -9,7 +8,6 @@ import { useFormErros } from '../../../hooks/useFormErros';
 import { mapNotificationErrors } from '../../../utils/mapNotificationErrors';
 
 export const useLogin = () => {
-    const navigate = useNavigate();
     const [login, setLogin] = useState<string>('');
     const [senha, setSenha] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -63,7 +61,7 @@ export const useLogin = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [login, senha, recaptchaValue, navigate]);
+    }, [login, senha, recaptchaValue]);
 
     const handleFormKeyDown = useCallback((event: React.KeyboardEvent<HTMLFormElement>) => {
         if (event.key === 'Enter') {
