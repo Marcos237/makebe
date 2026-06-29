@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { Grid } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
 import { RecuperaText, UrlEsqueciSenha } from '../../../constants/Usuario/autenticacaoConstant';
 import { BotaoItens } from '../../../Interfaces/Botao/botao';
 import { PutService } from '../../../services/shared/putService';
@@ -29,6 +28,7 @@ const RecuperaSenha: React.FC = () => {
     const [erroTrigger, setErroTrigger] = useState(0);
     useFormErros(erros, erroTrigger);
     const { fetchUsuarioLogado } = useUsuarioLogado();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const carregarUsuario = async () => {
@@ -52,6 +52,7 @@ const RecuperaSenha: React.FC = () => {
         const retorno = await PutService(recuperaItens, `${API_BASE_URL}${UrlEsqueciSenha}`);
         if (!retorno?.notifications || retorno?.notifications?.length === 0) {
             setIsLoading(false);
+            navigate('/login');
         } else {
             const errosConvertidos: ErroItem[] = mapNotificationErrors(retorno.notifications);
             setErros(errosConvertidos);
@@ -92,54 +93,39 @@ const RecuperaSenha: React.FC = () => {
                     </div>
 
                     <form id='frmRecuperarSenha' onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} className={styles.form}>
-                        <div className={styles.formLayout}>
-                            <Grid item md={6} xs={12} className={`${styles.gridEsquerdo} hiddenTelaPequena`}>
-                                <div className={styles.conteudoEsquedoRecupera}>
-                                    <h2>Por favor!</h2>
-                                    <p>{RecuperaText}</p>
-                                </div>
-                            </Grid>
+                        <div className={styles.campos}>
+                            <div className={styles.info}>
+                                <p>{RecuperaText}</p>
+                            </div>
 
-                            <div className={styles.separador}></div>
-
-                            <Grid item md={6} xs={12} className={styles.gridDireito}>
-                                <div className={styles.conteudoDireitoRecupera}>
-                                    <div className={styles.formItensRecupera}>
-                                        <CampoTexto
-                                            textBoxProps={{
-                                                name: "Senha",
-                                                tooltip: "digite sua senha",
-                                                label: "Senha",
-                                                type: "password",
-                                                value: senha,
-                                                erroSession: 'Senha',
-                                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setSenha(e.target.value)
-                                            }}
-                                        />
-                                    </div>
-                                    <div className={styles.formItensRecupera}>
-                                        <CampoTexto
-                                            textBoxProps={{
-                                                name: "ConfirmacaoSenha",
-                                                tooltip: "Confirme sua Senha",
-                                                label: "Confirma Senha*",
-                                                value: confirmacaoSenha,
-                                                type: 'password',
-                                                erroSession: 'ConfirmacaoSenha',
-                                                onChange: (e: React.ChangeEvent<HTMLInputElement>) => setConfirmacaoSenha(e.target.value)
-                                            }}
-                                        />
-                                    </div>
-                                    <div className={styles.recaptcha}>
-                                        <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
-                                    </div>
-                                    <div className={styles.formItens}>
-                                        <div className={styles.botao}>
-                                            <BotaoSubmit botaoProps={botaoProps} />
-                                        </div>
-                                    </div>
-                                </div>
-                            </Grid>
+                            <CampoTexto
+                                textBoxProps={{
+                                    name: "Senha",
+                                    tooltip: "digite sua senha",
+                                    label: "Senha",
+                                    type: "password",
+                                    value: senha,
+                                    erroSession: 'Senha',
+                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setSenha(e.target.value)
+                                }}
+                            />
+                            <CampoTexto
+                                textBoxProps={{
+                                    name: "ConfirmacaoSenha",
+                                    tooltip: "Confirme sua Senha",
+                                    label: "Confirma Senha*",
+                                    value: confirmacaoSenha,
+                                    type: 'password',
+                                    erroSession: 'ConfirmacaoSenha',
+                                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setConfirmacaoSenha(e.target.value)
+                                }}
+                            />
+                            <div className={styles.recaptcha}>
+                                <RecaptchaComponent siteKey={RECAPTCHA_SITE_KEY} onChange={handleRecaptchaChange} />
+                            </div>
+                            <div className={styles.botaoArea}>
+                                <BotaoSubmit botaoProps={botaoProps} />
+                            </div>
                         </div>
                     </form>
                 </div>
