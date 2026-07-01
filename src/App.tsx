@@ -12,6 +12,7 @@ import Agenda from './features/agenda';
 import Agendamento from './features/agendamento';
 import ProtectedRoute from './components/ProtectedRoute';
 import { HomePage } from './features/home';
+import CookieConsent from './components/CookieConsent/CookieConsent';
 
 const RedirectToVitrine: React.FC = () => {
   React.useEffect(() => {
@@ -49,6 +50,7 @@ const App: React.FC = () => {
         <Route path="/Agenda/:urlParametro" element={<ProtectedRoute><Agenda /></ProtectedRoute>} /> 
         <Route path="/Agendamento" element={<ProtectedRoute><Agendamento /></ProtectedRoute>} />
       </Routes>
+      <CookieConsent />
     </div>
   );
 };
