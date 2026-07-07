@@ -49,17 +49,17 @@ const PortifolioPageContent: React.FC = () => {
     const [tipoPortifolioImagem, setTipoPortifolioImagem] = useState<Array<TipoPortifolioImagemItem>>([])
     const {urlParametro } = useParams();
     const [isHiddenItem, setIsHiddenItem] = useState(false);
-
+    const parametroNormalizado = (urlParametro ?? "").trim().toLowerCase();
 
     useHiddenItem("persistir", "lista", isHiddenItem);
 
     const tipoUsuarioId =
-        urlParametro === "Loja" ? TipoUsuarioLojaId : urlParametro === "Colaborador" ? TipoUsuarioColaboradorId : "";
+        parametroNormalizado === "loja" ? TipoUsuarioLojaId : parametroNormalizado === "colaborador" ? TipoUsuarioColaboradorId : "";
+    const tipoUsuarioResolvido = tipoUsuarioId || TipoUsuarioLojaId;
 
     const fetchPortifolioData = useCallback(async (tipoUsuarioId?: string, page: number = 1) => {
 
-        const TipoUsuarioItem =
-            urlParametro === "Loja" ? TipoUsuarioLojaId : urlParametro === "Colaborador" ? TipoUsuarioColaboradorId : "";
+        const tipoUsuarioAtual = tipoUsuarioId || tipoUsuarioResolvido;
         const paginacao: PaginacaoItens<PortifolioItem> = {
             quantidadePagina: resultadosBusca?.quantidadePagina || 6,
             paginaAtual: page,
@@ -73,21 +73,22 @@ const PortifolioPageContent: React.FC = () => {
             paginacao.objetos = [];
 
             paginacao.objetoPesquisa = resultadosBusca?.objetoPesquisa || {};
-            paginacao.objetoPesquisa.tipoUsuarioId = Number(tipoUsuarioId) || Number(TipoUsuarioItem);
+            paginacao.objetoPesquisa.tipoUsuarioId = Number(tipoUsuarioAtual);
             const response = await GetPaginadoService(paginacao, `${API_BASE_AGENDA_URL}${UrlBuscarPaginado}`);
             if (response) {
                 setResultadosBusca(response ?? {});
             }
         }
-    }, [resultadosBusca, urlParametro]);
+    }, [resultadosBusca, tipoUsuarioResolvido]);
 
     const fetchTipoUsuariosImagens = useCallback(async () => {
+        const tipoUsuarioAtual = tipoUsuarioResolvido;
 
-        const tipoPortifolioImagensResponse = await GetByIdService(tipoUsuarioId, `${API_BASE_AGENDA_URL}${UrlTipoPortifolioImagem}`
+        const tipoPortifolioImagensResponse = await GetByIdService(tipoUsuarioAtual, `${API_BASE_AGENDA_URL}${UrlTipoPortifolioImagem}`
         ) as ResponseItem<TipoPortifolioImagemItem>;
         setTipoPortifolioImagem(tipoPortifolioImagensResponse?.datas ?? []);
-        await fetchPortifolioData(tipoUsuarioId ?? '');
-    }, [tipoUsuarioId, fetchPortifolioData]);
+        await fetchPortifolioData(tipoUsuarioAtual);
+    }, [tipoUsuarioResolvido, fetchPortifolioData]);
 
     const handleScrollToTop = () => {
         window.scrollTo({
@@ -127,13 +128,13 @@ const PortifolioPageContent: React.FC = () => {
         const retorno = await GetByIdService(Id, `${API_BASE_AGENDA_URL}${UrlPortifolio}`) as ResponseItem<PortifolioItem>;
         retorno.data = {
             ...retorno.data,
-            tipoUsuarioId: Number(tipoUsuarioId ?? 0),
+            tipoUsuarioId: Number(tipoUsuarioResolvido),
         };
         setPortifolio(retorno.data);
         handleButtonClickSalvar();
         handleScrollToTop();
 
-    }, [tipoUsuarioId]);
+    }, [tipoUsuarioResolvido]);
     const actionButtons = useMemo(() => ([
         {
             id: 1,
@@ -187,12 +188,12 @@ const PortifolioPageContent: React.FC = () => {
             const colaborador = await fetchColaboradorData();
             setPersistirItensList(prev => [...prev, colaborador]);
         },
-        () => fetchPortifolioData(tipoUsuarioId),
+        () => fetchPortifolioData(tipoUsuarioResolvido),
         fetchTipoUsuariosImagens
-    ], [tipoUsuarioId]);
+    ], [tipoUsuarioResolvido]);
 
     useFetchTipo(
-        urlParametro ?? "", [() => fetchPortifolioData(tipoUsuarioId), fetchTipoUsuariosImagens],
+        urlParametro ?? "", [() => fetchPortifolioData(tipoUsuarioResolvido), fetchTipoUsuariosImagens],
         TipoUsuarioLojaId,
         TipoUsuarioColaboradorId
     );
@@ -202,7 +203,7 @@ const PortifolioPageContent: React.FC = () => {
         let isSave = persistirItensList.find(item => item.isSave)?.isSave;
         if (isSave) {
             persistirItensList.map(item => item.isSave = false)
-            fetchPortifolioData(tipoUsuarioId)
+            fetchPortifolioData(tipoUsuarioResolvido)
         }
     });
 
