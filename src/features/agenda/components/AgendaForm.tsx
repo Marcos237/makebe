@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import { Tooltip } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { FaRegTrashAlt, FaSave } from "react-icons/fa";
+import { useParams } from "react-router-dom";
 import CampoTexto from "../../../components/textbox";
 import DateTimerPicker from "../../../components/dateTimerPicker";
 import Dropdown from "../../../components/dropdown";
@@ -55,7 +56,12 @@ const AgendaForm: React.FC<{
     const [isLeitura, setIsLeitura] = useState<boolean>(false);
     const [erros, setErros] = useState<ErroItem[]>([]);
     const [erroTrigger, setErroTrigger] = useState(0);
-    const isAgendaColaborador = tipoItem?.toString() === TipoColaborador;
+    const { urlParametro } = useParams();
+    const parametroNormalizado = (urlParametro ?? "").trim().toLowerCase();
+    const tipoAgendaAtual =
+        tipoItem
+        ?? (parametroNormalizado === "loja" ? Number(TipoLoja) : parametroNormalizado === "colaborador" ? Number(TipoColaborador) : 0);
+    const isAgendaColaborador = tipoAgendaAtual.toString() === TipoColaborador;
 
     const lojaProps = persistirDropProps.find((item) => item.name === "loja")?.selectItems ?? [];
     const colaboradorProps = persistirDropProps.find((item) => item.name === "colaborador")?.selectItems ?? [];
@@ -81,10 +87,10 @@ const AgendaForm: React.FC<{
             )
             : false);
         setIdLoja(persistirProps?.item?.idLoja ?? 0);
-        setTipo(tipoItem);
+        setTipo(tipoAgendaAtual);
         setColaboradorId(persistirProps?.item?.idColaborador);
         setIsLeitura(persistirProps?.item?.isTodoDia ?? false);
-    }, [isAgendaColaborador, persistirProps, tipoItem]);
+    }, [isAgendaColaborador, persistirProps, tipoAgendaAtual]);
 
     updatePersistirPrev(fetchAgendaPersistir, undefined, persistirProps.item);
 
@@ -101,7 +107,7 @@ const AgendaForm: React.FC<{
         setBloquadoHoje(false);
         setIdLoja(0);
         setColaboradorId(0);
-        setTipo(tipoItem);
+        setTipo(tipoAgendaAtual);
     };
 
     const enviarSatusMessage = () => {
@@ -128,7 +134,7 @@ const AgendaForm: React.FC<{
             agendaAbertaFim: formatarHoraComData(agendaAbertaFim),
             idLoja,
             idColaborador,
-            tipo: Number(tipoItem) ?? tipo,
+            tipo: tipoAgendaAtual || tipo,
             ...(isAgendaColaborador
                 ? {
                     agendaBloqueadaInicio: formatarHoraComData(agendaBloqueadaInicio),
@@ -250,7 +256,7 @@ const AgendaForm: React.FC<{
 
                     <div className={styles.camposLayout}>
                         <div className={`${styles.coluna} ${styles.campos}`}>
-                            {tipoItem?.toString() === TipoLoja && (
+                            {tipoAgendaAtual.toString() === TipoLoja && (
                                 <div className={styles.formItens}>
                                     <Dropdown
                                         dropProps={{
@@ -264,7 +270,7 @@ const AgendaForm: React.FC<{
                                     />
                                 </div>
                             )}
-                            {tipoItem?.toString() === TipoColaborador && (
+                            {tipoAgendaAtual.toString() === TipoColaborador && (
                                 <div className={styles.formItens}>
                                     <Dropdown
                                         dropProps={{
