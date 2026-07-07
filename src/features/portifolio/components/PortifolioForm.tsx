@@ -19,6 +19,7 @@ import { GetByIdService } from "../../../services/shared/getByIdService";
 import { Tooltip } from "@mui/material";
 import { ErroItem } from "../../../Interfaces/shared/erroItem";
 import { useFormErros } from "../../../hooks/useFormErros";
+import { useParams } from "react-router-dom";
 import BotaoSubmit from "../../../components/submitButton";
 import CampoTexto from "../../../components/textbox";
 import Upload from "../../../components/upload";
@@ -49,6 +50,7 @@ const PortifolioPersistir: React.FC<{
     const [colaboradorPortifolioId, setColaboradorPortifolioId] = useState<number>(0);
     const [lojaPortifolioId, setLojaPortifolioId] = useState<number>(0);
     const [TipoUsuarioId, setTipoUsuarioId] = useState<number>(0);
+    const { urlParametro } = useParams();
     const colaboradorProps = persistirDropProps.find((item) => item.name === "colaborador")?.selectItems ?? [];
     const lojaProps = persistirDropProps.find((item) => item.name === "loja")?.selectItems ?? [];
     const portifolioImagemItem: PortifolioImagemItem[] = useMemo(() => {
@@ -56,6 +58,11 @@ const PortifolioPersistir: React.FC<{
     }, [persistirProps]);
     const [erros, setErros] = useState<ErroItem[]>([]);
     const [erroTrigger, setErroTrigger] = useState(0);
+
+    const tipoUsuarioAtual =
+        persistirProps.item?.tipoUsuarioId
+        ?? (tipoUsuario ? Number(tipoUsuario) : undefined)
+        ?? (urlParametro === "Loja" ? Number(TipoUsuarioLojaId) : urlParametro === "Colaborador" ? Number(TipoUsuarioColaboradorId) : 0);
 
     useFormErros(erros, erroTrigger);
 
@@ -69,7 +76,7 @@ const PortifolioPersistir: React.FC<{
         setColaboradorId(persistirProps?.item?.colaboradorId ?? 0);
         setColaboradorPortifolioId(persistirProps?.item?.colaboradorPortifolioId ?? 0);
         setLojaPortifolioId(persistirProps?.item?.lojaPortifolioId ?? 0);
-        setTipoUsuarioId(Number(tipoUsuario ?? ""));
+        setTipoUsuarioId(tipoUsuarioAtual);
 
         const uploadItemsRetorno: UploadItens[] = [];
         tiposPortifolioImagem.forEach((tipos, index) => {
@@ -98,10 +105,10 @@ const PortifolioPersistir: React.FC<{
             uploadItemsRetorno.push(uploadImagem);
             setUploadItems(uploadItemsRetorno);
         });
-    }, [persistirProps, tipoUsuario, tiposPortifolioImagem, portifolioImagemItem]);
+    }, [persistirProps, tipoUsuarioAtual, tiposPortifolioImagem, portifolioImagemItem]);
 
     const limparUpload = async () => {
-        const imagem = await GetByIdService(tipoUsuario ?? "", `${API_BASE_AGENDA_URL}${UrlTipoPortifolioImagem}`) as ResponseItem<TipoPortifolioImagemItem>;
+        const imagem = await GetByIdService(tipoUsuarioAtual, `${API_BASE_AGENDA_URL}${UrlTipoPortifolioImagem}`) as ResponseItem<TipoPortifolioImagemItem>;
 
         const uploadItemsRetorno: UploadItens[] = [];
         imagem?.datas?.forEach((tipos, index) => {
@@ -190,7 +197,7 @@ const PortifolioPersistir: React.FC<{
             colaboradorPortifolioId: colaboradorPortifolioId || 0,
             lojaPortifolioId: lojaPortifolioId || 0,
             portifolioImagens: imagensAtualizadas || [],
-            tipoUsuarioId: TipoUsuarioId ?? Number(tipoUsuario)
+            tipoUsuarioId: TipoUsuarioId || tipoUsuarioAtual
         };
         const retorno = await PostService(portifolio, `${API_BASE_AGENDA_URL}${UrlPortifolio}`);
         retornoPost(retorno);

@@ -39,7 +39,7 @@ import styles from "./Portifolio.module.css";
 
 
 
-const Portifolio: React.FC = () => {
+const PortifolioPageContent: React.FC = () => {
     const [useUsuarioLogadoItem, setUsuarioLogado] = useState<UsuarioLoginItens>();
     const [persistirItensList, setPersistirItensList] = useState<Array<PersistirItens<any>>>([]);
     const [resultadosBusca, setResultadosBusca] = useState<PaginacaoItens<PortifolioItem>>();
@@ -287,4 +287,11 @@ const Portifolio: React.FC = () => {
         </div>
     )
 }
-export default Portifolio;
+
+const PortifolioPage: React.FC = () => {
+    const { urlParametro } = useParams();
+
+    return <PortifolioPageContent key={urlParametro ?? "portifolio"} />;
+};
+
+export default PortifolioPage;
