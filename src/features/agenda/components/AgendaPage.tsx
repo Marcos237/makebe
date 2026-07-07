@@ -1,6 +1,7 @@
 import React from "react";
 import { Tooltip } from "@mui/material";
 import { TfiAgenda, TfiLayersAlt } from "react-icons/tfi";
+import { useParams } from "react-router-dom";
 import Banner from "../../../components/banner";
 import Footer from "../../../components/footer";
 import GridViewLista from "../../../components/gridview";
@@ -10,7 +11,7 @@ import AgendaForm from "./AgendaForm";
 import AgendaSearch from "./AgendaSearch";
 import styles from "./Agenda.module.css";
 
-const AgendaPage: React.FC = () => {
+const AgendaPageContent: React.FC = () => {
     const {
         agendaItem,
         gridViewItens,
@@ -96,6 +97,12 @@ const AgendaPage: React.FC = () => {
             </div>
         </div>
     );
+};
+
+const AgendaPage: React.FC = () => {
+    const { urlParametro } = useParams();
+
+    return <AgendaPageContent key={urlParametro ?? "agenda"} />;
 };
 
 export default AgendaPage;

@@ -44,10 +44,11 @@ export const useAgendaPage = () => {
     const [isHiddenItem, setIsHiddenItem] = useState(false);
     const submittingRef = useRef(false);
     const { urlParametro } = useParams();
+    const parametroNormalizado = (urlParametro ?? "").trim().toLowerCase();
 
     useHiddenItem("persistir", "lista", isHiddenItem);
 
-    const tipoItem = urlParametro === "Loja" ? TipoLoja : urlParametro === "Colaborador" ? TipoColaborador : 0;
+    const tipoItem = parametroNormalizado === "loja" ? TipoLoja : parametroNormalizado === "colaborador" ? TipoColaborador : 0;
 
     const fetchAgendaData = useCallback(async (tipoAgenda?: string, page: number = 1) => {
         const agendaDefault: AgendaItens = {
