@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { useParams } from "react-router-dom";
@@ -32,11 +32,19 @@ export const useEnderecoPage = () => {
     const [modalOpen, setModalOpen] = useState<ModalItem>();
     const [persistirItensList, setPersistirItensList] = useState<Array<PersistirItens<any>>>([]);
     const [isHiddenItem, setIsHiddenItem] = useState(false);
+    const [clearFormTrigger, setClearFormTrigger] = useState(0);
     const { urlParametro } = useParams();
 
     useHiddenItem("persistir", "lista", isHiddenItem);
 
-    const tipoUsuarioId = urlParametro === "Loja" ? TipoUsuarioLojaId : urlParametro === "Colaborador" ? TipoUsuarioColaboradorId : "";
+    useEffect(() => {
+        setEnderecoItem(undefined);
+        setIsHiddenItem(false);
+        setClearFormTrigger((prev) => prev + 1);
+    }, [urlParametro]);
+
+    const parametroNormalizado = (urlParametro ?? "").trim().toLowerCase();
+    const tipoUsuarioId = parametroNormalizado === "loja" ? TipoUsuarioLojaId : parametroNormalizado === "colaborador" ? TipoUsuarioColaboradorId : "";
 
     const fetchEnderecoData = useCallback(async (tipoUsuario?: string, page: number = 1) => {
         const paginacao = paginar(resultadosBusca, page);
@@ -71,7 +79,9 @@ export const useEnderecoPage = () => {
     };
 
     const handleButtonClickListar = () => {
+        setEnderecoItem(undefined);
         setIsHiddenItem(false);
+        setClearFormTrigger((prev) => prev + 1);
     };
 
     const handleSaveSuccess = useCallback(() => {
@@ -82,10 +92,14 @@ export const useEnderecoPage = () => {
         event.preventDefault();
         const enderecoId = endereco?.id ?? 0;
         const retorno = await buscarEnderecoPorId(enderecoId);
+        retorno.data = {
+            ...retorno.data,
+            tipoUsuarioId: Number(tipoUsuarioId ?? 0),
+        };
         setEnderecoItem(retorno.data ?? {});
         handleButtonClickSalvar();
         handleScrollToTop();
-    }, []);
+    }, [tipoUsuarioId]);
 
     const handleDeleteClick = useCallback(async (event: React.MouseEvent, endereco?: EnderecoItens) => {
         event.preventDefault();
@@ -187,5 +201,6 @@ export const useEnderecoPage = () => {
         resultadosBusca,
         tipoUsuarioId,
         usuarioLogadoItem,
+        clearFormTrigger,
     };
 };

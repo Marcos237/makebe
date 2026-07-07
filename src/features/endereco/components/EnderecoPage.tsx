@@ -2,6 +2,7 @@ import React from "react";
 import { Tooltip } from "@mui/material";
 import { FaThList } from "react-icons/fa";
 import { FaMapLocationDot } from "react-icons/fa6";
+import { useParams } from "react-router-dom";
 import Banner from "../../../components/banner";
 import Footer from "../../../components/footer";
 import GridViewLista from "../../../components/gridview";
@@ -11,7 +12,7 @@ import EnderecoForm from "./EnderecoForm";
 import styles from "./Endereco.module.css";
 import EnderecoSearch from "./EnderecoSearch";
 
-const EnderecoPage: React.FC = () => {
+const EnderecoPageContent: React.FC = () => {
     const {
         enderecoItem,
         gridViewItens,
@@ -24,6 +25,7 @@ const EnderecoPage: React.FC = () => {
         resultadosBusca,
         tipoUsuarioId,
         usuarioLogadoItem,
+        clearFormTrigger,
     } = useEnderecoPage();
 
     return (
@@ -42,7 +44,7 @@ const EnderecoPage: React.FC = () => {
                     </div>
 
                     <div className={styles.sectionBody}>
-                        <EnderecoForm persistirProps={{ item: enderecoItem, onSave: handleSaveSuccess }} persistirDropProps={persistirItensList} tipoUsuario={tipoUsuarioId} />
+                        <EnderecoForm persistirProps={{ item: enderecoItem, onSave: handleSaveSuccess }} persistirDropProps={persistirItensList} tipoUsuario={tipoUsuarioId} clearTrigger={clearFormTrigger} />
                     </div>
                 </div>
 
@@ -85,6 +87,12 @@ const EnderecoPage: React.FC = () => {
             </div>
         </div>
     );
+};
+
+const EnderecoPage: React.FC = () => {
+    const { urlParametro } = useParams();
+
+    return <EnderecoPageContent key={urlParametro ?? "endereco"} />;
 };
 
 export default EnderecoPage;

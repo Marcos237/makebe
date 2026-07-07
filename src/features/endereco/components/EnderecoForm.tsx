@@ -1,7 +1,8 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Tooltip } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { FaRegTrashAlt, FaSave } from "react-icons/fa";
+import { useParams } from "react-router-dom";
 import BotaoSubmit from "../../../components/submitButton";
 import Dropdown from "../../../components/dropdown";
 import Mensagem from "../../../components/mensagem";
@@ -23,7 +24,8 @@ const EnderecoForm: React.FC<{
     persistirProps: PersistirItens<EnderecoItens>;
     persistirDropProps: Array<PersistirItens<EnderecoItens>>;
     tipoUsuario?: string;
-}> = ({ persistirProps, persistirDropProps, tipoUsuario }) => {
+    clearTrigger?: number;
+}> = ({ persistirProps, persistirDropProps, tipoUsuario, clearTrigger }) => {
     const [isMessage, setMessage] = useState<boolean>(false);
     const [messageItens, setMessageItens] = useState<MensagemItens>();
     const [lojaId, setLojaId] = useState<number>();
@@ -35,33 +37,21 @@ const EnderecoForm: React.FC<{
     const [estado, setEstado] = useState<string>("");
     const [cidade, setCidade] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [tipoUsuarioId, setTipoUsuarioId] = useState<number>();
+    const {urlParametro } = useParams();
     const [colaboradorEnderecoId, setColaboradorEnderecoId] = useState<number>();
     const [colaboradorId, setColaboradorId] = useState<number>();
     const [lojaEnderecoId, setLojaEnderecoId] = useState<number>();
     const [erros, setErros] = useState<ErroItem[]>([]);
     const [erroTrigger, setErroTrigger] = useState(0);
 
+    const tipoUsuarioId =
+        persistirProps.item?.tipoUsuarioId
+        ?? (urlParametro === "Loja" ? Number(TipoUsuarioLojaId) : urlParametro === "Colaborador" ? Number(TipoUsuarioColaboradorId) : 0);
+
     const colaboradorProps = persistirDropProps.find((item) => item.name === "colaborador")?.selectItems ?? [];
     const lojaProps = persistirDropProps.find((item) => item.name === "loja")?.selectItems ?? [];
 
     useFormErros(erros, erroTrigger);
-
-    const fetchEnderecoData = useCallback(async () => {
-        setId(persistirProps.item?.id);
-        setCep(persistirProps.item?.cep || "");
-        setLojaId(persistirProps.item?.lojaId);
-        setNumero(persistirProps.item?.numero);
-        setLogradouro(persistirProps.item?.logradouro || "");
-        setCidade(persistirProps.item?.cidade || "");
-        setEstado(persistirProps.item?.estado || "");
-        setTipoUsuarioId(Number(tipoUsuario));
-        setColaboradorEnderecoId(persistirProps?.item?.colaboradorEnderecoId);
-        setLojaEnderecoId(persistirProps?.item?.lojaEnderecoId);
-        setColaboradorId(persistirProps?.item?.colaboradorId);
-    }, [persistirProps.item, tipoUsuario]);
-
-    updatePersistirPrev(fetchEnderecoData, undefined, persistirProps.item);
 
     const handleDropdownChange = (e: SelectChangeEvent<string>, tipo: string) => {
         if (tipo === "colaborador") {
@@ -72,7 +62,7 @@ const EnderecoForm: React.FC<{
         }
     };
 
-    const limparItens = () => {
+    const limparItens = useCallback(() => {
         setId(0);
         setCep("");
         setLojaId(0);
@@ -89,7 +79,40 @@ const EnderecoForm: React.FC<{
             setColaboradorId(0);
             setColaboradorEnderecoId(0);
         }
-    };
+    }, [tipoUsuario]);
+
+    const fetchEnderecoData = useCallback(async () => {
+        setId(persistirProps.item?.id);
+        setCep(persistirProps.item?.cep || "");
+        setLojaId(persistirProps.item?.lojaId);
+        setNumero(persistirProps.item?.numero);
+        setLogradouro(persistirProps.item?.logradouro || "");
+        setCidade(persistirProps.item?.cidade || "");
+        setEstado(persistirProps.item?.estado || "");
+        setColaboradorEnderecoId(persistirProps?.item?.colaboradorEnderecoId);
+        setLojaEnderecoId(persistirProps?.item?.lojaEnderecoId);
+        setColaboradorId(persistirProps?.item?.colaboradorId);
+    }, [persistirProps.item]);
+
+    const limparFormulario = useCallback(async () => {
+        limparItens();
+    }, [limparItens]);
+
+    updatePersistirPrev(fetchEnderecoData, limparFormulario, persistirProps.item);
+
+    useEffect(() => {
+        if (tipoUsuario === TipoUsuarioLojaId) {
+            setColaboradorId(0);
+        }
+
+        if (tipoUsuario === TipoUsuarioColaboradorId) {
+            setLojaId(0);
+        }
+    }, [tipoUsuario]);
+
+    useEffect(() => {
+        limparItens();
+    }, [clearTrigger, limparItens]);
 
     const enviarSatusMessage = () => {
         setMessage(true);
@@ -114,7 +137,7 @@ const EnderecoForm: React.FC<{
             colaboradorId: Number(colaboradorId) || 0,
             colaboradorEnderecoId: colaboradorEnderecoId || 0,
             lojaEnderecoId: lojaEnderecoId || 0,
-            tipoUsuarioId: Number(tipoUsuario) ?? tipoUsuarioId,
+            tipoUsuarioId: tipoUsuarioId,
         };
 
         const retorno = await salvarEndereco(endereco);
@@ -262,7 +285,7 @@ const EnderecoForm: React.FC<{
                                         name: "numero",
                                         value: numero?.toString(),
                                         tooltip: "digite seu nÃºmero",
-                                        label: "NÃºmero",
+                                        label: "Número",
                                         type: "text",
                                         readonly: false,
                                         onChange: (e: React.ChangeEvent<HTMLInputElement>) => setNumero(Number(e.target.value)),
@@ -328,7 +351,7 @@ const EnderecoForm: React.FC<{
                         <CampoTexto textBoxProps={{ name: "colaboradorId", value: colaboradorId?.toString(), type: "hidden", onChange: (e: React.ChangeEvent<HTMLInputElement>) => setColaboradorId(Number(e.target.value)) }} />
                         <CampoTexto textBoxProps={{ name: "lojaEnderecoId", value: lojaEnderecoId?.toString(), type: "hidden", onChange: (e: React.ChangeEvent<HTMLInputElement>) => setLojaEnderecoId(Number(e.target.value)) }} />
                         <CampoTexto textBoxProps={{ name: "colaboradorEnderecoId", value: colaboradorEnderecoId?.toString(), type: "hidden", onChange: (e: React.ChangeEvent<HTMLInputElement>) => setColaboradorEnderecoId(Number(e.target.value)) }} />
-                        <CampoTexto textBoxProps={{ name: "TipoUsuarioId", value: tipoUsuarioId?.toString(), type: "hidden", onChange: (e: React.ChangeEvent<HTMLInputElement>) => setTipoUsuarioId(Number(e.target.value)) }} />
+                        <CampoTexto textBoxProps={{ name: "TipoUsuarioId", value: tipoUsuarioId.toString(), type: "hidden", onChange: () => undefined }} />
                     </div>
                 </form>
             </div>

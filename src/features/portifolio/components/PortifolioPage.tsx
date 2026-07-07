@@ -47,7 +47,7 @@ const Portifolio: React.FC = () => {
     const [modalOpen, setModalOpen] = useState<ModalItem>();
     const [gridViewItens, setGridView] = useState<GrigViewItens<PortifolioItem> | undefined>(undefined);
     const [tipoPortifolioImagem, setTipoPortifolioImagem] = useState<Array<TipoPortifolioImagemItem>>([])
-    const { urlParametro } = useParams();
+    const {urlParametro } = useParams();
     const [isHiddenItem, setIsHiddenItem] = useState(false);
 
 
