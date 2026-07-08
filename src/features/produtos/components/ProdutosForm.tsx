@@ -9,12 +9,14 @@ import { urlPersistir, PeriodoServico } from "../../../constants/Servicos/servic
 import { PostService } from "../../../services/shared/postService";
 import { moneyMaskConst } from "../../../utils/mascaras";
 import { Tooltip } from "@mui/material";
+import { SelectChangeEvent } from "@mui/material/Select";
 import { FaRegTrashAlt, FaSave } from "react-icons/fa";
 import { ErroItem } from "../../../Interfaces/shared/erroItem";
 import { useFormErros } from "../../../hooks/useFormErros";
 import CampoTexto from "../../../components/textbox";
 import Mensagem from "../../../components/mensagem";
 import BotaoSubmit from "../../../components/submitButton";
+import Dropdown from "../../../components/dropdown";
 import updatePersistirPrev from "../../../hooks/useUpdatePersistirPrev";
 import { mapNotificationErrors } from "../../../utils/mapNotificationErrors";
 import HoraPicker from "../../../components/horaPicker";
@@ -27,6 +29,8 @@ const ServicoPersistir: React.FC<{
     const [isMessage, setMessage] = useState<boolean>(false);
     const [id, setId] = useState<number>(0);
     const [descricao, setDescricao] = useState<string>("");
+    const [categoriaItemId, setCategoriaItemId] = useState<number>(0);
+    const [descricaoCategoria, setDescricaoCategoria] = useState<string>("");
     const [periodo, setPeriodo] = useState<number>(0);
     const [valor, setValor] = useState<number>(0);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -39,6 +43,8 @@ const ServicoPersistir: React.FC<{
         if (!persistirProps?.item) return;
         setId(persistirProps.item.id ?? 0);
         setDescricao(persistirProps.item.descricao ?? "");
+        setCategoriaItemId(persistirProps.item.categoriaItemId ?? 0);
+        setDescricaoCategoria(persistirProps.item.descricaoCategoria ?? "");
         setPeriodo(persistirProps.item.periodo ?? 0);
         setValor(persistirProps.item.valor ?? 0);
     }, [persistirProps]);
@@ -60,6 +66,8 @@ const ServicoPersistir: React.FC<{
         setIsLoading(false);
         setId(0);
         setDescricao("");
+        setCategoriaItemId(0);
+        setDescricaoCategoria("");
         setPeriodo(0);
         setValor(0);
     };
@@ -85,6 +93,8 @@ const ServicoPersistir: React.FC<{
         const servico: ServicosItens = {
             id: id || 0,
             descricao: descricao,
+            categoriaItemId: categoriaItemId || 0,
+            descricaoCategoria: descricaoCategoria || "",
             periodo: periodo || 0,
             valor: valor || 0
         };
@@ -118,6 +128,13 @@ const ServicoPersistir: React.FC<{
 
     const handlePeriodoChange = (valor: number) => {
         setPeriodo(valor);
+    };
+
+    const handleCategoriaChange = (e: SelectChangeEvent<string>) => {
+        const selectedId = Number(e.target.value);
+        const selectedItem = persistirProps.selectItems?.find(item => Number(item.key) === selectedId);
+        setCategoriaItemId(selectedId);
+        setDescricaoCategoria(selectedItem?.value ?? "");
     };
 
     return (
@@ -172,6 +189,18 @@ const ServicoPersistir: React.FC<{
                                             setValor(rawValue === "" ? 0 : Number(rawValue) / 100);
                                         },
                                         erroSession: "Valor"
+                                    }}
+                                />
+                            </div>
+                            <div className={styles.formItens}>
+                                <Dropdown
+                                    dropProps={{
+                                        name: "Categoria",
+                                        itens: persistirProps.selectItems,
+                                        label: "Categoria*",
+                                        selectedId: categoriaItemId?.toString() || "",
+                                        onChange: handleCategoriaChange,
+                                        erroSession: "Categoria"
                                     }}
                                 />
                             </div>

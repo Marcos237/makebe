@@ -6,7 +6,7 @@ import { PaginacaoItens } from "../../../Interfaces/shared/PaginacaoItens";
 import { GetPaginadoService } from "../../../services/shared/getPaginadoService";
 import { API_BASE_URL, API_BASE_AGENDA_URL } from "../../../config/apiConfig";
 import { UrlUsuarioLogado } from "../../../constants/Usuario/usuarioConstant";
-import { propertyLabels, UrlBuscarPaginado, UrlServico, ModalTexto } from "../../../constants/Servicos/servicoConstant";
+import { propertyLabels, UrlBuscarPaginado, UrlServico, ModalTexto, UrlCategoriaServico } from "../../../constants/Servicos/servicoConstant";
 import { ServicosItens } from "../../../Interfaces/Produto/servicosItens";
 import { paginar } from "../../../functions/paginacao";
 import { ResponseItem } from "../../../Interfaces/shared/ResponseItem";
@@ -24,6 +24,7 @@ import Banner from "../../../components/banner";
 import Footer from "../../../components/footer";
 import useUpdateGrid from "../../../hooks/useUpdateGrid";
 import useUpdateFetch from "../../../hooks/useUpdateFetch";
+import { mapToSelectItens } from "../../../functions/mapToSelectItens";
 import ServicoPersistir from "./ProdutosForm";
 import ServicoBusca from "./ProdutosSearch";
 import GridViewLista from "../../../components/gridview";
@@ -67,7 +68,10 @@ const Servico: React.FC = () => {
     }, []);
 
     const fetchPersistirData = useCallback(async () => {
+        const categoriasResponse = await GetAllService(`${API_BASE_AGENDA_URL}${UrlCategoriaServico}`) as ResponseItem<ServicosItens>;
+        const categorias = mapToSelectItens(categoriasResponse?.datas as ServicosItens[], "id", "descricao");
         const persistirProps: PersistirItens<ServicosItens> = {
+            selectItems: categorias,
             onSave: handleSaveSuccess,
         };
         stePersistirItens(persistirProps);
