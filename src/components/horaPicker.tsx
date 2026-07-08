@@ -11,31 +11,21 @@ const HoraPicker = (horaProps: HoraItens) => {
 
   const fetchHora = useCallback(() => {
     if (horaProps.value) {
-  
       const valorString = horaProps.value.toString();
       const [horaParte, minutoParte] = valorString.split(".");
-      setHora(horaParte);
- 
-      setMinuto((minutoParte || '') === '00' ? '00' : 
-      (minutoParte || '').startsWith('0') ? (minutoParte || '').slice(1) :
-      (minutoParte || '').length === 1 ? `${minutoParte}0` :
-      minutoParte || '');
+      setHora(String(Number(horaParte || "0")));
 
-     }
-     else {
+      const minutoNormalizado = (minutoParte || "").padEnd(2, "0").slice(0, 2);
+      setMinuto(String(Number(minutoNormalizado || "0")));
+    } else {
       setHora("0");
       setMinuto("0");
     }
   }, [horaProps.value]);
 
   useEffect(() => {
-
-    if (hora === "00") setHora("0");
-    if (minuto === "00") setMinuto("0");
-
     fetchHora();
-
-  }, [fetchHora, hora, minuto]);
+  }, [fetchHora]);
 
   const horas: SelectItens[] = Array.from({ length: 101 }, (_, i) => ({
     key: i,
