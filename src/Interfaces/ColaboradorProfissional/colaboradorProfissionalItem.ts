@@ -1,4 +1,9 @@
-import { NotificationItens } from "../shared/NotificationItens";
+export interface ColaboradorProfissionalServicoItem {
+    id?: number;
+    idColaborador?: number;
+    idServico?: number;
+    ativo?: boolean;
+}
 
 export interface ColaboradorProfissionalItem {
     id?: number;
@@ -6,6 +11,7 @@ export interface ColaboradorProfissionalItem {
     usuarioId?: string;
     lojaId?: number;
     servicoId?: number;
+    servicos?: ColaboradorProfissionalServicoItem[];
     descricao?: string;
     PeriodoInativoInicioExtenso?: string;
     PeriodoInativoFimExtenso?: string;

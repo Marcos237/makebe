@@ -65,6 +65,7 @@
 }
 
 .data-box-servico {
+  display: block;
   width: 100%;
   margin-left: 10px;
   margin-bottom: 6px;
@@ -75,6 +76,13 @@
   white-space: normal;
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+
+.data-box-detalhes {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .data-box-tittle {
@@ -148,6 +156,21 @@
   gap: 8px;
   flex: 0 0 auto;
   margin-top: 6px;
+}
+
+@media (min-width: 901px) {
+  .data-box-detalhes {
+    align-items: center;
+  }
+
+  .data-box-servico {
+    margin-left: 0;
+    text-align: center;
+  }
+
+  .linha-item {
+    justify-content: center;
+  }
 }
 
 .icon-btn {

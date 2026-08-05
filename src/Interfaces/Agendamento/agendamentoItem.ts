@@ -11,6 +11,8 @@ export interface AgendamentoItem {
   descricaoServico?: string;
   idUsuario?: string;
   nomeUsuario?: string;
+  nomeCliente?: string;
+  telefoneCliente?: string;
   dataInicioAgendamentoExtenso?: string;
   dataInicioAgendamento?: Dayjs
   dataTerminoAgendamento?: Dayjs

@@ -46,10 +46,13 @@ export const useAgendamentoPage = () => {
         return agendamentos.map((a) => {
             const ini = dayjs(a.dataInicioAgendamento as any);
             const fim = dayjs(a.dataTerminoAgendamento as any);
+            const nomeCliente = a.nomeCliente ?? a.nomeUsuario ?? "";
 
             return {
                 id: a.id ?? 0,
-                name: a.nomeUsuario ?? "",
+                name: nomeCliente,
+                nomeCliente,
+                telefoneCliente: a.telefoneCliente ?? "",
                 descricaoServico: a.descricaoServico ?? "",
                 data: ini.isValid() ? ini.format("DD/MM/YYYY") : "",
                 dataInicio: ini.isValid() ? [ini.format("HH:mm")] : [],
@@ -59,6 +62,43 @@ export const useAgendamentoPage = () => {
             };
         });
     }, []);
+
+const criarHoraAgendadaPadrao = useCallback((data?: string, id?: number): HoraAgendadaItem[] => {
+        const dataPadrao = dayjs(data, "DD/MM/YYYY", true);
+        const dataSelecionada = dataPadrao.isValid()
+            ? dataPadrao.format("DD/MM/YYYY")
+            : dayjs().format("DD/MM/YYYY");
+
+        return [{
+            id: 1,
+            data: dataSelecionada,
+            dataInicio: [dataSelecionada],
+            dataFim: [],
+            idColaborador: id?.toString() ?? String(colaboradorId ?? "0"),
+            name: "",
+            nomeCliente: "",
+            telefoneCliente: "",
+            descricaoServico: "",
+            tooltipItem: "salvar",
+        }];
+    }, [colaboradorId]);
+
+    const limparCamposAgendamento = useCallback((dataSelecionada?: Dayjs | null, id?: string) => {
+        setAgendamentoItem((prev) => ({
+            ...prev,
+            id: prev?.id ?? 0,
+            nomeUsuario: "",
+            nomeCliente: "",
+            telefoneCliente: "",
+            descricaoServico: "",
+            idServico: 0,
+            dataInicioAgendamento: dataSelecionada ?? prev?.dataInicioAgendamento,
+            dataTerminoAgendamento: undefined,
+            idColaborador: id ?? prev?.idColaborador ?? "0",
+            ativo: true,
+            urlImagem: imagem,
+        }));
+    }, [imagem]);
 
     const agendamentoData = useCallback(async () => {
         if (isDayItem) {
@@ -107,14 +147,17 @@ export const useAgendamentoPage = () => {
         }
 
         const response = await buscarAgendamentosPorData(dataParam, idColaborador);
+
         const dataSelecionada = dayjs(dataParam, "YYYY-MM-DD", true).format("DD/MM/YYYY");
-        const itensDoDia = mapAgendamentosToHoras(response.datas);
+        const itensDoDia = response.datas?.length
+            ? mapAgendamentosToHoras(response.datas)
+            : criarHoraAgendadaPadrao(dataSelecionada, idColaborador);
 
         setHorasAgendadas((prev) => {
             const semDiaSelecionado = prev.filter((item) => item.data !== dataSelecionada);
             return [...semDiaSelecionado, ...itensDoDia];
         });
-    }, [colaboradorId, selectedDateParam, mapAgendamentosToHoras]);
+    }, [colaboradorId, criarHoraAgendadaPadrao, selectedDateParam, mapAgendamentosToHoras]);
 
     const handlerCloseClick = async () => {
         await refreshSelectedDay();
@@ -136,42 +179,48 @@ export const useAgendamentoPage = () => {
 
         const ini = dayjs(response?.data?.dataInicioAgendamento as any);
         const fim = dayjs(response?.data?.dataTerminoAgendamento as any);
+        limparCamposAgendamento(ini.isValid() ? ini : dayjs(selectedDateParam, "YYYY-MM-DD", true), String(response?.data?.idColaborador ?? "0"));
+        setHorasAgendadas(mapAgendamentosToHoras([response.data]));
         setAgendamentoItem((prev) => ({
             ...prev,
             id: response?.data?.id ?? 0,
-            dataInicioAgendamento: ini,
+            dataInicioAgendamento: ini.isValid() ? ini : prev?.dataInicioAgendamento,
             dataTerminoAgendamento: fim,
             idColaborador: String(response?.data?.idColaborador) ?? "0",
             nomeUsuario: response.data?.nomeUsuario,
+            nomeCliente: response.data?.nomeCliente ?? response.data?.nomeUsuario,
+            telefoneCliente: response.data?.telefoneCliente,
             idServico: response?.data?.idServico,
+            descricaoServico: response?.data?.descricaoServico,
             nomeColaborador: response?.data?.nomeColaborador,
             ativo: true,
             urlImagem: imagem,
             idUsuario: response?.data?.idUsuario,
         }));
         setIsHiddenItem(false);
-    }, [imagem, refreshSelectedDay]);
+    }, [imagem, limparCamposAgendamento, mapAgendamentosToHoras, refreshSelectedDay, selectedDateParam]);
 
     const handlerNovo = useCallback(async (data?: string, id?: number) => {
-        if (!data) return;
-
-        const dataFormat = formatarData(data);
+        const dataBase = data ?? dayjs().format("DD/MM/YYYY");
+        const dataFormat = formatarData(dataBase);
         const idColaborador = id?.toString() ?? "0";
-        const parsed = dayjs(data, "DD/MM/YYYY", true);
-        setSelectedDateParam(parsed.isValid() ? parsed.format("YYYY-MM-DD") : "");
+        const parsed = dayjs(dataBase, "DD/MM/YYYY", true);
+        const dataSelecionada = parsed.isValid() ? parsed : dayjs();
+        setSelectedDateParam(dataSelecionada.format("YYYY-MM-DD"));
+        limparCamposAgendamento(dataSelecionada, String(idColaborador));
 
         setAgendamentoItem((prev) => ({
             ...prev,
             id: 0,
-            dataInicioAgendamento: dataFormat ?? undefined,
+            dataInicioAgendamento: dataFormat ?? prev?.dataInicioAgendamento ?? dataSelecionada,
             idColaborador: String(idColaborador),
             ativo: true,
         }));
 
-        setHorasAgendadas([]);
+        setHorasAgendadas(criarHoraAgendadaPadrao(dataBase, id));
         setIsHiddenItem(false);
         setIsHoraOpen(true);
-    }, []);
+    }, [criarHoraAgendadaPadrao, limparCamposAgendamento]);
 
     const handlerDeletar = useCallback(async (id?: number) => {
         if (!id) return;
@@ -215,9 +264,16 @@ export const useAgendamentoPage = () => {
         setSelectedDateParam(dataParam);
         const idColaborador = Number(colaboradorId ?? 0) ?? 0;
         const response = await buscarAgendamentosPorData(dataParam, idColaborador);
+        const dataSelecionada = date.format("DD/MM/YYYY");
+        const itensDoDia = response.datas?.length
+            ? mapAgendamentosToHoras(response.datas)
+            : criarHoraAgendadaPadrao(dataSelecionada, idColaborador);
 
-        if (!response.datas) {
-            setHorasAgendadas((prev) => prev.filter((item) => item.data !== date.format("DD/MM/YYYY")));
+        if (!itensDoDia.length) {
+            setHorasAgendadas((prev) => {
+                const semDiaSelecionado = prev.filter((item) => item.data !== dataSelecionada);
+                return [...semDiaSelecionado, ...criarHoraAgendadaPadrao(dataSelecionada, idColaborador)];
+            });
             setAgendamentoItem((prev) => ({
                 ...prev,
                 id: 0,
@@ -227,6 +283,8 @@ export const useAgendamentoPage = () => {
                 ativo: true,
                 urlImagem: imagem,
                 nomeUsuario: "",
+                nomeCliente: "",
+                telefoneCliente: "",
                 idServico: 0,
             }));
             setIsHiddenItem(false);
@@ -234,14 +292,15 @@ export const useAgendamentoPage = () => {
             setIsDayItem(true);
             return;
         }
+
         const itens = mapAgendamentosToHoras(response.datas);
         setHorasAgendadas((prev) => {
-            const semDiaSelecionado = prev.filter((item) => item.data !== date.format("DD/MM/YYYY"));
+            const semDiaSelecionado = prev.filter((item) => item.data !== dataSelecionada);
             return [...semDiaSelecionado, ...itens];
         });
         setIsHoraOpen(true);
         setIsDayItem(true);
-    }, [colaboradorId, imagem, mapAgendamentosToHoras]);
+    }, [colaboradorId, criarHoraAgendadaPadrao, imagem, mapAgendamentosToHoras]);
 
     const calendarioItem: CalendarioItem = {
         year: anoItem !== undefined && anoItem !== null ? Number(anoItem) : Number(currentYear),
@@ -281,6 +340,8 @@ export const useAgendamentoPage = () => {
             idColaborador: "0",
             ativo: true,
             nomeUsuario: "",
+            nomeCliente: "",
+            telefoneCliente: "",
             idServico: 0,
             urlImagem: "",
         }));

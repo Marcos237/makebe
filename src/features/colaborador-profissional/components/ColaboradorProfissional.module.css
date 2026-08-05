@@ -144,6 +144,18 @@
     margin-bottom: 16px;
 }
 
+.servicoIconButton {
+    min-height: 32px;
+    min-width: 32px;
+    width: 32px;
+    padding: 6px;
+    border-radius: 10px;
+}
+
+.servicoIconButton svg {
+    font-size: 12px;
+}
+
 .camposLayout {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);

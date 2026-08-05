@@ -7,7 +7,7 @@ import {
     UrlBuscarPorId as UrlBuscarAgendamentoPorId,
 } from "../../../constants/Agendamento/agendamentoConstant";
 import { UrlBuscarPorId as UrlBuscarColaboradorPorId } from "../../../constants/Colaborador/colaboradorConstant";
-import { UrlServico } from "../../../constants/Servicos/servicoConstant";
+import { BuscarPorColaborador, UrlServico } from "../../../constants/Servicos/servicoConstant";
 import { UrlBuscarCliente } from "../../../constants/shared/baseConstant";
 import { UrlUsuarioLogado } from "../../../constants/Usuario/usuarioConstant";
 import { AgendamentoItem } from "../../../Interfaces/Agendamento/agendamentoItem";
@@ -51,6 +51,10 @@ export const buscarColaboradorPorId = async (id: number) => (
 
 export const buscarServicosAgendamento = async () => (
     GetAllService(`${API_BASE_AGENDA_URL}${UrlServico}`)
+) as Promise<ResponseItem<ServicosItens>>;
+
+export const buscarServicosAgendamentoPorColaborador = async (idColaborador: number) => (
+    GetByIdService(idColaborador, `${API_BASE_AGENDA_URL}${BuscarPorColaborador}`)
 ) as Promise<ResponseItem<ServicosItens>>;
 
 export const buscarClientesAgendamento = async (term: string) => (

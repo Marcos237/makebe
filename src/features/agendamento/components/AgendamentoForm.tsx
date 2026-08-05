@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Avatar, Box, Collapse, Tooltip } from "@mui/material";
+import { Avatar, Box, Tooltip } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { FaRegCalendarAlt, FaRegTrashAlt, FaSave } from "react-icons/fa";
 import DateTimerPicker from "../../../components/dateTimerPicker";
 import Dropdown from "../../../components/dropdown";
@@ -29,6 +29,7 @@ import {
     buscarClientesAgendamento,
     buscarColaboradorPorId,
     buscarServicosAgendamento,
+    buscarServicosAgendamentoPorColaborador,
     salvarAgendamento,
 } from "../services/agendamentoService";
 import styles from "./Agendamento.module.css";
@@ -93,15 +94,22 @@ const AgendamentoForm: React.FC<{
         setColaborador(response?.data);
     }, [persistirProps]);
 
-    const servicoData = useCallback(async () => {
-        const response = await buscarServicosAgendamento();
+    const servicoData = useCallback(async (colaboradorIdParam?: string) => {
+        const colaboradorId = Number(colaboradorIdParam ?? persistirProps?.item?.idColaborador ?? idColaborador ?? "0");
+        const response = colaboradorId > 0
+            ? await buscarServicosAgendamentoPorColaborador(colaboradorId)
+            : await buscarServicosAgendamento();
         const itensSelect = mapToSelectItens(response?.datas as ServicosItens[], "id", "descricao");
         setServicos(itensSelect);
-    }, []);
+    }, [idColaborador, persistirProps?.item?.idColaborador]);
 
     updatePersistirPrev(colaboradorData, undefined, persistirProps.item);
     updatePersistirPrev(fetchAgendamentoPersistir, undefined, persistirProps.item);
     updatePersistirPrev(servicoData, undefined, persistirProps.item);
+
+    useEffect(() => {
+        void servicoData(idColaborador);
+    }, [idColaborador, servicoData]);
 
     const verificarDigitos = (s?: string | null, n = 3) => {
         if (!s) return false;
@@ -190,12 +198,13 @@ const AgendamentoForm: React.FC<{
         }
     };
 
+
     const handlerOpenAgendadosClick = useCallback((e?: React.MouseEvent<HTMLButtonElement>) => {
         e?.preventDefault?.();
         const nextOpen = !isHoraOpen;
         setHoraOpen(nextOpen);
         if (nextOpen) {
-            const data = formatarData(dataInicio);
+            const data = formatarData(dataInicio) ?? dayjs();
             void onDayClick?.(data);
         } else {
             void onRefreshDay?.();
@@ -302,19 +311,17 @@ const AgendamentoForm: React.FC<{
                             </div>
 
                             <div className={styles.agendadosPanel}>
-                                <Collapse
-                                    in={isHoraOpen}
-                                    timeout={{ enter: 90, exit: 70 }}
-                                    easing={{
-                                        enter: "cubic-bezier(0.2, 0, 0, 1)",
-                                        exit: "cubic-bezier(0.4, 0, 1, 1)",
-                                    }}
-                                    collapsedSize={0}
-                                >
-                                    <Box id="agendados-panel" component="div" sx={{ willChange: "height", overflow: "hidden" }}>
-                                        <HoraAgendada horaAgendadaItem={horasAgendadas} isReadOnly />
+                                    <Box
+                                        id="agendados-panel"
+                                        component="div"
+                                        className={`${styles.agendadosConteudo} ${isHoraOpen ? styles.agendadosConteudoOpen : ""}`}
+                                    >
+                                        <HoraAgendada
+                                            horaAgendadaItem={horasAgendadas}
+                                            diaISO={(formatarData(dataInicio) ?? dayjs()).format("YYYY-MM-DD")}
+                                            isReadOnly
+                                        />
                                     </Box>
-                                </Collapse>
                             </div>
 
                             <div className={styles.pickerRow}>

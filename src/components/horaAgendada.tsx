@@ -81,19 +81,25 @@ const HoraAgendada: React.FC<{
     }
   }
 
+  const limparDataSelecionada = useCallback((data?: string) => {
+    if (!data?.trim()) return "";
+
+    const dataNormalizada = dayjs(data, ["YYYY-MM-DD", "YYYY-MM-DDTHH:mm:ss", "YYYY-MM-DDTHH:mm:ss.SSSZ", "DD/MM/YYYY"], true);
+    return dataNormalizada.isValid() ? dataNormalizada.format("DD/MM/YYYY") : "";
+  }, []);
+
   const dataSelecionada = useMemo(() => {
-    if (diaISO) return dayjs(diaISO).format("DD/MM/YYYY");
+    if (diaISO) return limparDataSelecionada(diaISO);
     const item = (horaAgendadaItem ?? []).find(i => i.data?.trim());
-    return item?.data ?? "";
-  }, [horaAgendadaItem, diaISO]);
+    return limparDataSelecionada(item?.data);
+  }, [horaAgendadaItem, diaISO, limparDataSelecionada]);
 
   const itensDoDia = useMemo(() => {
     if (!dataSelecionada) return [];
-    return (horaAgendadaItem ?? []).filter(i => i.data === dataSelecionada);
-  }, [horaAgendadaItem, dataSelecionada]);
+    return (horaAgendadaItem ?? []).filter(i => limparDataSelecionada(i.data) === dataSelecionada);
+  }, [horaAgendadaItem, dataSelecionada, limparDataSelecionada]);
 
   useClickOutside(boxRef, handleOutsideClose, !isMobile);
-
 
   if (!dataSelecionada) return null;
 
@@ -147,64 +153,72 @@ const HoraAgendada: React.FC<{
             <div className="linha-horario">
               {itensDoDia.map((agendamento, i) => {
                 const id = agendamento?.id ?? (horaAgendadaItem ?? []).find(it => it.id === agendamento?.id)?.id ?? 0;
-                const nome = agendamento?.name ?? (horaAgendadaItem ?? []).find(it => it.id === agendamento?.id)?.name ?? "";
-
+                const itemAtual = (horaAgendadaItem ?? []).find(it => it.id === agendamento?.id);
+                const nomeCliente = agendamento?.nomeCliente ?? agendamento?.name ?? itemAtual?.nomeCliente ?? itemAtual?.name ?? "";
+                const telefoneCliente = agendamento?.telefoneCliente ?? itemAtual?.telefoneCliente ?? "";
+                const temHorarioFim = Boolean(agendamento?.dataFim?.length && agendamento.dataFim.some(h => h?.trim()));
                 const key = id || `${agendamento.data}-${agendamento.dataInicio}-${agendamento.dataFim}-${i}`;
 
                 return (
                   <div key={key} className="box-item">
-                    <span className="data-box-name nome">{nome}</span>
-                    {agendamento.descricaoServico && (
-                      <span className="data-box-servico">{agendamento.descricaoServico}</span>
-                    )}
-                    <div className="linha-item">
-                      <span className="data-box-text hora">
-                        {agendamento.dataInicio?.toString() ?? ""}
-                      </span>
-
-
-                      <span className="data-box-text data-box-fim hora">
-                        {agendamento.dataFim?.toString() ?? ""}
-                      </span>
-
-                      <input type="hidden" name={`horaFimId[${id}]`} value={id?.toString() ?? ""} />
-
-                      <div className="acoes">
-
-                        {!isReadOnly && (
-                          <>
-                        <Tooltip title="editar">
-                              {isEditar && loadingEditarId === id ? (
-                                <Box sx={{ color: "#ed145b" }}>
-                                  <CircularProgress
-                                    size={28}
-                                    thickness={4}
-                                    disableShrink
-                                    sx={{
-                                      '& .MuiCircularProgress-circle': {
-                                        strokeLinecap: 'round',
-                                        animationDuration: '1.4s',
-                                      }
-                                    }}
-                                    color="inherit"
-                                  />
-                                </Box>
-                              ) : (
-                                <span className="icon-btn" onClick={() => handleEditar(Number(id))}>
-                                  <TfiAgenda />
-                                </span>
-                              )}
-                            </Tooltip>
-                            <Tooltip title="remover">
-                              <span className="icon-btn" onClick={() => handleRemover(Number(id))}>
-                                <FaRegTrashAlt />
-                              </span>
-                            </Tooltip>
-                          </>
-                        )}
-
-                      </div>
+                    <div className="data-box-detalhes">
+                      {agendamento.descricaoServico && (
+                        <span className="data-box-servico">{agendamento.descricaoServico}</span>
+                      )}
+                      {nomeCliente && (
+                        <span className="data-box-servico">Nome: {nomeCliente}</span>
+                      )}
+                      {telefoneCliente && (
+                        <span className="data-box-servico">Telefone: {telefoneCliente}</span>
+                      )}
                     </div>
+                    {temHorarioFim && (
+                      <div className="linha-item">
+                        <span className="data-box-text hora">
+                          {agendamento.dataInicio?.toString() ?? ""}
+                        </span>
+
+                        <span className="data-box-text data-box-fim hora">
+                          {agendamento.dataFim?.toString() ?? ""}
+                        </span>
+
+                        <input type="hidden" name={`horaFimId[${id}]`} value={id?.toString() ?? ""} />
+
+                        <div className="acoes">
+                          {!isReadOnly && (
+                            <>
+                              <Tooltip title="editar">
+                                {isEditar && loadingEditarId === id ? (
+                                  <Box sx={{ color: "#ed145b" }}>
+                                    <CircularProgress
+                                      size={28}
+                                      thickness={4}
+                                      disableShrink
+                                      sx={{
+                                        '& .MuiCircularProgress-circle': {
+                                          strokeLinecap: 'round',
+                                          animationDuration: '1.4s',
+                                        }
+                                      }}
+                                      color="inherit"
+                                    />
+                                  </Box>
+                                ) : (
+                                  <span className="icon-btn" onClick={() => handleEditar(Number(id))}>
+                                    <TfiAgenda />
+                                  </span>
+                                )}
+                              </Tooltip>
+                              <Tooltip title="remover">
+                                <span className="icon-btn" onClick={() => handleRemover(Number(id))}>
+                                  <FaRegTrashAlt />
+                                </span>
+                              </Tooltip>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}

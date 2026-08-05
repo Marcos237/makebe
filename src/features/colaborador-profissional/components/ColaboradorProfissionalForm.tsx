@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { Tooltip } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
-import { FaRegTrashAlt, FaSave } from "react-icons/fa";
+import { FaPlus, FaRegTrashAlt, FaSave } from "react-icons/fa";
 import DateTimerPicker from "../../../components/dateTimerPicker";
 import BotaoSubmit from "../../../components/submitButton";
 import Dropdown from "../../../components/dropdown";
@@ -11,7 +11,10 @@ import { formatarHora, formatarHoraComData } from "../../../functions/formatData
 import { useFormErros } from "../../../hooks/useFormErros";
 import updatePersistirPrev from "../../../hooks/useUpdatePersistirPrev";
 import { BotaoItens } from "../../../Interfaces/Botao/botao";
-import { ColaboradorProfissionalItem } from "../../../Interfaces/ColaboradorProfissional/colaboradorProfissionalItem";
+import {
+    ColaboradorProfissionalItem,
+    ColaboradorProfissionalServicoItem,
+} from "../../../Interfaces/ColaboradorProfissional/colaboradorProfissionalItem";
 import { MensagemItens } from "../../../Interfaces/Mensagens/MensagemItens";
 import { ErroItem } from "../../../Interfaces/shared/erroItem";
 import { PersistirItens } from "../../../Interfaces/shared/persistirItens";
@@ -19,6 +22,8 @@ import { RetornarMessageService } from "../../../services/shared/retornarMessage
 import { mapNotificationErrors } from "../../../utils/mapNotificationErrors";
 import { salvarColaboradorProfissional } from "../services/colaboradorProfissionalService";
 import styles from "./ColaboradorProfissional.module.css";
+
+const MAX_SERVICOS = 10;
 
 const ColaboradorProfissionalForm: React.FC<{
     persistirProps: PersistirItens<ColaboradorProfissionalItem>;
@@ -30,7 +35,9 @@ const ColaboradorProfissionalForm: React.FC<{
     const [usuarioId, setUsuarioId] = useState<string>("");
     const [colaboradorId, setColaboradorId] = useState<number>(0);
     const [lojaId, setLojaId] = useState<number>(0);
-    const [servicoId, setServicoId] = useState<number>(0);
+    const [servicosSelecionados, setServicosSelecionados] = useState<ColaboradorProfissionalServicoItem[]>([
+        { idServico: 0, ativo: true },
+    ]);
     const [descricao, setDescricao] = useState<string>("");
     const [periodoInativoInicio, setPeriodoInativoInicio] = useState<string>("");
     const [periodoInativoFim, setPeriodoInativoFim] = useState<string>("");
@@ -50,7 +57,17 @@ const ColaboradorProfissionalForm: React.FC<{
         setUsuarioId(item?.usuarioId || "");
         setColaboradorId(item?.colaboradorId ?? 0);
         setLojaId(item?.lojaId ?? 0);
-        setServicoId(item?.servicoId ?? 0);
+
+        const servicos = item?.servicos?.length
+            ? item.servicos.slice(0, MAX_SERVICOS).map((servico) => ({
+                id: servico.id ?? 0,
+                idColaborador: servico.idColaborador ?? item?.colaboradorId ?? 0,
+                idServico: servico.idServico ?? 0,
+                ativo: servico.ativo ?? true,
+            }))
+            : [{ idServico: item?.servicoId ?? 0, idColaborador: item?.colaboradorId ?? 0, ativo: true }];
+
+        setServicosSelecionados(servicos.length > 0 ? servicos : [{ idServico: 0, ativo: true }]);
         setDescricao(item?.descricao ?? "");
         setPeriodoInativoInicio(
             item?.PeriodoInativoInicioExtenso ??
@@ -71,7 +88,7 @@ const ColaboradorProfissionalForm: React.FC<{
         setId(0);
         setColaboradorId(0);
         setLojaId(0);
-        setServicoId(0);
+        setServicosSelecionados([{ idServico: 0, ativo: true }]);
         setDescricao("");
         setPeriodoInativoInicio("");
         setPeriodoInativoFim("");
@@ -87,12 +104,23 @@ const ColaboradorProfissionalForm: React.FC<{
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         setIsLoading(true);
+
+        const servicos = servicosSelecionados
+            .filter((servico) => Number(servico.idServico ?? 0) > 0)
+            .map((servico) => ({
+                id: servico.id ?? 0,
+                idColaborador: colaboradorId ?? 0,
+                idServico: Number(servico.idServico ?? 0),
+                ativo: servico.ativo ?? true,
+            }));
+
         const colabolador: ColaboradorProfissionalItem = {
             id: id ?? 0,
             usuarioId: usuarioId ?? "",
             colaboradorId: colaboradorId ?? 0,
             lojaId: lojaId ?? 0,
-            servicoId: servicoId ?? 0,
+            servicoId: servicosSelecionados[0]?.idServico ?? 0,
+            servicos,
             descricao: descricao ?? "",
             PeriodoInativoInicioExtenso: formatarHoraComData(periodoInativoInicio) ?? undefined,
             PeriodoInativoFimExtenso: formatarHoraComData(periodoInativoFim) ?? undefined,
@@ -134,9 +162,37 @@ const ColaboradorProfissionalForm: React.FC<{
         if (tipo === "loja") {
             setLojaId(Number(e.target.value));
         }
-        if (tipo === "servico") {
-            setServicoId(Number(e.target.value));
-        }
+    };
+
+    const handleServicoChange = (index: number, value: string) => {
+        setServicosSelecionados((prev) => prev.map((servico, currentIndex) => (
+            currentIndex === index
+                ? {
+                    ...servico,
+                    idServico: Number(value),
+                    idColaborador: colaboradorId,
+                    ativo: true,
+                }
+                : servico
+        )));
+    };
+
+    const handleAdicionarServico = () => {
+        setServicosSelecionados((prev) => {
+            if (prev.length >= MAX_SERVICOS) return prev;
+            return [...prev, { idServico: 0, idColaborador: colaboradorId, ativo: true }];
+        });
+    };
+
+    const handleRemoverServico = (index: number) => {
+        setServicosSelecionados((prev) => {
+            if (prev.length <= 1) {
+                return [{ ...prev[0], idServico: 0, idColaborador: colaboradorId, ativo: true }];
+            }
+
+            const proximaLista = prev.filter((_, currentIndex) => currentIndex !== index);
+            return proximaLista.length > 0 ? proximaLista : [{ idServico: 0, idColaborador: colaboradorId, ativo: true }];
+        });
     };
 
     const botaoProps: BotaoItens = {
@@ -159,7 +215,7 @@ const ColaboradorProfissionalForm: React.FC<{
             <div className={styles.card}>
                 <div className={styles.header}>
                     <h2>Profissional</h2>
-                    <p>Gerencie os vínculos profissionais</p>
+                    <p>Gerencie os vinculos profissionais</p>
                 </div>
 
                 <div className={styles.messageText}>
@@ -208,24 +264,42 @@ const ColaboradorProfissionalForm: React.FC<{
                         <div className={styles.separador}></div>
 
                         <div className={`${styles.coluna} ${styles.campos}`}>
-                            <div className={styles.formItens}>
-                                <Dropdown
-                                    dropProps={{
-                                        name: "ServicoId",
-                                        label: "Serviço*",
-                                        itens: servicoProps,
-                                        selectedId: servicoId || "0",
-                                        onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "servico"),
-                                        erroSession: "ServicoId",
-                                    }}
-                                />
-                            </div>
+                            {servicosSelecionados.map((servico, index) => (
+                                <div className={styles.formItens} key={`servico-${index}`}>
+                                    <Dropdown
+                                        dropProps={{
+                                            name: `ServicoId_${index}`,
+                                            label: `Servico ${index + 1}*`,
+                                            itens: servicoProps,
+                                            selectedId: servico.idServico || "0",
+                                            onChange: (e: SelectChangeEvent<string>) => handleServicoChange(index, e.target.value),
+                                            erroSession: `ServicoId_${index}`,
+                                        }}
+                                    />
+                                    <div className={styles.formActions}>
+                                        {index === servicosSelecionados.length - 1 && servicosSelecionados.length < MAX_SERVICOS && (
+                                            <Tooltip title="Adicionar servico">
+                                                <button onClick={handleAdicionarServico} className={`${styles.actionButton} ${styles.servicoIconButton}`} type="button">
+                                                    <FaPlus />
+                                                </button>
+                                            </Tooltip>
+                                        )}
+                                        {servicosSelecionados.length > 1 && (
+                                            <Tooltip title="Remover servico">
+                                                <button onClick={() => handleRemoverServico(index)} className={`${styles.deleteButton} ${styles.servicoIconButton}`} type="button">
+                                                    <FaRegTrashAlt />
+                                                </button>
+                                            </Tooltip>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
                             <div className={styles.formItens}>
                                 <CampoTexto
                                     textBoxProps={{
                                         name: "Descricao",
-                                        tooltip: "Descrição",
-                                        label: "Descrição",
+                                        tooltip: "Descricao",
+                                        label: "Descricao",
                                         value: descricao,
                                         type: "text",
                                         onChange: (e: React.ChangeEvent<HTMLInputElement>) => setDescricao(e.target.value),
