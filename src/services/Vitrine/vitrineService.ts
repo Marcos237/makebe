@@ -1,21 +1,16 @@
-import axios, { AxiosRequestConfig, AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 import { API_BASE_URL } from '../../config/apiConfig';
-import { getTokenFromLocalStorage } from '../../config/ArmazenaToken';
 import { VitrineItem } from '../../Interfaces/Vitrine/vitrineItem';
 import { NotificationItens } from '../../Interfaces/shared/NotificationItens';
+import { buildRequestConfig } from '../shared/apiSecurityHeaders';
 
 export const VitrineService = async (): Promise<VitrineItem> => {
 
     try {
-        const token = getTokenFromLocalStorage();
-        const config: AxiosRequestConfig = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        };
+        const url = `${API_BASE_URL}vitrine`;
+        const config = buildRequestConfig(url);
 
-        const response = await axios.get(`${API_BASE_URL}vitrine`, config);
+        const response = await axios.get(url, config);
         const vitrineItem: VitrineItem = {
             descricao: response.data.descricao ?? '', 
         };

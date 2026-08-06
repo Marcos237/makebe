@@ -1,17 +1,11 @@
-import axios, { AxiosRequestConfig } from 'axios';
-import { getTokenFromLocalStorage } from '../../config/ArmazenaToken';
+import axios from 'axios';
 import { returnErroService } from './returnErroService';
 import { ResponseItem } from '../../Interfaces/shared/ResponseItem';
+import { buildRequestConfig } from './apiSecurityHeaders';
 
 export const PostService = async <T>(  item: T, url: string): Promise<ResponseItem<T>> => {
   try {
-    const token = getTokenFromLocalStorage();
-    const config: AxiosRequestConfig = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    };
+    const config = buildRequestConfig(url);
 
     const response = await axios.post<ResponseItem<T>>(`${url}`, item, config);
     return response.data; 

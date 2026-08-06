@@ -1,18 +1,12 @@
-import axios, { AxiosRequestConfig } from 'axios';
-import { getTokenFromLocalStorage } from '../../config/ArmazenaToken';
+import axios from 'axios';
 import { ResponseItem } from '../../Interfaces/shared/ResponseItem';
 import { returnErroService } from './returnErroService';
+import { buildRequestConfig } from './apiSecurityHeaders';
 
 export const DeleteService = async<T>(id : string | number, url : string): Promise<ResponseItem<T>> => {
 
     try {
-        const token = getTokenFromLocalStorage();
-        const config: AxiosRequestConfig = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        };
+        const config = buildRequestConfig(url);
 
         const response = await axios.delete(`${url}/${id}`, config);
         return response.data; 

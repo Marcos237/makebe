@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { API_BASE_URL } from "../config/apiConfig";
 import {
-  getTokenFromLocalStorage,
   hasValidTokenInLocalStorage,
   removeTokenFromLocalStorage,
 } from "../config/ArmazenaToken";
 import { UrlUsuarioLogado } from "../constants/Usuario/usuarioConstant";
+import { buildRequestConfig } from "../services/shared/apiSecurityHeaders";
 
 interface ProtectedRouteProps {
   children: React.ReactElement;
@@ -27,14 +27,10 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       }
 
       try {
-        const token = getTokenFromLocalStorage();
+        const url = `${API_BASE_URL}${UrlUsuarioLogado}`;
+        const config = buildRequestConfig(url);
 
-        await axios.get(`${API_BASE_URL}${UrlUsuarioLogado}`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        await axios.get(url, config);
         if (isMounted) {
           setIsAuthorized(true);
         }
