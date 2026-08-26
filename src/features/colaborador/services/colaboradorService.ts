@@ -2,6 +2,7 @@ import { API_BASE_AGENDA_URL, API_BASE_URL } from "../../../config/apiConfig";
 import {
     UrlBuscarPaginado,
     UrlBuscarPermissao,
+    UrlBuscarPorIdUsuario,
     UrlColaborador,
 } from "../../../constants/Colaborador/colaboradorConstant";
 import { UrlUsuarioLogado } from "../../../constants/Usuario/usuarioConstant";
@@ -29,6 +30,10 @@ export const buscarPermissoesColaborador = async () => (
 
 export const buscarColaboradorPorUsuarioId = async (usuarioId: string) => (
     GetByIdService(usuarioId, `${API_BASE_AGENDA_URL}${UrlColaborador}`)
+) as Promise<ResponseItem<ColaboradorItens>>;
+
+export const buscarGestorPorUsuarioId = async (usuarioId: string) => (
+    GetByIdService(usuarioId || "0", `${API_BASE_AGENDA_URL}${UrlBuscarPorIdUsuario}`)
 ) as Promise<ResponseItem<ColaboradorItens>>;
 
 export const salvarColaborador = async (colaborador: ColaboradorItens) => (

@@ -41,6 +41,9 @@ const Upload: React.FC<UploadItens> = ({ uploadProps, onUpload }) => {
     }, [uploadProps]);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (uploadProps?.readonly) {
+            return;
+        }
 
         const file = e.target.files?.[0];
 
@@ -70,6 +73,9 @@ const Upload: React.FC<UploadItens> = ({ uploadProps, onUpload }) => {
     };
 
     const handleIconClick = () => {
+        if (uploadProps?.readonly) {
+            return;
+        }
 
         setNomeImagem('');
 
@@ -110,6 +116,7 @@ const Upload: React.FC<UploadItens> = ({ uploadProps, onUpload }) => {
                             alt={nomeImagem ?? undefined}
                             src={urlImagem ?? undefined}
                             className='avatar'
+                            sx={{ cursor: uploadProps?.readonly ? 'default' : 'pointer' }}
                         />
                     </label>
 
@@ -119,8 +126,11 @@ const Upload: React.FC<UploadItens> = ({ uploadProps, onUpload }) => {
                             className='icone-remove'
                             onClick={handleIconClick}
                             role="button"
-                            tabIndex={0}
+                            tabIndex={uploadProps?.readonly ? -1 : 0}
                             onKeyDown={(e) => {
+                                if (uploadProps?.readonly) {
+                                    return;
+                                }
 
                                 if (e.key === 'Enter' || e.key === ' ') {
 
@@ -154,6 +164,7 @@ const Upload: React.FC<UploadItens> = ({ uploadProps, onUpload }) => {
                     style={{ display: 'none' }}
                     name={name}
                     ref={inputRef}
+                    disabled={uploadProps?.readonly}
                 />
 
             </div>

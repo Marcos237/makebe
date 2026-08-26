@@ -13,7 +13,7 @@ const API_SECURITY_CONFIGS: ApiSecurityConfig[] = [
     apiKey: '684b3b6f-e7e3-4763-918f-2de3ec05f306',
   },
   {
-    matchers: ['makebe-agenda', 'agenda'],
+    matchers: ['makebe-agenda', 'agenda', 'localhost:44330'],
     apiKey: '9bc8e4b0-bdef-4cb5-b8e8-4078308d0ab9',
     headerName: 'ApiSecurity',
   },

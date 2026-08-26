@@ -17,6 +17,7 @@ const SwitchButton: React.FC<{ switchProps: SwitchButtonItem }> = ({ switchProps
                     name={switchProps.name}
                     type="checkbox"
                     checked={switchProps.checked}
+                    disabled={switchProps.disabled}
                     onChange={switchProps.handleChange}
                 />
                 <span className="slider"></span>

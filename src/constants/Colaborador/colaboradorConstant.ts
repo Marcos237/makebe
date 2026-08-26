@@ -12,6 +12,7 @@ export const modalTitulo = "Colaborador";
 export const modalTexto = "Deseja remover o colaborador?"
 export const UrlColaborador = "Colaborador";
 export const UrlBuscarPorId = "Colaborador/BuscarPorId"
+export const UrlBuscarPorIdUsuario = "Colaborador/BuscarPorIdUsuario";
 export const UrlBuscarPaginado = "Colaborador/BuscarPaginado";
 export const UrlBuscarPermissao = "Permissao";
 export const TipoCliente = "3";

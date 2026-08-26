@@ -15,4 +15,5 @@ export interface ColaboradorItens {
     descricaoStatus?: string;
     nomeColaboradorRazaoSocial?: string;
     tipo?: number;
+    isGestor?: boolean;
 }

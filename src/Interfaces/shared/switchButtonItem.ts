@@ -3,5 +3,6 @@ export interface SwitchButtonItem {
     name?: string;
     erroSession?: string;
     checked: boolean;
+    disabled?: boolean;
     handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }

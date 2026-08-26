@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { Tooltip } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { useParams } from "react-router-dom";
-import { FaRegTrashAlt, FaSave } from "react-icons/fa";
+import { FaPlus, FaRegTrashAlt, FaSave } from "react-icons/fa";
 import BotaoSubmit from "../../../components/submitButton";
 import Dropdown from "../../../components/dropdown";
 import Mensagem from "../../../components/mensagem";
@@ -22,7 +22,7 @@ import { UploadItens } from "../../../Interfaces/TextBox/UploadItens";
 import { RetornarMessageService } from "../../../services/shared/retornarMessageService";
 import { mapNotificationErrors } from "../../../utils/mapNotificationErrors";
 import { cpfMaskConst, foneMaskConst } from "../../../utils/mascaras";
-import { salvarColaborador } from "../services/colaboradorService";
+import { buscarGestorPorUsuarioId, salvarColaborador } from "../services/colaboradorService";
 import styles from "./Colaborador.module.css";
 
 const ColaboradorForm: React.FC<{
@@ -45,6 +45,7 @@ const ColaboradorForm: React.FC<{
     const [status, setStatus] = useState<boolean>(false);
     const [readOnlyItem, setReadOnly] = useState<boolean>(false);
     const [tipo, setTipo] = useState<number>();
+    const [isGestor, setIsGestor] = useState<boolean>(false);
     const [erros, setErros] = useState<ErroItem[]>([]);
     const [erroTrigger, setErroTrigger] = useState(0);
     const { urlParametro } = useParams();
@@ -64,6 +65,7 @@ const ColaboradorForm: React.FC<{
                 nomeImagem: persistirProps.item?.nomeImagem,
                 urlImagem: persistirProps.item?.urlImagem,
                 id: "1",
+                readonly: persistirProps.item?.isGestor || false,
             },
         });
         setInstagran(persistirProps?.item?.instagram ?? "");
@@ -71,6 +73,7 @@ const ColaboradorForm: React.FC<{
         setStatus(persistirProps.item?.status || false);
         setReadOnly(readOnly);
         setTipo(tipoItem);
+        setIsGestor(persistirProps.item?.isGestor || false);
     }, [persistirProps, readOnly, tipoItem]);
 
     updatePersistirPrev(fetchColaboradorData, undefined, persistirProps.item);
@@ -88,7 +91,11 @@ const ColaboradorForm: React.FC<{
         setPermissaoId("");
         setStatus(false);
         setReadOnly(false);
+        setIsGestor(false);
     };
+
+    const isFieldsReadOnly = readOnlyItem || isGestor;
+    const isInserirGestorDisabled = isLoading || Number(id || '0') > 0;
 
     const enviarSatusMessage = () => {
         setMessage(true);
@@ -114,6 +121,7 @@ const ColaboradorForm: React.FC<{
             permissaoId: permissaoId || "",
             status: status || false,
             tipo: Number(tipoItem) ?? tipo,
+            isGestor,
         };
 
         const colaboradorResponse = await salvarColaborador(colabolador);
@@ -147,6 +155,7 @@ const ColaboradorForm: React.FC<{
                 nomeImagem: fileName,
                 urlImagem: base64String,
                 id: "1",
+                readonly: isFieldsReadOnly,
             },
         });
     };
@@ -157,11 +166,48 @@ const ColaboradorForm: React.FC<{
         }
     };
 
+    const handleInserirGestor = async () => {
+        setIsLoading(true);
+
+        const gestorResponse = await buscarGestorPorUsuarioId(usuarioId);
+        const gestor = gestorResponse?.data;
+
+        if (gestor) {
+            setId(gestor.id || "");
+            setUsuarioId(gestor.usuarioId || "");
+            setNome(gestor.nome || "");
+            setCpf(gestor.cpf || "");
+            setEmail(gestor.email || "");
+            setTelefone(gestor.telefone || "");
+            setInstagran(gestor.instagram || "");
+            setPermissaoId(gestor.permissaoId || "");
+            setStatus(gestor.status || false);
+            setReadOnly(false);
+            setIsGestor(Boolean(gestor.isGestor));
+            setUploadItem({
+                uploadProps: {
+                    nomeImagem: gestor.nomeImagem,
+                    urlImagem: gestor.urlImagem,
+                    id: "1",
+                    readonly: Boolean(gestor.isGestor),
+                },
+            });
+        } else {
+            const errosConvertidos: ErroItem[] = mapNotificationErrors(gestorResponse?.notifications);
+            setErros(errosConvertidos);
+            setErroTrigger((prev) => prev + 1);
+            enviarSatusMessage();
+        }
+
+        setIsLoading(false);
+    };
+
     const switchButton: SwitchButtonItem = {
         label: "Status : ",
         name: "Status",
         erroSession: "Status",
         checked: status,
+        disabled: isFieldsReadOnly,
         handleChange: () => setStatus(!status),
     };
 
@@ -194,6 +240,12 @@ const ColaboradorForm: React.FC<{
 
                 <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} id="frmColaborador" className={styles.form}>
                     <div className={styles.formActions}>
+                        <button onClick={handleInserirGestor} className={styles.insertGestorButton} type="button" disabled={isInserirGestorDisabled}>
+                            <Tooltip title="InserirGestor">
+                                <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                                    <FaPlus />                                </span>
+                            </Tooltip>
+                        </button>
                         <button onClick={limparItens} className={styles.deleteButton} type="button">
                             <Tooltip title="limpar">
                                 <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
@@ -206,7 +258,7 @@ const ColaboradorForm: React.FC<{
                     <div className={styles.camposLayout}>
                         <div className={`${styles.coluna} ${styles.campos}`}>
                             <div className={styles.formItensImagem}>
-                                <Upload uploadProps={uploadItem.uploadProps} onUpload={handleImageUpload} />
+                                <Upload uploadProps={{ ...uploadItem.uploadProps, readonly: isFieldsReadOnly }} onUpload={handleImageUpload} />
                             </div>
                             <div className={styles.formItens}>
                                 <CampoTexto
@@ -216,6 +268,7 @@ const ColaboradorForm: React.FC<{
                                         label: "Nome*",
                                         value: nome,
                                         type: "text",
+                                        readonly: isFieldsReadOnly,
                                         onChange: (e: React.ChangeEvent<HTMLInputElement>) => setNome(e.target.value),
                                         erroSession: "Nome",
                                     }}
@@ -230,7 +283,7 @@ const ColaboradorForm: React.FC<{
                                         value: cpf,
                                         type: "text",
                                         mask: cpfMaskConst,
-                                        readonly: readOnlyItem,
+                                        readonly: isFieldsReadOnly,
                                         onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCpf(e.target.value),
                                         erroSession: "CPF",
                                     }}
@@ -245,6 +298,7 @@ const ColaboradorForm: React.FC<{
                                         value: telefone,
                                         type: "text",
                                         mask: foneMaskConst(telefone),
+                                        readonly: isFieldsReadOnly,
                                         onChange: (e: React.ChangeEvent<HTMLInputElement>) => setTelefone(e.target.value),
                                         erroSession: "Telefone",
                                     }}
@@ -258,7 +312,7 @@ const ColaboradorForm: React.FC<{
                                         label: "Email*",
                                         value: email,
                                         type: "text",
-                                        readonly: readOnlyItem,
+                                        readonly: isFieldsReadOnly,
                                         onChange: (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value),
                                         erroSession: "Email",
                                     }}
@@ -277,6 +331,7 @@ const ColaboradorForm: React.FC<{
                                             label: "Permissão*",
                                             itens: persistirProps.selectItems ?? [],
                                             selectedId: permissaoId || "",
+                                            isLeitura: isFieldsReadOnly,
                                             onChange: (e: SelectChangeEvent<string>) => handleDropdownChange(e, "permissao"),
                                             erroSession: "PermissaoId",
                                         }}
@@ -291,6 +346,7 @@ const ColaboradorForm: React.FC<{
                                         label: "Instagram",
                                         value: instagran,
                                         type: "text",
+                                        readonly: isFieldsReadOnly,
                                         onChange: (e: React.ChangeEvent<HTMLInputElement>) => setInstagran(e.target.value),
                                     }}
                                 />
